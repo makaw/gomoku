@@ -6,10 +6,10 @@ package gui;
 
 
 import game.Game;
-import game.GameStateSpy;
+import game.GameState;
+import gomoku.AppObserver;
 import gomoku.IConf;
 import gomoku.Settings;
-import gomoku.SettingsSpy;
 import gui.dialogs.NewGameDialog;
 import gui.dialogs.PromptDialog;
 import javax.swing.*;
@@ -18,10 +18,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 import javax.swing.plaf.metal.OceanTheme;
-import network.Client;
-import network.Command;
-import sun.net.www.content.text.plain;
-import sun.rmi.server.UnicastRef;
 
 /**
  *
@@ -48,11 +44,9 @@ public class GUI extends JFrame implements IBaseGUI {
   /** Obiekt służący do odtwarzania dźwięków */  
   private Sounds sounds;
   /** Referencja do obiektu służącego do komunikacji z wątkiem kontrolującym przebieg gry  w zakresie zmiany stanu gry */
-  private final GameStateSpy gameStateSpy;
+  private final AppObserver gameSpy;
   /** Obiekt przechowujący ustawienia gry */
   private final Settings settings;
-  /** Referencja do obiektu służącego do komunikacji z wątkiem kontrolującym przebieg gry w zakresie zmiany ustawień */
-  private final SettingsSpy settingsSpy;
   /** Panel w którym zawiera się graficzna reprezentacja planszy */
   private final JPanel panelBoard;
   /** Obiekt przycisku do wysyłania wiadomości w grze sieciowej, uchwyt jest potrzebny do
@@ -62,17 +56,14 @@ public class GUI extends JFrame implements IBaseGUI {
   /**
    * Konstruktor budujący graficzny interfejs użytkownika i wywołujący 
    * okno z wyborem trybu nowej gry
-   * @param gameStateSpy Referencja do obiektu służącego do komunikacji z wątkiem kontrolującym 
-   * przebieg gry w zakresie zmiany stanu gry
-   * @param settingsSpy Referencja do obiektu służącego do komunikacji z wątkiem kontrolującym 
-   * przebieg gry w zakresie zmiany ustawień
+   * @param gameSpy Referencja do obiektu służącego do komunikacji z wątkiem kontrolującym 
+   * przebieg gry
    */  
-  public GUI(final GameStateSpy gameStateSpy, SettingsSpy settingsSpy) {
+  public GUI(final AppObserver gameSpy) {
       
     super("Gomoku");  
     
-    this.gameStateSpy = gameStateSpy;
-    this.settingsSpy = settingsSpy;
+    this.gameSpy = gameSpy;
     
     settings = new Settings();
     
@@ -114,7 +105,7 @@ public class GUI extends JFrame implements IBaseGUI {
         String msg = new PromptDialog(GUI.this, 
                                       "Tre\u015b\u0107 wiadomo\u015bci:").getMessage();
         if (msg!=null && !msg.isEmpty()) {
-          gameStateSpy.sendMessage(msg);
+          gameSpy.sendObject("message", msg);
         } 
         
        }
@@ -191,23 +182,12 @@ public class GUI extends JFrame implements IBaseGUI {
    * @see game.Game#update(java.util.Observable, java.lang.Object) 
    */
   @Override
-  public void restartGame(byte gameMode, String serverIP) {    
-      
-    if (this.gameMode == Game.NETWORK_GAME) {
-        
-       try {
-          Client client = new Client(serverIP, gameStateSpy, console);  
-          client.sendCommand(new Command(Command.CMD_EXIT));
-       }
-       catch (Exception e) { System.err.println(e); }
-       gameStateSpy.setState(Game.WAIT, serverIP);
-        
-    }
+  public void restartGame(byte gameMode, String serverIP) {      
       
     this.gameMode = gameMode;
     
     // przesłanie do wątka gry informacji o zmianie stanu
-    gameStateSpy.setState(Game.RESTART, serverIP);
+    gameSpy.sendObject("state", new GameState(GameState.RESTART, serverIP));
     board.clear();
     console.clear();   
     
@@ -232,8 +212,8 @@ public class GUI extends JFrame implements IBaseGUI {
   @Override
   public void restartGameSettings() {
 
-   // przesłanie do wątka gry informacji o zmianie stanu
-    gameStateSpy.setState(Game.WAIT);
+    // przesłanie do wątka gry informacji o zmianie stanu
+    gameSpy.sendObject("state", new GameState(GameState.WAIT));
     
     console.clear();
     console.setMessageLn("Przerwano gr\u0119 (zmiana ustawie\u0144).", Color.RED);
@@ -249,7 +229,8 @@ public class GUI extends JFrame implements IBaseGUI {
     catch(InterruptedException e) {}
     
     // przesłanie do wątka gry nowych ustawien i referencji do nowej planszy
-    settingsSpy.setSettings(settings, board);
+    gameSpy.sendObject("settings", settings);
+    gameSpy.sendObject("board", board);
     gameMode = new NewGameDialog(this).getGameMode();
 
   }  
@@ -281,7 +262,8 @@ public class GUI extends JFrame implements IBaseGUI {
     catch(InterruptedException e) {}
     
     // przesłanie do wątka gry nowych ustawien i referencji do nowej planszy
-    settingsSpy.setSettings(settings, board, false);
+    gameSpy.sendObject("settings", settings);
+    gameSpy.sendObject("board", board);
 
   }    
 

@@ -4,8 +4,8 @@
  */
 package game;
 
+import gomoku.AppObserver;
 import gomoku.Settings;
-import gomoku.SettingsSpy;
 import gui.BoardGraphics;
 import gui.Console;
 import gui.GUI;
@@ -29,14 +29,7 @@ import network.Command;
  * 
  */
 public class Game  implements Observer {
-   
-   /** Stała używana do oznaczenia stanu rozgrywki: trwa */
-   public final static byte RUN = 0;
-   /** Stała używana do oznaczenia stanu rozgrywki: rozpoczęcie nowej gry */
-   public final static byte RESTART = 1;
-   /** Stała używana do oznaczenia stanu rozgrywki: oczekiwanie na nową grę */
-   public final static byte WAIT = 2;    
-  
+     
    /** Stała używana do oznaczenia trybu rozgrywki: gracz kontra komputer */
    public final static byte SINGLE_GAME = 1;
    /** Stała używana do oznaczenia trybu rozgrywki: gracz kontra gracz (hot-seat) */
@@ -63,7 +56,7 @@ public class Game  implements Observer {
    private String serverIP;
    /** Referencja do obiektu służącego do komunikacji z tym wątkiem, 
     * potrzebna do ustawienia obserwacji stanu gry przez wątek serwera */
-   private final GameStateSpy gameStateSpy;
+   private final AppObserver gameSpy;
    /** Obiekt klienta w grze siociowej */
    private Client client;
 
@@ -73,74 +66,75 @@ public class Game  implements Observer {
     * @param gBoard Referencja do graficznej reprezentacji planszy
     * @param console Referencja do obiektu reprezentującego konsolę do wyświetlania komunikatów
     * @param sounds Referencja do obiektu służącego do odtwarzania dźwięków
-    * @param gameStateSpy Referencja do obiektu służącego do komunikacji z tym wątkiem, 
+    * @param gameSpy Referencja do obiektu służącego do komunikacji z tym wątkiem, 
     * potrzebna do ustawienia obserwacji stanu gry przez wątki sieciowe
     */
-   public Game(BoardGraphics gBoard, Console console, Sounds sounds, GameStateSpy gameStateSpy) {
+   public Game(BoardGraphics gBoard, Console console, Sounds sounds, AppObserver gameSpy) {
      
      this.gBoard = gBoard;
      this.console = console;
      this.sounds = sounds;
-     this.gameStateSpy = gameStateSpy;
+     this.gameSpy = gameSpy;
          
    }
    
    /**
-    * Metoda aktualizująca zmienną określającą stan gry przy wykorzystaniu
-    * mechanizmu "Obserwatora" (Observer); służy do komunikacji z wątkiem GUI
-    * @param obs Obserwowany obiekt
-    * @param change Przekazany nowy stan gry 
-    * @see GameStateSpy 
-    * @see gui.GUI#restartGame(byte, java.lang.String) 
-    */
+   * Metoda ustawia referencje przekazane przez obserwatora
+   * @param o Obserwowany obiekt 
+   * @param object Przekazany obiekt
+   */
    @Override
-   public void update(Observable obs, Object change) {
-      
-     // zmieniono stan gry (restart)
-     if (change instanceof GameStateSpy) {
-               
-       // zmiana stanu  
-       this.gameState = ((GameStateSpy)change).state;
+   public void update(Observable o, Object object) {
        
-       // wymuszenie końca ruchu graczy
-       if (player1!=null) player1.forceEndTurn();
-       if (player2!=null) player2.forceEndTurn();
-       // zmiana adresu IP serwera
-       this.serverIP = ((GameStateSpy)change).serverIP;
-       console.msgButtonEnable(false);                            
-       
-     }
-     // zmiana ustawień już po wyborze trybu rozgrywki, dla gry sieciowej
-     else if (change instanceof SettingsSpy) {
-       
-       SettingsSpy changedSettings = (SettingsSpy)change;  
-       // czy zmiana ma być wykonana z tego miejsca ?
-       if (!changedSettings.isRestart()) {
-          
-          // zmiana referencji do graficznej planszy
-          setBoard(changedSettings.getBoard());
-        
-       }
-       
-     }
+     AppObserver obs = (AppObserver)object;
      
-     // prześlij wiadomość
-     else if (change instanceof String && !String.valueOf(change).startsWith("server_")) {
-         
-         try {
-             
-            String msg = "[Gracz "+(client.getNumber()+1)+"]: " + (String)change;
-            client.sendCommand(new Command(Command.CMD_MESSAGE, msg));
-            console.newLine();
-            console.setMessageLn("Wys\u0142ano: "+(String)change, Color.GRAY);
+     switch (obs.getKey()) {
+   
+        // zmieniono stan gry
+        case "state":  
+       
+            GameState state = (GameState)obs.getObject();
             
-         } catch (IOException e) {
-             System.err.println(e);
-         } catch (ClassNotFoundException e) {
-             System.err.println(e);
-         }
-     
+            // zmiana stanu  
+            this.gameState = state.getState();
+       
+            // wymuszenie końca ruchu graczy
+            if (player1!=null) player1.forceEndTurn();
+            if (player2!=null) player2.forceEndTurn();
+            // zmiana adresu IP serwera
+            this.serverIP = state.getServerIP();
+            console.msgButtonEnable(false);    
+                
+            break;
+            
+        // zmieniono ustawienia, zmiana ref. do graficznej planszy  
+        case "board":
+            
+           setBoard((BoardGraphics)obs.getObject());
+           
+           break;
+        
+        // przesłanie wiadomości
+        case "message":
+            
+           String msg = (String)obs.getObject();
+           if (msg.startsWith("server_")) break;
+           
+           try {
+             
+             String txt = "[Gracz "+(client.getNumber()+1)+"]: " + msg;
+             client.sendCommand(new Command(Command.CMD_MESSAGE, txt));
+             console.newLine();
+             console.setMessageLn("Wys\u0142ano: "+msg, Color.GRAY);
+            
+           } catch (IOException | ClassNotFoundException e) {
+              System.err.println(e);
+           }
+        
+           break;
+           
      }
+     
    
      
    }
@@ -175,7 +169,7 @@ public class Game  implements Observer {
    public void startNewGame(Byte gameMode, Settings settings) {
    
        
-     gameState = Game.RUN;
+     gameState = GameState.RUN;
      // logika planszy dla przekazanych ustawień
      lBoard = new BoardLogic(settings);
      
@@ -206,7 +200,7 @@ public class Game  implements Observer {
              
             try {
                 
-              client = new Client(serverIP, gameStateSpy, console);  
+              client = new Client(serverIP, gameSpy, console);  
               // jeżeli się udało połączyć, to zmiana ustawień gry
               Settings clientSettings = client.getSettings();
               ((GUI)(SwingUtilities.getWindowAncestor(console)))
@@ -256,7 +250,7 @@ public class Game  implements Observer {
      // zatrzymanie, jeżeli brakuje graczy lub nie ma połąćzenia przy grze sieciowej
      if (player1==null || player2==null) {
            
-         gameState=Game.WAIT;
+         gameState=GameState.WAIT;
          console.setMessageLn("Wybierz \"Gra\"  \u279C \"Nowa gra\" aby " +
                               "rozpocz\u0105\u0107.", Color.GRAY);
 
@@ -287,10 +281,10 @@ public class Game  implements Observer {
      List<Player> players = Arrays.asList(player1, player2); 
      
      // petla rozgrywki
-     while (gameState==Game.RUN) {  
+     while (gameState==GameState.RUN) {  
                     
        // sekwencja zdarzeń dla każdego z graczy  
-       for(Player p:players) if (gameState==Game.RUN) {
+       for(Player p:players) if (gameState==GameState.RUN) {
          
          // komunikat na konsoli
          console.setMessage("Ruch #" + Integer.toString(moveNo) + ": ", Color.BLUE);
@@ -301,7 +295,7 @@ public class Game  implements Observer {
          p.makeMove();   
          
          // żeby uniknąć wypisywanie komunikatów jeżeli przerwano w trakcie ruchu
-         if (gameState!=Game.RUN) break;
+         if (gameState!=GameState.RUN) break;
          
          // dokończenie komunikatu na konsoli - wykonany ruch 
          console.setMessageLn("  \u279C  " + BoardGraphics.getFieldName(lBoard.lastField.getA(),
@@ -335,7 +329,7 @@ public class Game  implements Observer {
            // kończący dzwonek :-)
            sounds.play(Sounds.SND_SUCCESS);
            // zatrzymanie rozgrywki
-           gameState=Game.WAIT;
+           gameState=GameState.WAIT;
            
            
              
@@ -343,7 +337,7 @@ public class Game  implements Observer {
          
          
          // odłączenie od serwera
-         if (gameState!=Game.RUN && gameMode==NETWORK_GAME && client!=null) {
+         if (gameState!=GameState.RUN && gameMode==NETWORK_GAME && client!=null) {
              
            try {
              client.sendCommand(new Command(Command.CMD_EXIT));
@@ -379,7 +373,7 @@ public class Game  implements Observer {
          Thread.sleep(10);
        } catch (InterruptedException e) {}
      
-     } while (gameState!=Game.RESTART);
+     } while (gameState!=GameState.RESTART);
          
      
        

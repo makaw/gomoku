@@ -66,7 +66,7 @@ public class SettingsDialog extends SimpleDialog {
        String[] options = {"7\u00d77", "9\u00d79", "11\u00d711", 
                            "13\u00d713", "15\u00d715"};
        final Integer[] boardOptionIndex = new Integer[] {7, 9, 11, 13, 15};
-       final JComboBox<String> boardSize = new JComboBox<String>(options);
+       final JComboBox<String> boardSize = new JComboBox<>(options);
        boardSize.setFont(formsFont);
        boardSize.setSelectedIndex(Arrays.asList(boardOptionIndex).indexOf(settings.getColsAndRows()));
        boardSize.setBorder(new EmptyBorder(5, 0, 5, 0)); 
@@ -77,7 +77,7 @@ public class SettingsDialog extends SimpleDialog {
        p.add(label);
        options = new String[] {"3 kamienie", "4 kamienie", "5 kamieni"};
        final Integer[] piecesOptionIndex = new Integer[] {3, 4, 5};
-       final JComboBox<String> piecesInLine = new JComboBox<String>(options);
+       final JComboBox<String> piecesInLine = new JComboBox<>(options);
        piecesInLine.setFont(formsFont);
        piecesInLine.setSelectedIndex(Arrays.asList(piecesOptionIndex).indexOf(settings.getPiecesInRow()));
        piecesInLine.setBorder(new EmptyBorder(5, 0, 5, 0)); 

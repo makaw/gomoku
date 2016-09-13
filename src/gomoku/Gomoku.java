@@ -5,7 +5,8 @@
 package gomoku;
 
 import game.Game;
-import game.GameStateSpy;
+import game.GameState;
+import gui.BoardGraphics;
 import gui.GUI;
 import gui.dialogs.RulesDialog;
 import java.lang.reflect.InvocationTargetException;
@@ -30,11 +31,9 @@ public final class Gomoku implements Observer {
   /** Obiekt reprezentujący rozgrywkę */
   private final Game game;
   /** Obiekt służący do komunikacji z wątkiem GUI w zakresie zmiany stanu gry */
-  private GameStateSpy gameStateSpy;
+  private AppObserver gameSpy;
   /** Obiekt przechowujący ustawienia gry */
   private final Settings settings;
-  /** Obiekt służący do komunikacji z wątkiem GUI w zakresie zmiany ustawień */
-  private SettingsSpy settingsSpy;
 
   
   /**
@@ -46,24 +45,22 @@ public final class Gomoku implements Observer {
    */
   private Gomoku() throws InterruptedException, InvocationTargetException {
 
-    gameStateSpy = new GameStateSpy();
+    gameSpy = new AppObserver();
     settings = new Settings();
-    settingsSpy = new SettingsSpy();
       
     // bezpieczne wywołanie interfejsu graficznego  
     SwingUtilities.invokeAndWait(new Runnable() {
       @Override
       public void run() {
-        gui = new GUI(gameStateSpy, settingsSpy); 
+        gui = new GUI(gameSpy); 
       }
     });
     
-    game = new Game(gui.getBoard(), gui.getConsole(), gui.getSounds(), gameStateSpy);
+    game = new Game(gui.getBoard(), gui.getConsole(), gui.getSounds(), gameSpy);
     
     // ustawienie obserwatorów - dot. zmiany stanu gry oraz ustawień
-    gameStateSpy.addObserver(game);
-    settingsSpy.addObserver(game);
-    settingsSpy.addObserver(this);
+    gameSpy.addObserver(game);
+    gameSpy.addObserver(this);
     
     // na starcie odpalenie okna z wyborem trybu gry
     //new NewGameDialog(gui, true);
@@ -74,7 +71,7 @@ public final class Gomoku implements Observer {
        // uruchomienie nowej gry 
        game.startNewGame(gui.getGameMode(), settings);
        // po zakończeniu gry, oczekiwanie na rozpoczęcie nowej
-       do { } while (game.getState()!=Game.RESTART);
+       do { } while (game.getState()!=GameState.RESTART);
        
     }  while (true);
     
@@ -82,29 +79,33 @@ public final class Gomoku implements Observer {
   }
   
   
-  /**
-   * Metoda aktualizująca ustawienia gry oraz referencję do graficznej 
-   * reprezentacji planszy, przy wykorzystaniu mechanizmu "Obserwatora" 
-   * (Observer); służy do komunikacji z wątkiem GUI
-   * @param obs Obserwowany obiekt
-   * @param change Przekazany nowy stan gry 
-   * @see SettingsSpy
-   * @see gui.GUI#restartGameSettings() 
-   */  
-  @Override
-  public void update(Observable obs, Object change) {
+   /**
+   * Metoda ustawia referencje przekazane przez obserwatora
+   * @param o Obserwowany obiekt 
+   * @param object Przekazany obiekt
+   */
+   @Override
+   public void update(Observable o, Object object) {
       
-    // zmieniono ustawienia gry
-    if (change instanceof SettingsSpy) {
-       
-      SettingsSpy changedSettings = (SettingsSpy)change;
-      
-        settings.setSettings(changedSettings.colsAndRows, changedSettings.piecesInRow, 
-                             changedSettings.piecesInRowStrict);
-        game.setBoard(changedSettings.board);
+     AppObserver obs = (AppObserver)object;
+     
+     switch (obs.getKey()) {
+   
+        // zmieniono stan gry
+        case "settings": 
+            
+          Settings s = (Settings)obs.getObject();
+          settings.setSettings(s.getColsAndRows(), s.getPiecesInRow(), s.getPiecesInRowStrict());
+          
+          break;
+          
+        case "board":
+            
+          game.setBoard((BoardGraphics)obs.getObject());
         
-      
-    }     
+          break;
+          
+     }
      
   }  
   

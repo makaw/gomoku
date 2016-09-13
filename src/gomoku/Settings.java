@@ -13,9 +13,9 @@ package gomoku;
  * @author Maciej Kawecki
  * 
  */
-@SuppressWarnings("serial")
 public class Settings extends SettingsVar {
    
+  private static final long serialVersionUID = 1L;  
     
     
   /**

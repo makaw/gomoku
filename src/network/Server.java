@@ -4,6 +4,7 @@
  */
 package network;
 
+import gomoku.AppObserver;
 import gomoku.Settings;
 import gui.GUI;
 import gui.ServerGUI;
@@ -44,13 +45,11 @@ public class Server  implements Observer {
   /** True jeżeli konieczny jest restart, false jeżeli nie */
   private boolean restart;
   /** Referencja do obiektu do komunikacji z innymi wątkami (GUI) - obserwatora */
-  private ServerSpy serverSpy;
+  private AppObserver serverSpy;
   /** Referencja do obiektu reprezentującego graficzny interfejs użytkownika serwera */
   private ServerGUI gui;
   /** Ustawienia gry po stronie serwera */
   private final Settings settings;
-  /** Obiekt służący do komunikacji z wątkiem GUI serwera w zakresie zmiany ustawień */
-  private ServerSettingsSpy settingsSpy;  
   
   /**
    * Konstruktor obiektu serwera głównego
@@ -62,14 +61,13 @@ public class Server  implements Observer {
     this.output = new ObjectOutputStream[2];
     this.input = new ObjectInputStream[2];
     
-    serverSpy = new ServerSpy();
+    serverSpy = new AppObserver();
     serverSpy.addObserver(this);
-    serverSocketList = new ArrayList<Socket>();
-    serverThreadList = new ArrayList<ServerThread>();
+    serverSocketList = new ArrayList<>();
+    serverThreadList = new ArrayList<>();
     
     // ustawia wartości domyślne
     settings = new Settings();
-    settingsSpy = new ServerSettingsSpy();
     
     GUI.setLookAndFeel();
     
@@ -77,11 +75,9 @@ public class Server  implements Observer {
     SwingUtilities.invokeAndWait(new Runnable() {
       @Override
       public void run() {
-        gui = new ServerGUI(serverSpy, settingsSpy, settings); 
+        gui = new ServerGUI(serverSpy, settings); 
       }
-    });    
-    
-    settingsSpy.addObserver(this);
+    });        
   
       
   }
@@ -177,6 +173,8 @@ public class Server  implements Observer {
       
   }
   
+  
+  
   /**
    * Metoda uruchamia wątki serwera dla każdego z podłączonych wcześniej klientów
    */
@@ -217,7 +215,7 @@ public class Server  implements Observer {
    * Metoda pobiera obiekt komunikacji z innymi wątkami (Observable)
    * @return Obiekt komunikacji z innymi wątkami (Observable)
    */
-  protected ServerSpy getServerSpy() {
+  protected AppObserver getServerSpy() {
       
     return serverSpy;  
       
@@ -235,40 +233,34 @@ public class Server  implements Observer {
   }
   
   
-  /**
-   * Metoda aktualizująca ustawienia gry po stronie serwera,
-   * oraz odbierająca informacje o zmianie stanu serwera, 
-   * przy wykorzystaniu mechanizmu "Obserwatora" (Observer) + restart serwera; 
-   * komunikacja z wątkiem GUI
-   * @param obs Obserwowany obiekt
-   * @param change Przekazany nowy stan gry 
-   * @see ServerSettingsSpy
-   * @see ServerSpy
-   * @see gui.ServerGUI#restartGameSettings() 
-   */  
-  @Override
-  public void update(Observable obs, Object change) {
-      
-   
-    if (change instanceof ServerSettingsSpy) {
+   /**
+   * Metoda ustawia referencje przekazane przez obserwatora
+   * @param o Obserwowany obiekt 
+   * @param object Przekazany obiekt
+   */
+   @Override
+   public void update(Observable o, Object object) {
        
-         // zmiana ustawień, restart serwera
-        
-        ServerSettingsSpy changedSettings = (ServerSettingsSpy)change;
-      
-        settings.setSettings(changedSettings.colsAndRows, changedSettings.piecesInRow, 
-                             changedSettings.piecesInRowStrict);
-        
-        serverRestart();
-        
-      
-    }     
-    
-    else if (change instanceof ServerSpy) {
-         
-         serverRestart();
-       
-     }
+     AppObserver obs = (AppObserver)object;
+     
+     switch (obs.getKey()) {
+
+        case "state":
+            
+           String val = (String)obs.getObject();
+           if (val.equals("restart")) serverRestart();
+           
+           break;
+           
+        case "settings":
+            
+           Settings s = (Settings)obs.getObject();
+           settings.setSettings(s.getColsAndRows(), s.getPiecesInRow(), s.getPiecesInRowStrict());                       
+           serverRestart();
+           
+           break;
+           
+    }           
      
   }    
   
@@ -381,7 +373,6 @@ public class Server  implements Observer {
           server.setOutputStream(clients, new ObjectOutputStream(socket.getOutputStream()));
           // dodanie wątku na listę
           server.addNewSocket(socket);
-          
           clients++;
           
         }

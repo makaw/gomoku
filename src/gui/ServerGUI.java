@@ -5,6 +5,7 @@
 package gui;
 
 
+import gomoku.AppObserver;
 import gomoku.Settings;
 import gui.dialogs.ConfirmDialog;
 import gui.dialogs.SettingsDialog;
@@ -12,8 +13,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.*;
-import network.ServerSettingsSpy;
-import network.ServerSpy;
 
 
 /**
@@ -36,25 +35,24 @@ public class ServerGUI extends JFrame implements IBaseGUI {
   private final Settings serverSettings;
   /** Referencja do obiektu służącego do komunikacji z wątkami 
    * odpowiedzialnymi za pracę serwera w razie zmiany ustawień */
-  private final ServerSettingsSpy settingsSpy;
+  private final AppObserver serverSpy;
+  
   
   /**
    * Konstruktor budujący graficzny interfejs użytkownika i wywołujący 
    * okno z wyborem trybu nowej gry
    * @param serverSpy Referencja do obiektu służącego do komunikacji z wątkami 
    * odpowiedzialnymi za pracę serwera 
-   * @param settingsSpy Referencja do obiektu służącego do komunikacji z wątkami 
-   * odpowiedzialnymi za pracę serwera w razie zmiany ustawień
    * @param serverSettings  Referencja do obiektu zawierającego ustawienia gry 
    * po stronie serwera
    */      
-  public ServerGUI(final ServerSpy serverSpy, final ServerSettingsSpy settingsSpy, Settings serverSettings) {
+  public ServerGUI(final AppObserver serverSpy, Settings serverSettings) {
      
     super("Gomoku Server");
     
     
     this.serverSettings = serverSettings;
-    this.settingsSpy = settingsSpy;
+    this.serverSpy = serverSpy;
     
     setIconImage(Images.getImage("icon_small.png")); 
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -100,7 +98,7 @@ public class ServerGUI extends JFrame implements IBaseGUI {
        public void actionPerformed(final ActionEvent e) {   
           // potwierdzenie przez użytkownika 
           boolean res = new ConfirmDialog(frame, "Zrestartowa\u0107 serwer ?").getResponse();  
-          if (res) serverSpy.setState(true);
+          if (res) serverSpy.sendObject("state", "restart");
        }
     });
     
@@ -172,6 +170,7 @@ public class ServerGUI extends JFrame implements IBaseGUI {
    */
   @Override
   public void restartGame(byte gameMode, String serverIP) {}
+  
    
   /**
    * Tylko nadpisanie pustą metodą
@@ -179,7 +178,7 @@ public class ServerGUI extends JFrame implements IBaseGUI {
   @Override
   public void restartGameSettings() {
   
-     settingsSpy.setSettings(serverSettings);
+     serverSpy.sendObject("settings", serverSettings);
      console.setMessageLn("Ustawienia zostały zmienione.", Color.BLUE);
      
   }

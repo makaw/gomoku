@@ -4,8 +4,8 @@
  */
 package network;
 
-import game.Game;
-import game.GameStateSpy;
+import game.GameState;
+import gomoku.AppObserver;
 import gomoku.IConf;
 import gomoku.Settings;
 import gomoku.SettingsVar;
@@ -38,7 +38,7 @@ public final class Client {
   /** Ustawienia przekazane z serwera */
   private SettingsVar settingsVar;
   /** Obserwator stanu gry */
-  private final GameStateSpy gameStateSpy;
+  private final AppObserver gameSpy;
   /** Referencja do konsoli GUI */
   private final Console console;
   /** Timer do pingowania serwera */
@@ -50,13 +50,13 @@ public final class Client {
   /**
    * Konstruktor szablonu obiektu klienta w grze sieciowej
    * @param serverIP Adres IP (lub nazwa hosta) serwera zdalnego
-   * @param gameStateSpy Referencja do obserwatora stanu gry
+   * @param gameSpy Referencja do obserwatora stanu gry
    * @param console Referencja do konsoli GUI
    * @throws java.io.IOException Podłączanie gniazdka
    * @throws java.lang.ClassNotFoundException W razie nieprawidłowej komendy z serwera
    * (nie można zrzutować otrzymanych danych)
    */  
-  public Client(String serverIP, GameStateSpy gameStateSpy, Console console) throws IOException, ClassNotFoundException {    
+  public Client(String serverIP, AppObserver gameSpy, Console console) throws IOException, ClassNotFoundException {    
    
      // podłączenie gniazdka
      this.serverIP = serverIP;
@@ -64,7 +64,7 @@ public final class Client {
      output = new ObjectOutputStream(socket.getOutputStream());
      input = new ObjectInputStream(socket.getInputStream());
      
-     this.gameStateSpy = gameStateSpy;
+     this.gameSpy = gameSpy;
      this.console = console;
      
      // oczekiwanie na powitanie z serwera
@@ -214,7 +214,7 @@ public final class Client {
       
     clientEnded = true;  
       
-    gameStateSpy.setState(Game.WAIT);
+    gameSpy.sendObject("state", new GameState(GameState.WAIT, ""));
     
     console.newLine();
     console.setMessageLn("Zerwanie po\u0142\u0105czenia przez serwer.", Color.RED);

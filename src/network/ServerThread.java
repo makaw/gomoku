@@ -111,7 +111,7 @@ public class ServerThread extends Thread {
           
          console.setMessageLn("Utracono po\u0142\u0105czenie z klientem "+(clientNumber+1)+" ("+e+")", Color.RED);
          
-         server.getServerSpy().setState(true);
+         server.getServerSpy().sendObject("state", "restart");
           
          stopThread = true;
          
