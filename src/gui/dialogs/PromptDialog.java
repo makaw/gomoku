@@ -94,6 +94,7 @@ public class PromptDialog extends SimpleDialog {
      
       // przygotowanie przycisków OK i Anuluj
       JButton buttonSend = new JButton(" OK ");
+      buttonSend.setFocusPainted(false);
       buttonSend.addActionListener(new ActionListener() {
          @Override
          public void actionPerformed(final ActionEvent e) { 
@@ -103,6 +104,7 @@ public class PromptDialog extends SimpleDialog {
       });
 
       JButton buttonCancel = new JButton("Anuluj");
+      buttonCancel.setFocusPainted(false);
       buttonCancel.addActionListener(new ActionListener() {
          @Override
          public void actionPerformed(final ActionEvent e) {   

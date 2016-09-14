@@ -65,10 +65,11 @@ public class PlayerComputer extends Player  {
    /**
     * Metoda generująca losowy ruch, najchętniej w pobliżu ostatniego ruchu przeciwnika.
     * Tymczasowa, tylko do czasu zrobienia czegoś lepszego :-)
-    * @Deprecated 
+    * @deprecated 
     * @param lastField Ostatnio zapełnione pole na planszy
     * @return Współrzędne pola na planszy
     */
+   @Deprecated
    private BoardField getRandMove(BoardField lastField) {
       
       int randField;

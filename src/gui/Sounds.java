@@ -36,7 +36,7 @@ public class Sounds {
    
    /**
     * Konstruktor wczytujący pliki dźwiękowe i ustawiający flagę zezwolenia na odtwarzanie na wartość domyślną
-    * @see game.Settings#DEFAULT_ENABLE_SOUND
+    * @see gomoku.IConf#DEFAULT_ENABLE_SOUND
     */
    public Sounds() {
        

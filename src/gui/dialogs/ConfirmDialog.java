@@ -70,6 +70,7 @@ public class ConfirmDialog extends SimpleDialog {
        
       // przygotowanie przycisków Tak/Nie
       JButton buttonYes = new JButton("Tak");
+      buttonYes.setFocusPainted(false);
       buttonYes.addActionListener(new ActionListener() {
          @Override
          public void actionPerformed(final ActionEvent e) { 
@@ -79,6 +80,7 @@ public class ConfirmDialog extends SimpleDialog {
       });
        
       JButton buttonNo = new JButton("Nie");
+      buttonNo.setFocusPainted(false);
       buttonNo.addActionListener(new ActionListener() {
          @Override
          public void actionPerformed(final ActionEvent e) {   

@@ -10,6 +10,7 @@ import game.GameState;
 import gomoku.AppObserver;
 import gomoku.IConf;
 import gomoku.Settings;
+import gui.dialogs.ConfirmDialog;
 import gui.dialogs.NewGameDialog;
 import gui.dialogs.PromptDialog;
 import javax.swing.*;
@@ -147,6 +148,9 @@ public class GUI extends JFrame implements IBaseGUI, Observer {
       @Override
       public void actionPerformed(final ActionEvent e) {
             
+         boolean res = new ConfirmDialog(GUI.this, "Czy na pewno roz\u0142\u0105czy\u0107 ?").getResponse(); 
+          
+         if (res) 
          try {
            socket.close();
            disconButton.setEnabled(false);
@@ -218,7 +222,6 @@ public class GUI extends JFrame implements IBaseGUI, Observer {
    *  kontrolującego przebieg gry o zmianie, wyczyszczenie graficznej planszy i konsoli
    * @param gameMode Wybrany przez użytkownika tryb nowej gry
    * @param serverIP Adres IP serwera
-   * @see game.GameStateSpy
    * @see game.Game#update(java.util.Observable, java.lang.Object) 
    */
   @Override
@@ -259,9 +262,6 @@ public class GUI extends JFrame implements IBaseGUI, Observer {
    * powiadomienie wątku kontrolującego przebieg gry o zmianie stanu, wyczyszczenie konsoli, przygotowanie 
    * nowej graficznej planszy, oraz przesłanie do wątku kontrolującego przebieg gry nowych ustawień i 
    * referencji do nowej graficznej reprezentacji planszy
-   * @see gomoku.SettingsSpy
-   * @see game.GameStateSpy
-   * @see game.Gomoku#update(java.util.Observable, java.lang.Object) 
    * @see game.Game#update(java.util.Observable, java.lang.Object) 
    */
   @Override
@@ -297,7 +297,6 @@ public class GUI extends JFrame implements IBaseGUI, Observer {
    * oraz przesłanie do wątku kontrolującego przebieg gry referencji do nowej
    * graficznej reprezentacji planszy
    * @param colsAndRows Ilość wierszy i kolumn dla klienta
-   * @see gomoku.SettingsSpy
    * @see game.Game#update(java.util.Observable, java.lang.Object) 
    */
   public void restartClientGameSettings(int colsAndRows) {
@@ -414,6 +413,7 @@ public class GUI extends JFrame implements IBaseGUI, Observer {
       
      AppObserver obs = (AppObserver)object;
      
+     // przekazanie referencji do utworzonego gniazdka klienta
      switch (obs.getKey()) {
          
          case "socket": 

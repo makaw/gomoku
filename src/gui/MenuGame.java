@@ -27,7 +27,7 @@ import java.lang.management.ManagementFactory;
 @SuppressWarnings("serial")
 public class MenuGame extends JMenu {
     
-   /** Opcja nowej gry */ 
+   /** Menu: opcja nowej gry */ 
    private final JMenuItem newGameItem;
     
     
@@ -40,7 +40,7 @@ public class MenuGame extends JMenu {
      super("Gra");
      setMnemonic(KeyEvent.VK_G);
     
-     newGameItem = new JMenuItem("Nowa gra");
+     newGameItem = new JMenuItem("Nowa gra");     
      newGameItem.setPreferredSize(new Dimension(160, 20));
      newGameItem.setMnemonic(KeyEvent.VK_N);
      newGameItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.CTRL_MASK));
@@ -65,6 +65,7 @@ public class MenuGame extends JMenu {
        @Override  
        public void actionPerformed(final ActionEvent e) {
            
+         // -------------------------------------------------------  
          // kod ze stackoverflow.com (4159802)
          StringBuilder cmd = new StringBuilder();
          cmd.append(System.getProperty("java.home") + File.separator + "bin" + File.separator + "java ");
@@ -77,6 +78,7 @@ public class MenuGame extends JMenu {
            Runtime.getRuntime().exec(cmd.toString());
          }
          catch (IOException ex) { System.err.println(ex); }
+         // -------------------------------------------------------
            
        }
      });   
