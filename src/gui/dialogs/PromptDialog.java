@@ -5,7 +5,7 @@
 package gui.dialogs;
 
 import gui.SimpleDialog;
-import gui.Images;
+import gui.ImageRes;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -73,7 +73,7 @@ public class PromptDialog extends SimpleDialog {
       
       
       //JLabel ico = new JLabel(UIManager.getIcon("OptionPane.questionIcon")); 
-      JLabel ico = new JLabel(Images.getIcon("question.png"));
+      JLabel ico = new JLabel(ImageRes.getIcon("question.png"));
       ico.setBorder(new EmptyBorder(25, 5, 0, 5));
       p.add(ico);
       

@@ -54,7 +54,7 @@ public class ServerGUI extends JFrame implements IBaseGUI {
     this.serverSettings = serverSettings;
     this.serverSpy = serverSpy;
     
-    setIconImage(Images.getImage("icon_small.png")); 
+    setIconImage(ImageRes.getImage("icon_small.png")); 
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     
     // umieszczenie okna programu na środku ekranu

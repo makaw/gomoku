@@ -16,7 +16,7 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.*;
 import gui.IBaseGUI;
-import gui.Images;
+import gui.ImageRes;
 import gomoku.IConf;
 
 /**
@@ -49,7 +49,7 @@ public class RulesDialog extends SimpleDialog {
        setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
        JPanel p = new JPanel(new FlowLayout(FlowLayout.CENTER));
        p.setBorder(new EmptyBorder(10, 10, 10, 10));
-       JLabel ico = new JLabel(Images.getIcon("icon.png"));
+       JLabel ico = new JLabel(ImageRes.getIcon("icon.png"));
        p.add(ico);
        JPanel p0 = new JPanel(new GridLayout(2, 1, 0, 10));      
        p0.add(new JLabel("Gomoku v." + IConf.VERSION));

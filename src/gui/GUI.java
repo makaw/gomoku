@@ -79,7 +79,7 @@ public class GUI extends JFrame implements IBaseGUI, Observer {
     
     settings = new Settings();
     
-    setIconImage(Images.getImage("icon_small.png"));  
+    setIconImage(ImageRes.getImage("icon_small.png"));  
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     
     // umieszczenie okna programu na środku ekranu
@@ -108,7 +108,7 @@ public class GUI extends JFrame implements IBaseGUI, Observer {
     JPanel panelButtons = new JPanel(new GridLayout(3,1));
   
     // przycisk do wysyłania wiadomości
-    msgButton = new JButton("", Images.getIcon("message.png"));
+    msgButton = new JButton("", ImageRes.getIcon("message.png"));
     msgButton.setFocusPainted(false);
     msgButton.setToolTipText("Wy\u015blij wiadomo\u015b\u0107");
     msgButton.addActionListener(new ActionListener() {
@@ -126,13 +126,13 @@ public class GUI extends JFrame implements IBaseGUI, Observer {
     msgButton.setEnabled(false);
      
     // przycisk do włączania/wyłączania dźwięku
-    final JButton sndButton = new JButton("", Images.getIcon(IConf.DEFAULT_ENABLE_SOUND ? "sound.png" : "mute.png"));
+    final JButton sndButton = new JButton("", ImageRes.getIcon(IConf.DEFAULT_ENABLE_SOUND ? "sound.png" : "mute.png"));
     sndButton.setFocusPainted(false);
     sndButton.setToolTipText("D\u017awi\u0119k w\u0142./wy\u0142.");
     sndButton.addActionListener(new ActionListener() {
        @Override
        public void actionPerformed(final ActionEvent e) {
-         sndButton.setIcon(sounds.getEnabled() ? Images.getIcon("mute.png") : Images.getIcon("sound.png"));
+         sndButton.setIcon(sounds.getEnabled() ? ImageRes.getIcon("mute.png") : ImageRes.getIcon("sound.png"));
          sounds.toggleSound();
        }
     });        
@@ -141,7 +141,7 @@ public class GUI extends JFrame implements IBaseGUI, Observer {
     menuGame = new MenuGame(this);
     
     // przycisk rozłączenia z serwerem
-    disconButton = new JButton("", Images.getIcon("disconnect.png"));
+    disconButton = new JButton("", ImageRes.getIcon("disconnect.png"));
     disconButton.setFocusPainted(false);
     disconButton.setToolTipText("Roz\u0142\u0105cz z serwerem");
     disconButton.addActionListener(new ActionListener() {

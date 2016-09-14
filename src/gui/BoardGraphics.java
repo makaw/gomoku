@@ -7,7 +7,6 @@ package gui;
 import game.BoardField;
 import game.BoardLogic;
 import gomoku.IConf;
-import gomoku.Settings;
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
@@ -32,8 +31,6 @@ public class BoardGraphics extends JLayeredPane {
   private static final int B_HEIGHT=400;  
   /** Ilość wierszy i kolumn planszy */
   private Integer colsAndRows;  
-  /** Referencja do obiektu plików graficznych */
-  protected final Images images;
   /** Przechowanie poprzednio narysowanego na planszy kursora */
   private JLabel tmpCursor;
 
@@ -48,8 +45,6 @@ public class BoardGraphics extends JLayeredPane {
       
     super();  
     this.colsAndRows = colsAndRows;
-    // zaladowanie obrazkow - kamieni i kursorow
-    images = new Images();
     setPreferredSize(new Dimension(B_WIDTH, B_HEIGHT)); 
     tmpCursor = null;
 
@@ -76,7 +71,7 @@ public class BoardGraphics extends JLayeredPane {
     
     Graphics2D g2D = (Graphics2D)g;   
     // rysowanie tla
-    g2D.drawImage(Images.getImage("bgboard.jpg"), 0, 0, this);
+    g2D.drawImage(ImageRes.getImage("bgboard.jpg"), 0, 0, this);
     
     // ustawienie grubosci linii, czcionki i koloru
     g2D.setStroke(new BasicStroke(1.5f));  
@@ -138,10 +133,10 @@ public class BoardGraphics extends JLayeredPane {
        if (getCursor().getType()!=Cursor.HAND_CURSOR) setCursor(new Cursor(Cursor.HAND_CURSOR));  
          
        // wstawienie odpowiedniego obrazka do komp.JLabel
-       ImageIcon img = new ImageIcon(cursor ? images.getImgCursor(pColor) : images.getImgPiece(pColor, pChecked));
+       ImageIcon img = new ImageIcon(cursor ? ImageRes.getImgCursor(pColor) : ImageRes.getImgPiece(pColor, pChecked));
        JLabel piece = new JLabel(img); 
        // ustawienie pozycji komponentu JLabel i dodanie go do planszy
-       piece.setBounds(24+PX_FIELD*a, 12+PX_FIELD*b, Images.imgPiecesWidth, Images.imgPiecesHeight);
+       piece.setBounds(24+PX_FIELD*a, 12+PX_FIELD*b, ImageRes.IMG_PIECES_WIDTH, ImageRes.IMG_PIECES_HEIGHT);
        add(piece);
        
        // przesuniecie na wierzch zaznaczonego rzedu (wygrana)
@@ -260,7 +255,7 @@ public class BoardGraphics extends JLayeredPane {
   
   public static int getFieldA(int x) {
 
-     return (int) Math.floor((((float)x - PX_BOARD_MARGIN/2 - Images.imgPiecesWidth/2)/PX_FIELD));
+     return (int) Math.floor((((float)x - PX_BOARD_MARGIN/2 - ImageRes.IMG_PIECES_WIDTH/2)/PX_FIELD));
   
   }
   
@@ -272,7 +267,7 @@ public class BoardGraphics extends JLayeredPane {
    */  
   public static int getFieldB(int y) {
      
-      return (int) Math.floor(((float)y - Images.imgPiecesHeight/2)/PX_FIELD);
+      return (int) Math.floor(((float)y - ImageRes.IMG_PIECES_HEIGHT/2)/PX_FIELD);
      
   }
   

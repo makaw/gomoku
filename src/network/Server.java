@@ -294,13 +294,13 @@ public class Server  implements Observer {
              System.err.println("IOExc restart: "+e);
          }
        
-         while (!serverSocket.isClosed()) { 
-         
+         do {          
              try {
-                 Thread.sleep(10);
+                 Thread.sleep(50);
              } catch (Exception e) {}
            
-         };
+         } while (!serverSocket.isClosed());
+         
          
          setServerSocket();
          
@@ -322,6 +322,7 @@ public class Server  implements Observer {
       try { 
           serverSocket = new ServerSocket(IConf.SERVER_PORT);
       } catch (IOException e) {
+          
           System.err.println("Wyj\u015bcie z programu : "+e);
           System.exit(0);
       }
