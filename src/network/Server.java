@@ -173,6 +173,17 @@ public class Server  implements Observer {
       
   }
   
+  /**
+   * Metoda dla statycznej klasy main; 
+   * usuwa gniazdko klienta z listy
+   * @param socket Gniazdko klienta
+   */  
+  private void removeSocket(Socket socket) {
+      
+     serverSocketList.remove(socket);
+      
+  }
+  
   
   
   /**
@@ -360,13 +371,28 @@ public class Server  implements Observer {
       console.setMessageLn("Oczekiwanie na po\u0142\u0105czenia na porcie " + IConf.SERVER_PORT + " ...", Color.DARK_GRAY); 
       
       int clients = 0;
-      
+      Socket socketOld = null;
       
       while (clients<2)  {
           
         try {  
        
           Socket socket = server.getServerSocket().accept();
+          
+          // sprawdzenie poprzednio podlączonego (czy się nie rozłączył)
+          if (socketOld != null && clients>0) {
+            ObjectOutputStream out = server.getOutputStream(clients-1); 
+            try {
+              out.writeObject(new Command(Command.CMD_PING));
+              out.flush();
+            } catch (IOException ex) {
+              console.setMessageLn("Utracone wcze\u015bniejsze po\u0142\u0105czenie z "
+                      + socketOld.getInetAddress(), Color.RED);
+              server.removeSocket(socketOld);
+              clients--;
+            }  
+          }
+          
           console.setMessageLn("Zaakceptowano po\u0142\u0105czenie z " + socket.getInetAddress(), Color.BLUE);
      
           server.setInputStream(clients, new ObjectInputStream(socket.getInputStream()));
@@ -374,8 +400,9 @@ public class Server  implements Observer {
           // dodanie wątku na listę
           server.addNewSocket(socket);
           clients++;
+          socketOld = socket;
           
-        }
+        }        
         
         catch (IOException e) {
         

@@ -5,6 +5,7 @@
 package gui.dialogs;
 
 
+import game.Game;
 import gomoku.IConf;
 import gui.SimpleDialog;
 import java.awt.Color;
@@ -118,7 +119,7 @@ public class NewGameDialog extends SimpleDialog {
               
           
           // jeżeli to klient, to pobranie od użytkownika adresu IP serwera
-          if (gameModeTmp==3) {
+          if (gameModeTmp == Game.NETWORK_GAME) {
 
              // usunięcie komponentów i ustawienie przezroczystego tła
              // żeby okienko wyboru nowej gry zniknęło, ale dalej blokowało wątki
@@ -131,10 +132,12 @@ public class NewGameDialog extends SimpleDialog {
           }
           
            // zakończenie obecnej rozgrywki i rozpoczęcie nowej 
-          if (gameModeTmp!=3 || (serverIP!=null && !serverIP.isEmpty())) {
+          if (gameModeTmp != Game.NETWORK_GAME || (serverIP!=null && !serverIP.isEmpty())) {
           
              gameMode = gameModeTmp;
+             
              frame.restartGame(gameMode, serverIP);
+             
           }
           
           

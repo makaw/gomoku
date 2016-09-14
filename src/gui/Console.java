@@ -20,15 +20,21 @@ public class Console extends JTextPane {
       
    /** Flaga blokująca wyprowadzanie na konsolę komunikatów */ 
    private final Boolean lockedFlag; 
-  /** Obiekt przycisku do wysyłania wiadomości w grze sieciowej, uchwyt jest potrzebny do
+   /** Obiekt przycisku do wysyłania wiadomości w grze sieciowej, uchwyt jest potrzebny do
    * blokowania i odblokowywania przycisku */
-  private final JButton msgButton;   
+   private final JButton msgButton;   
+   /** Przycisk do rozłączenia z serwerem */
+   private final JButton disconButton;
+   
+   private final JMenuItem newGameItem;
     
    /**
     * Konstruktor obiektu reprezentującego konsolę, przygotowuje komponent do użycia
     * @param msgButton
+    * @param disconButton
+    * @param newGameItem
     */
-   protected Console(JButton msgButton) {
+   protected Console(JButton msgButton, JButton disconButton, JMenuItem newGameItem) {
        
       super();
       setEditable(false);
@@ -38,7 +44,9 @@ public class Console extends JTextPane {
       lockedFlag = false;
       
       this.msgButton = msgButton;
-       
+      this.disconButton = disconButton;
+      this.newGameItem = newGameItem;
+      
    } 
    
    /**
@@ -166,15 +174,17 @@ public class Console extends JTextPane {
    
    
   /**
-   * Metoda blokuje/odblokowuje przycisk wiadomości
-   * @param enabled True jeżeli przycisk ma być odblokowany, false jeżeli nie
+   * Metoda blokuje/odblokowuje przyciski wiadomości i odłączenia
+   * @param enabled True jeżeli przyciski mają być odblokowane
    * @since 1.1
    */
-  public void msgButtonEnable(boolean enabled) {
+  public void networkButtonsEnable(boolean enabled) {
       
-    msgButton.setEnabled(enabled);      
+    msgButton.setEnabled(enabled); 
+    disconButton.setEnabled(enabled); 
+    newGameItem.setEnabled(!enabled);
       
   }
   
-    
+  
 }

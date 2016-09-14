@@ -67,6 +67,9 @@ public final class Client {
      this.gameSpy = gameSpy;
      this.console = console;
      
+     
+     gameSpy.sendObject("socket", socket);
+     
      // oczekiwanie na powitanie z serwera
      do {
          
@@ -102,9 +105,10 @@ public final class Client {
      ping = new Ping(this); 
      ping.startPinging();
      
-     console.msgButtonEnable(true);
+     console.networkButtonsEnable(true);
      
      clientEnded = false;
+     
      
   }
   
@@ -223,7 +227,7 @@ public final class Client {
    
              
     ping.stopPinging();
-    console.msgButtonEnable(false);
+    console.networkButtonsEnable(false);
             
     try {
        socket.close();

@@ -34,7 +34,7 @@ public final class Gomoku implements Observer {
   private AppObserver gameSpy;
   /** Obiekt przechowujący ustawienia gry */
   private final Settings settings;
-
+  
   
   /**
    * Konstruktor klasy głównej, inicjalizacja obiektów, w tym bezpieczne wywołanie 
@@ -91,19 +91,21 @@ public final class Gomoku implements Observer {
      
      switch (obs.getKey()) {
    
-        // zmieniono stan gry
-        case "settings": 
-            
-          Settings s = (Settings)obs.getObject();
-          settings.setSettings(s.getColsAndRows(), s.getPiecesInRow(), s.getPiecesInRowStrict());
-          
-          break;
           
         case "board":
             
           game.setBoard((BoardGraphics)obs.getObject());
         
           break;
+          
+        case "settings-main":
+            
+          Settings s = (Settings)obs.getObject();
+          settings.setSettings(s.getColsAndRows(), s.getPiecesInRow(), s.getPiecesInRowStrict());
+          gui.getSettings().setSettings(s.getColsAndRows(), s.getPiecesInRow(), s.getPiecesInRowStrict());
+          break;
+     
+     
           
      }
      

@@ -12,6 +12,7 @@ import gui.GUI;
 import gui.Sounds;
 import java.awt.Color;
 import java.io.IOException;
+import java.net.Socket;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Observable;
@@ -59,7 +60,6 @@ public class Game  implements Observer {
    private final AppObserver gameSpy;
    /** Obiekt klienta w grze siociowej */
    private Client client;
-
    
    /**
     * Konstruktor obiektu odpowiedzialnego za przebieg rozgrywki, przypisuje referencje do obiektów GUI
@@ -103,7 +103,7 @@ public class Game  implements Observer {
             if (player2!=null) player2.forceEndTurn();
             // zmiana adresu IP serwera
             this.serverIP = state.getServerIP();
-            console.msgButtonEnable(false);    
+            console.networkButtonsEnable(false);    
                 
             break;
             
@@ -113,12 +113,13 @@ public class Game  implements Observer {
            setBoard((BoardGraphics)obs.getObject());
            
            break;
-        
+           
+           
+           
         // przesłanie wiadomości
         case "message":
             
            String msg = (String)obs.getObject();
-           if (msg.startsWith("server_")) break;
            
            try {
              
@@ -207,6 +208,7 @@ public class Game  implements Observer {
                       .restartClientGameSettings(clientSettings.getColsAndRows());
               settings.setSettings(clientSettings.getColsAndRows(), clientSettings.getPiecesInRow(), 
                       clientSettings.getPiecesInRowStrict());   
+              gameSpy.sendObject("settings-main", clientSettings);
               
               // zmiana logiki planszy, bo zmiana ustawień
               lBoard = new BoardLogic(clientSettings);
@@ -222,7 +224,7 @@ public class Game  implements Observer {
               }
               
               
-              console.msgButtonEnable(true);
+              console.networkButtonsEnable(true);
               
             } catch (IOException e) {
                
@@ -232,6 +234,7 @@ public class Game  implements Observer {
                catch (Exception ex) {} 
                
                console.setMessageLn("Pr\u00f3ba po\u0142\u0105czenia nieudana.", Color.RED); 
+               console.networkButtonsEnable(false);
                player1 = null;
                player2 = null;
                

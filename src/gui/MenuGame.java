@@ -27,6 +27,10 @@ import java.lang.management.ManagementFactory;
 @SuppressWarnings("serial")
 public class MenuGame extends JMenu {
     
+   /** Opcja nowej gry */ 
+   private final JMenuItem newGameItem;
+    
+    
    /**
     * Konstruktor budujący menu "Gra" aplikacji
     * @param frame Referencja do interfejsu GUI
@@ -36,12 +40,12 @@ public class MenuGame extends JMenu {
      super("Gra");
      setMnemonic(KeyEvent.VK_G);
     
-     JMenuItem menuItem = new JMenuItem("Nowa gra");
-     menuItem.setPreferredSize(new Dimension(160, 20));
-     menuItem.setMnemonic(KeyEvent.VK_N);
-     menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.CTRL_MASK));
-     add(menuItem);
-     menuItem.addActionListener(new ActionListener() {
+     newGameItem = new JMenuItem("Nowa gra");
+     newGameItem.setPreferredSize(new Dimension(160, 20));
+     newGameItem.setMnemonic(KeyEvent.VK_N);
+     newGameItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.CTRL_MASK));
+     add(newGameItem);
+     newGameItem.addActionListener(new ActionListener() {
        @Override  
        public void actionPerformed(final ActionEvent e) {
            
@@ -52,7 +56,7 @@ public class MenuGame extends JMenu {
      });   
      
      
-    menuItem = new JMenuItem("Serwer");
+    JMenuItem menuItem = new JMenuItem("Serwer");
     menuItem.setPreferredSize(new Dimension(160, 20));
     menuItem.setMnemonic(KeyEvent.VK_S);
     menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
@@ -113,6 +117,15 @@ public class MenuGame extends JMenu {
      });          
        
    }
+
+   
+   public JMenuItem getNewGameItem() {
+       return newGameItem;
+   }
+   
+   
+   
+   
     
     
 }

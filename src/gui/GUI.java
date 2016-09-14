@@ -16,6 +16,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.net.Socket;
+import java.util.Observable;
+import java.util.Observer;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 import javax.swing.plaf.metal.OceanTheme;
 
@@ -27,7 +31,7 @@ import javax.swing.plaf.metal.OceanTheme;
  * 
  */
 @SuppressWarnings("serial")
-public class GUI extends JFrame implements IBaseGUI {
+public class GUI extends JFrame implements IBaseGUI, Observer {
   
   
   /** Szerokość okna aplikacji w pikselach */
@@ -49,9 +53,16 @@ public class GUI extends JFrame implements IBaseGUI {
   private final Settings settings;
   /** Panel w którym zawiera się graficzna reprezentacja planszy */
   private final JPanel panelBoard;
-  /** Obiekt przycisku do wysyłania wiadomości w grze sieciowej, uchwyt jest potrzebny do
-   * blokowania i odblokowywania przycisku */
+  /** Obiekt przycisku do wysyłania wiadomości w grze sieciowej */
   private final JButton msgButton;
+  /** Przycisk rozłączenia z serwerem */
+  private final JButton disconButton;
+  /** Menu gra */
+  private final MenuGame menuGame;
+  /** Gniazdko dla klienta */
+  private Socket socket;  
+   
+   
   
   /**
    * Konstruktor budujący graficzny interfejs użytkownika i wywołujący 
@@ -124,11 +135,37 @@ public class GUI extends JFrame implements IBaseGUI {
          sounds.toggleSound();
        }
     });        
+    
+    
+    menuGame = new MenuGame(this);
+    
+    // przycisk rozłączenia z serwerem
+    disconButton = new JButton("", Images.getIcon("disconnect.png"));
+    disconButton.setFocusPainted(false);
+    disconButton.setToolTipText("Roz\u0142\u0105cz z serwerem");
+    disconButton.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(final ActionEvent e) {
+            
+         try {
+           socket.close();
+           disconButton.setEnabled(false);
+           menuGame.getNewGameItem().setEnabled(true);
+         } 
+         catch (IOException ex) {
+           System.err.println(ex);  
+         }          
+          
+      }
+       
+    });
+            
+    disconButton.setEnabled(false);
 
-    panelButtons.add(msgButton);
+    
     panelButtons.add(sndButton);
-    // puste miejsce
-    panelButtons.add(new JPanel());
+    panelButtons.add(msgButton);
+    panelButtons.add(disconButton);
 
     panelButtons.setPreferredSize(new Dimension(40, 104));    
     gb.setConstraints(panelButtons, gbc);
@@ -138,8 +175,9 @@ public class GUI extends JFrame implements IBaseGUI {
     gbc.weightx = 2.0;
     gbc.gridwidth = GridBagConstraints.REMAINDER;
     gbc.gridheight = 1;
+    
  
-    console = new Console(msgButton);
+    console = new Console(msgButton, disconButton, menuGame.getNewGameItem());
     console.setPreferredSize(new Dimension(F_WIDTH-70, 104));
     console.setSize(new Dimension(F_WIDTH-70, 64));
   
@@ -158,7 +196,7 @@ public class GUI extends JFrame implements IBaseGUI {
 
     // stworzenie glownego menu aplikacji
     JMenuBar menu = new JMenuBar();
-    menu.add(new MenuGame(this));
+    menu.add(menuGame);
     menu.add(new MenuHelp(this));
     setJMenuBar(menu);
     
@@ -169,6 +207,8 @@ public class GUI extends JFrame implements IBaseGUI {
 
     // witamy sie :-)
     console.setMessageLn("Dzie\u0144 dobry :-)", Color.BLACK); 
+    
+    gameSpy.addObserver(this);
 
   } 
 
@@ -184,6 +224,19 @@ public class GUI extends JFrame implements IBaseGUI {
   @Override
   public void restartGame(byte gameMode, String serverIP) {      
       
+    if (this.gameMode == Game.NETWORK_GAME && socket != null) {
+         
+      try {
+         socket.close();
+      } catch (IOException ex) {
+         System.err.println(ex);
+      }
+      
+      gameSpy.sendObject("state", new GameState(GameState.RESTART, serverIP));
+          
+    } 
+      
+      
     this.gameMode = gameMode;
     
     // przesłanie do wątka gry informacji o zmianie stanu
@@ -194,8 +247,10 @@ public class GUI extends JFrame implements IBaseGUI {
     if (gameMode == Game.NETWORK_GAME) 
       console.setMessageLn("Wybrano tryb sieciowy. Oczekiwanie na do\u0142\u0105czenie 2. gracza ....", Color.DARK_GRAY);
               
-    else
-      console.setMessageLn("Wybrano tryb gry.", Color.GRAY);
+    else {
+      console.setMessageLn("Wybrano tryb gry.", Color.GRAY);    
+    }
+    
     
   }
   
@@ -348,6 +403,31 @@ public class GUI extends JFrame implements IBaseGUI {
       
   }  
 
+  
+   /**
+   * Metoda ustawia referencje przekazane przez obserwatora
+   * @param o Obserwowany obiekt 
+   * @param object Przekazany obiekt
+   */
+   @Override
+   public void update(Observable o, Object object) {
+      
+     AppObserver obs = (AppObserver)object;
+     
+     switch (obs.getKey()) {
+         
+         case "socket": 
+             
+           socket = (Socket)obs.getObject();
+           disconButton.setEnabled(true);
+           menuGame.getNewGameItem().setEnabled(false);           
+           
+           break;
+      
+         
+     }  
+     
+   }
 
     
 }
