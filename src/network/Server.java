@@ -426,7 +426,6 @@ public class Server  implements Observer {
       } 
       
       
-      //if (server.restart)  continue;
       while (!server.restart) {
     
         try {

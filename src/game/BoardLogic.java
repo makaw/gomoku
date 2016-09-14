@@ -87,10 +87,7 @@ public class BoardLogic {
   public boolean setFieldState(int a, int b, byte state) {
     
     boolean changed = false;  
-    
-    Byte tmp = 0;
-      
-    
+
     try {
          
       fields[getIndex(a, b)].setState(state); 
@@ -129,7 +126,7 @@ public class BoardLogic {
        return null;
       
      int i,j,dir;
-     List<BoardField> winRow = new ArrayList<BoardField>();
+     List<BoardField> winRow = new ArrayList<>();
      Integer cnt = 0;   
 
      // przeglądanie od góry w 4 kierunkach: 0-skos góra, 1-pion, 2-poziom, 3-skos dół
@@ -232,7 +229,7 @@ public class BoardLogic {
    */
   protected List<BoardField> getEmptyFields() {
       
-     ArrayList<BoardField> emptyFields = new ArrayList<BoardField>();
+     ArrayList<BoardField> emptyFields = new ArrayList<>();
 
      for (int i=0; i<settings.getFieldsAmount();i++) {
          

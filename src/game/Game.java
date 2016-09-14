@@ -12,7 +12,6 @@ import gui.GUI;
 import gui.Sounds;
 import java.awt.Color;
 import java.io.IOException;
-import java.net.Socket;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Observable;

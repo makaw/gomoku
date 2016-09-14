@@ -122,13 +122,9 @@ public final class Gomoku implements Observer {
   
 
   /** 
-   * Metoda main wołana przez system w trakcie uruchamiania aplikacji, 
-   * ustawia temat LookAndFeel GUI. Następnie wywołuje konstruktor, który
-   * bezpiecznie uruchamia interfejs graficzny, ustanawia obserwatorów do 
-   * komunikacji pomiędzy wątkami, i pozostaje w pętli sterującej rozgrywką.
-   * @param args Argumenty przekazane do aplikacji. Wywołanie z parametrem -server 
-   * spowoduje uruchomienie statycznej metody main() z klasy GomokuServer, czyli 
-   * uruchomienie serwera.
+   * Metoda main wołana przez system w trakcie uruchamiania aplikacji, uruchomienie okna klienta.
+   * @param args Argumenty przekazane do aplikacji. Wywołanie z parametrem -s 
+   * spowoduje uruchomienie statycznej metody main() z klasy Server, czyli uruchomienie serwera.
    * @see network.Server
    */
   public static void main(final String[] args) {

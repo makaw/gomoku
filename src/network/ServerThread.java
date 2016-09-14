@@ -124,9 +124,7 @@ public class ServerThread extends Thread {
              
       } 
       
-      catch (ClassNotFoundException ex) {}
-     
-      catch (NullPointerException ex) {}
+      catch (ClassNotFoundException | NullPointerException ex) {}
       
          
      }   while (!stopThread);

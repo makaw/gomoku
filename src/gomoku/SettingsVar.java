@@ -31,9 +31,7 @@ public class SettingsVar implements Serializable {
    */
   public SettingsVar() {
       
-     colsAndRows = IConf.DEFAULT_COLS_AND_ROWS;
-     piecesInRow = IConf.DEFAULT_PIECES_IN_ROW;
-     piecesInRowStrict = IConf.DEFAULT_PIECES_IN_ROW_STRICT;
+     this(IConf.DEFAULT_COLS_AND_ROWS, IConf.DEFAULT_PIECES_IN_ROW, IConf.DEFAULT_PIECES_IN_ROW_STRICT);
       
   }    
   
