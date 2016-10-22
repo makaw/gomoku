@@ -105,6 +105,7 @@ public class RulesDialog extends SimpleDialog {
       
        
        JButton b = new JButton(" OK ");
+       b.setFocusPainted(false);
        b.addActionListener(new ActionListener() {
           @Override
           public void actionPerformed(final ActionEvent e) {   

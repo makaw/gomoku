@@ -173,6 +173,17 @@ public class BoardGraphics extends JLayeredPane {
     setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
       
   }
+
+
+    
+  public void setColsAndRows(Integer colsAndRows) {
+      
+    this.colsAndRows = colsAndRows;
+    
+  }
+  
+  
+  
   
   
   /**
@@ -255,6 +266,7 @@ public class BoardGraphics extends JLayeredPane {
   
   public static int getFieldA(int x) {
 
+     //x = col
      return (int) Math.floor((((float)x - PX_BOARD_MARGIN/2 - ImageRes.IMG_PIECES_WIDTH/2)/PX_FIELD));
   
   }

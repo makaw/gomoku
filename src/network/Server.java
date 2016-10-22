@@ -350,7 +350,7 @@ public class Server  implements Observer {
     }
 
     catch (Exception e) {  
-      System.out.println(e);
+      System.err.println(e);
       System.exit(0);  
     }
     

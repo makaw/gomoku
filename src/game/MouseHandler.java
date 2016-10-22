@@ -52,7 +52,7 @@ public class MouseHandler extends MouseAdapter  {
        // wyznaczenie indeksow macierzy - planszy
        int a = BoardGraphics.getFieldA(me.getX());
        int b = BoardGraphics.getFieldB(me.getY());
-
+       
        // FIX
        if (a<0 || a>=lBoard.getColsAndRows() || b<0 || b>=lBoard.getColsAndRows()) return;
        
@@ -63,7 +63,8 @@ public class MouseHandler extends MouseAdapter  {
        
        // rysowanie kamienia
        gBoard.setPiece(lBoard, a, b, pColor);
-       gBoard.repaint();    
+       gBoard.repaint();                  
+       
        // zmiana wartosci pola (logicznego)
        lockedFlag = lBoard.setFieldState(a, b, pColor);
        

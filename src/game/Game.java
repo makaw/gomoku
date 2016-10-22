@@ -172,7 +172,6 @@ public class Game  implements Observer {
      gameState = GameState.RUN;
      // logika planszy dla przekazanych ustawień
      lBoard = new BoardLogic(settings);
-     
 
      // przypisanie odpowiednich implementacji gracza w zależności od trybu rozgrywki
      switch (gameMode) {

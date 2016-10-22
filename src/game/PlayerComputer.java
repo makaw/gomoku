@@ -44,8 +44,11 @@ public class PlayerComputer extends Player  {
        
        gBoard.setWaitMouseCursor();
        
+       byte otherPieceColor = pieceColor == BoardField.BLACK ? BoardField.WHITE : BoardField.BLACK;
+      
        // pobranie wygenerowanego nowego ruchu 
        BoardField move = getRandMove(lBoard.lastField);
+       //move = Minimax.getInstance(lBoard, pieceColor).getMove();
                    
        // rysowanie kamienia
        gBoard.setPiece(lBoard, move.getA(), move.getB(), getColor());

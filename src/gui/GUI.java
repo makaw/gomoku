@@ -284,7 +284,7 @@ public class GUI extends JFrame implements IBaseGUI, Observer {
     catch(InterruptedException e) {}
     
     // przesłanie do wątka gry nowych ustawien i referencji do nowej planszy
-    gameSpy.sendObject("settings", settings);
+    gameSpy.sendObject("settings-main", settings);
     gameSpy.sendObject("board", board);
     gameMode = new NewGameDialog(this).getGameMode();
 
