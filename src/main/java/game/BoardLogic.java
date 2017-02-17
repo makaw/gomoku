@@ -264,6 +264,8 @@ public class BoardLogic {
       
     int score = 0;  
     
+    if (true) return 1;
+    
     String pieces = String.valueOf(settings.getPiecesInRow());
     String pattern = "[^" + (pColor == BoardField.BLACK ? "W" : "B" ) + "]{" + pieces + "}";
      

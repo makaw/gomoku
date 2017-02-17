@@ -130,7 +130,8 @@ public class RulesDialog extends SimpleDialog {
      */
     private String loadRules() throws IOException {
         
-       final InputStream input =  getClass().getResourceAsStream("/resources/rules.txt");
+       InputStream input =  getClass().getResourceAsStream("/rules.txt");
+       if (input == null) input =  getClass().getResourceAsStream("/resources/rules.txt");
        BufferedReader reader;
        
        try {

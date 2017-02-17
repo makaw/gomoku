@@ -67,6 +67,7 @@ public class ImageRes {
       
   }
   
+  
   /**
    * Statyczna metoda pobierająca ikonę ze wskazanego pliku z /resources/img
    * @param fileName Nazwa pliku z /resources/img/
@@ -76,30 +77,36 @@ public class ImageRes {
       
     ImageIcon icon = null; 
       
-    try {
-      icon = (new ImageIcon(ImageRes.class.getResource("/resources/img/"+fileName)));
+    try {    	
+      icon = (new ImageIcon(ImageRes.class.getResource("/img/"+fileName)));     
     }
     catch (NullPointerException e) {
-       System.err.println("Brak pliku /resources/img/"+fileName);      
+       try {
+    	 icon = (new ImageIcon(ImageRes.class.getResource("/resources/img/"+fileName))); 
+       }
+       catch (NullPointerException ex) {
+         System.err.println("Brak pliku /resources/img/"+fileName);
+       }
     }
         
     return icon;  
     
   }
   
-  
+ 
    
   /**
    * Statyczna metoda pobierająca obrazek ze wskazanego pliku z /resources/img
    * @param fileName Nazwa pliku z /resources/img/
    * @return Obrazek wczytany ze wskazanego pliku
-   * @see ImageRes#getIcon(java.lang.String) 
    */ 
   public static Image getImage(String fileName) {
       
-    return getIcon(fileName).getImage();
+    ImageIcon ico = getIcon(fileName);  
+    return (ico != null) ? getIcon(fileName).getImage() : null;
       
   }  
+  
   
   
   

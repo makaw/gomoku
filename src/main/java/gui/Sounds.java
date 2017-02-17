@@ -4,9 +4,10 @@
  */
 package gui;
 
-import gomoku.IConf;
 import java.applet.Applet;
 import java.applet.AudioClip;
+
+import gomoku.IConf;
 
 /**
  *
@@ -74,16 +75,23 @@ public class Sounds {
    private AudioClip loadSoundFile(String fileName) {
        
      AudioClip ac = null;
-     try {
-       ac = Applet.newAudioClip(getClass().getResource("/resources/snd/"+fileName));
+     
+     try {    	
+       ac = Applet.newAudioClip(getClass().getResource("/snd/"+fileName));     
      }
      catch (NullPointerException e) {
-       System.err.println("Brak pliku /resources/snd/"+fileName);      
-     }
+       try {
+         ac = Applet.newAudioClip(getClass().getResource("/resources/snd/"+fileName)); 
+       }
+       catch (NullPointerException ex) {
+         System.err.println("Brak pliku /resources/img/"+fileName);
+       }
+     }          
      
      return ac;
      
    }   
+   
 
    /**
     * Metoda odtwarzająca (w nowym wątku) wskazany klip dźwiękowy

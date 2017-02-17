@@ -1,0 +1,29 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>pl.net.kaw</groupId>
+	<artifactId>gomoku</artifactId>
+	<version>0.5-SNAPSHOT</version>
+	<name>Gomoku</name>
+	<organization>
+		<name>Maciej Kawecki</name>
+		<url>http://www.kaw.net.pl/</url>
+	</organization>
+	<inceptionYear>2015</inceptionYear>
+	<properties>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+	</properties>
+
+	<dependencies>
+	
+		<dependency>
+    		<groupId>fr.avianey</groupId>
+   			<artifactId>minimax4j</artifactId>
+    		<version>1.0.0</version>
+		</dependency>
+
+	</dependencies>
+	<url>https://github.com/makaw/gomoku</url>
+	<description>Gra logiczno-strategiczna Gomoku, tryb lokalny lub sieciowy</description>
+</project>
