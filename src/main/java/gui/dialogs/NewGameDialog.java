@@ -5,18 +5,25 @@
 package gui.dialogs;
 
 
-import game.Game;
-import gomoku.IConf;
-import gui.SimpleDialog;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
-import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.border.EmptyBorder;
+
+import game.GameMode;
+import gomoku.IConf;
 import gui.IBaseGUI;
+import gui.SimpleDialog;
 
 /**
  *
@@ -31,7 +38,7 @@ public class NewGameDialog extends SimpleDialog {
   /** Wartość true, jeżeli jest to start aplikacji, żeby móc się przywitać ;-) */  
   private final boolean firstTime; 
   /** Wybrany przez użytkownika tryb nowej gry */
-  private byte gameMode;
+  private GameMode gameMode;
   
   /**
     * Konstruktor, wywołanie konstruktora klasy nadrzędnej, wypełnienie wewn. pól 
@@ -43,7 +50,7 @@ public class NewGameDialog extends SimpleDialog {
       
      super(frame);
      this.firstTime = firstTime;
-     gameMode = 0;
+     gameMode = GameMode.SINGLE_GAME;
      super.showDialog(320, 220);
        
   }
@@ -74,32 +81,21 @@ public class NewGameDialog extends SimpleDialog {
      add(title);
      
      // lista pól "radiowych" do wybrania trybu nowej gry
-     JRadioButton jRadio1 = new JRadioButton("Rozpocznij gr\u0119 z komputerem *dumb AI", false);
-     JRadioButton jRadio2 = new JRadioButton("Rozpocznij gr\u0119 2-osobow\u0105 (hot-seat)", false);  
-     JRadioButton jRadio3 = new JRadioButton("Do\u0142\u0105cz do gry sieciowej (jako klient)", true);
-     jRadio1.setFont(formsFont);
-     jRadio2.setFont(formsFont);
-     jRadio3.setFont(formsFont);
-     jRadio1.setFocusPainted(false);
-     jRadio2.setFocusPainted(false);
-     jRadio3.setFocusPainted(false);
-     // przypisanie kluczy do pól wyboru
-     jRadio1.setActionCommand("1");
-     jRadio2.setActionCommand("2");
-     jRadio3.setActionCommand("3");
-     // ustanowienie grupy pól wyboru
+     JPanel p = new JPanel(new GridLayout(GameMode.values().length, 1));
      final ButtonGroup bGroup = new ButtonGroup();
-     bGroup.add(jRadio1);
-     bGroup.add(jRadio2);
-     bGroup.add(jRadio3);
-    
-     JPanel p = new JPanel(new GridLayout(3,1));
      
-     p.add(jRadio1);
-     p.add(jRadio2);
-     p.add(jRadio3);
-     p.setBorder(new EmptyBorder(0, 30, 0, 0));
+     for (GameMode mode : GameMode.values()) {
+    	 
+    	 JRadioButton jRadio = new JRadioButton(mode.toString(), mode == GameMode.DEFAULT); 
+    	 jRadio.setFont(formsFont);
+    	 jRadio.setFocusPainted(false);
+    	 jRadio.setActionCommand(String.valueOf(mode.getCode()));
+    	 bGroup.add(jRadio);
+    	 p.add(jRadio);
+    	 
+     }
      
+     p.setBorder(new EmptyBorder(0, 30, 0, 0));     
      add(p);
     
      p = new JPanel(new FlowLayout());
@@ -113,13 +109,12 @@ public class NewGameDialog extends SimpleDialog {
        public void actionPerformed(final ActionEvent e) {   
           
           // pobranie wybranego trybu nowej gry 
-          byte gameModeTmp = Byte.valueOf(bGroup.getSelection().getActionCommand());
+          GameMode modeTmp = GameMode.get(Integer.parseInt(bGroup.getSelection().getActionCommand()));
           
           String serverIP = "";
               
-          
           // jeżeli to klient, to pobranie od użytkownika adresu IP serwera
-          if (gameModeTmp == Game.NETWORK_GAME) {
+          if (modeTmp == GameMode.NETWORK_GAME) {
 
              // usunięcie komponentów i ustawienie przezroczystego tła
              // żeby okienko wyboru nowej gry zniknęło, ale dalej blokowało wątki
@@ -132,9 +127,9 @@ public class NewGameDialog extends SimpleDialog {
           }
           
            // zakończenie obecnej rozgrywki i rozpoczęcie nowej 
-          if (gameModeTmp != Game.NETWORK_GAME || (serverIP!=null && !serverIP.isEmpty())) {
+          if (modeTmp != GameMode.NETWORK_GAME || (serverIP!=null && !serverIP.isEmpty())) {
           
-             gameMode = gameModeTmp;
+             gameMode = modeTmp;
              
              frame.restartGame(gameMode, serverIP);
              
@@ -166,7 +161,7 @@ public class NewGameDialog extends SimpleDialog {
    * Metoda pobierająca wybrany przez użytkownika tryb nowej gry
    * @return Odpowiedź użytkownika 
    */   
-  public byte getGameMode() {
+  public GameMode getGameMode() {
       
     return gameMode;  
       

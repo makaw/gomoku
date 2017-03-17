@@ -218,7 +218,7 @@ public final class Client {
       
     clientEnded = true;  
       
-    gameSpy.sendObject("state", new GameState(GameState.WAIT, ""));
+    gameSpy.sendObject("state", GameState.WAIT);
     
     console.newLine();
     console.setMessageLn("Zerwanie po\u0142\u0105czenia przez serwer.", Color.RED);

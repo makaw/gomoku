@@ -5,7 +5,7 @@
 package gui;
 
 
-import game.Game;
+import game.GameMode;
 import game.GameState;
 import gomoku.AppObserver;
 import gomoku.IConf;
@@ -45,7 +45,7 @@ public class GUI extends JFrame implements IBaseGUI, Observer {
   /** Obiekt reprezentujący konsolę */
   private final Console console;
   /** Wybrany tryb gry */
-  private byte gameMode;
+  private GameMode gameMode;
   /** Obiekt służący do odtwarzania dźwięków */  
   private Sounds sounds;
   /** Referencja do obiektu służącego do komunikacji z wątkiem kontrolującym przebieg gry  w zakresie zmiany stanu gry */
@@ -225,9 +225,12 @@ public class GUI extends JFrame implements IBaseGUI, Observer {
    * @see game.Game#update(java.util.Observable, java.lang.Object) 
    */
   @Override
-  public void restartGame(byte gameMode, String serverIP) {      
+  public void restartGame(GameMode gameMode, String serverIP) {      
       
-    if (this.gameMode == Game.NETWORK_GAME && socket != null) {
+	GameState gs = GameState.RESTART;
+	gs.setServerIP(serverIP);  
+	  
+    if (this.gameMode == GameMode.NETWORK_GAME && socket != null) {
          
       try {
          socket.close();
@@ -235,19 +238,19 @@ public class GUI extends JFrame implements IBaseGUI, Observer {
          System.err.println(ex);
       }
       
-      gameSpy.sendObject("state", new GameState(GameState.RESTART, serverIP));
+      gameSpy.sendObject("state", gs);
           
     } 
       
       
     this.gameMode = gameMode;
     
-    // przesłanie do wątka gry informacji o zmianie stanu
-    gameSpy.sendObject("state", new GameState(GameState.RESTART, serverIP));
+    // przesłanie do wątka gry informacji o zmianie stanu    
+    gameSpy.sendObject("state", gs);
     board.clear();
     console.clear();   
     
-    if (gameMode == Game.NETWORK_GAME) 
+    if (gameMode == GameMode.NETWORK_GAME) 
       console.setMessageLn("Wybrano tryb sieciowy. Oczekiwanie na do\u0142\u0105czenie 2. gracza ....", Color.DARK_GRAY);
               
     else {
@@ -268,7 +271,7 @@ public class GUI extends JFrame implements IBaseGUI, Observer {
   public void restartGameSettings() {
 
     // przesłanie do wątka gry informacji o zmianie stanu
-    gameSpy.sendObject("state", new GameState(GameState.WAIT));
+    gameSpy.sendObject("state", GameState.WAIT);
     
     console.clear();
     console.setMessageLn("Przerwano gr\u0119 (zmiana ustawie\u0144).", Color.RED);
@@ -346,7 +349,7 @@ public class GUI extends JFrame implements IBaseGUI, Observer {
    * Metoda pobierająca tryb bieżącej rozgrywki
    * @return Tryb bieżącej rozgrywki
    */
-  public byte getGameMode() {
+  public GameMode getGameMode() {
       
     return gameMode; 
       

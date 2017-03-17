@@ -17,13 +17,9 @@
 
 	<dependencies>
 	
-		<dependency>
-    		<groupId>fr.avianey</groupId>
-   			<artifactId>minimax4j</artifactId>
-    		<version>1.0.0</version>
-		</dependency>
 
 	</dependencies>
+	
 	<url>https://github.com/makaw/gomoku</url>
 	<description>Gra logiczno-strategiczna Gomoku, tryb lokalny lub sieciowy</description>
 </project>

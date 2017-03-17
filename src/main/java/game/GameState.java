@@ -12,38 +12,22 @@ package game;
  * @author Maciej Kawecki
  * 
  */
-public class GameState {
+public enum GameState {
     
 
-   /** Stała używana do oznaczenia stanu rozgrywki: trwa */
-   public static final byte RUN = 0;
-   /** Stała używana do oznaczenia stanu rozgrywki: rozpoczęcie nowej gry */
-   public static final byte RESTART = 1;
-   /** Stała używana do oznaczenia stanu rozgrywki: oczekiwanie na nową grę */
-   public static final byte WAIT = 2;
+   /** Rozgrywka trwa */
+   RUN, 
+   /**Rozpoczęcie nowej gry */
+   RESTART, 
+   /** Oczekiwanie na nową grę */
+   WAIT;
     
-   /** Stan gry */
-   private final Byte state;
-   /** IP serwera */
-   private final String serverIP; 
+   /** Adres IP serwera */
+   private String serverIP = "";
    
    
-   public GameState(Byte state, String serverIP) {
-       
-     this.state = state;
-     this.serverIP = serverIP;
-       
-   }
-   
-   public GameState(Byte state) {
-       
-     this(state, "");  
-       
-   }
-   
-
-   public Byte getState() {
-       return state;
+   public void setServerIP(String serverIP) {
+	   this.serverIP = serverIP;
    }
 
    public String getServerIP() {
@@ -51,7 +35,4 @@ public class GameState {
    }
    
    
-    
-    
-    
 }

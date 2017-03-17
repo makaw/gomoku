@@ -4,6 +4,7 @@
  */
 package gui;
 
+import game.GameMode;
 import gomoku.Settings;
 
 
@@ -30,7 +31,7 @@ public interface IBaseGUI {
    * @param gameMode Wybrany przez użytkownika tryb nowej gry
    * @param serverIP Adres IP serwera   
    */  
-  void restartGame(byte gameMode, String serverIP);
+  void restartGame(GameMode gameMode, String serverIP);
   
   /**
    * Metoda obsługująca zmianę ustawień przez użytkownika: zatrzymanie bieżącej rozgrywki, 

@@ -5,7 +5,6 @@
 package gomoku;
 
 
-
 /**
  *
  * Szablon obiektu przechowywującego ustawienia gry.
@@ -16,6 +15,7 @@ package gomoku;
 public class Settings extends SettingsVar {
    
   private static final long serialVersionUID = 1L;  
+  
     
     
   /**
@@ -113,7 +113,7 @@ public class Settings extends SettingsVar {
      return piecesInRowStrict; 
       
   }
-  
+
   
   
     

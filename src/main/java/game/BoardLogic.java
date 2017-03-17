@@ -4,11 +4,10 @@
  */
 package game;
 
-import gomoku.Settings;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
+import gomoku.Settings;
 
 
 /**
@@ -27,7 +26,6 @@ public class BoardLogic {
   private final Settings settings;
   /** Wewnętrzna tablica zawierająca stan pól planszy */
   private final BoardField[] fields;
-  private String strFields;
   /** Referencja do ostatnio zapełnionego pola planszy */
   protected BoardField lastField;
   
@@ -51,9 +49,7 @@ public class BoardLogic {
       for (int b=0; b<settings.getColsAndRows(); b++) 
        fields[indeks+b] = new BoardField(a, b);
      
-    }
-    
-    for (int a=0; a<settings.getFieldsAmount(); a++) {  strFields += "0"; }
+    }    
     
   }
    
@@ -100,11 +96,7 @@ public class BoardLogic {
       
       freeFieldsAmount--;
       changed = true;
-      lastField = new BoardField(a, b, state);
-      
-      strFields = strFields.substring(0, index) + 
-              (state == BoardField.EMPTY ? "0" : (state == BoardField.WHITE ? "W" : "B"))
-                 + strFields.substring(index+1);      
+      lastField = new BoardField(a, b, state);      
       
     }
     
@@ -260,48 +252,7 @@ public class BoardLogic {
    */
   protected int getScore(byte pColor) {
         
-    if (freeFieldsAmount == settings.getFieldsAmount()) return 0; 
-      
-    int score = 0;  
-    
-    if (true) return 1;
-    
-    String pieces = String.valueOf(settings.getPiecesInRow());
-    String pattern = "[^" + (pColor == BoardField.BLACK ? "W" : "B" ) + "]{" + pieces + "}";
-     
-     
-    Matcher matcher = (Pattern.compile(pattern)).matcher(this.toString());
-   
-    while (matcher.find()) {
-                
-       String s = matcher.group();
-       if (s.matches("0{"+pieces+"}")) { continue; }
-         
-       int localScore = s.replaceAll("[^" + (pColor == BoardField.BLACK ? "B" : "W" ) + "]", "").length();
-       
-       if (localScore == settings.getPiecesInRow()) return Minimax.MAX_SCORE;
-       if (localScore == settings.getPiecesInRow() - 1)  localScore *= 4;
-       if (localScore == settings.getPiecesInRow() - 2)  localScore *= 2;
-       
-       score += localScore;
-          
-    }  
-    
-     
-    
-    return score;
-      
-  }
-  
-  
-  
-  
-  
-  
-  @Override
-  public String toString() {
-      
-    return strFields;  
+    return 1;
       
   }
   

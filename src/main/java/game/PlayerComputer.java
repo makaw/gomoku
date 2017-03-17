@@ -4,8 +4,9 @@
  */
 package game;
 
-import gui.BoardGraphics;
 import java.util.ArrayList;
+
+import gui.BoardGraphics;
 
 /**
  *
@@ -17,6 +18,9 @@ import java.util.ArrayList;
  */
 public class PlayerComputer extends Player  {
      
+	
+   private final static boolean DUMB = true;
+   
     
    /**
     * Konstruktor - wywołanie konstruktora z bazowej klasy abstrakcyjnej, 
@@ -44,11 +48,11 @@ public class PlayerComputer extends Player  {
        
        gBoard.setWaitMouseCursor();
        
-       byte otherPieceColor = pieceColor == BoardField.BLACK ? BoardField.WHITE : BoardField.BLACK;
-      
        // pobranie wygenerowanego nowego ruchu 
-       BoardField move = getRandMove(lBoard.lastField);
-       //move = Minimax.getInstance(lBoard, pieceColor).getMove();
+       BoardField move;
+       if (DUMB) move = getRandMove(lBoard.lastField);
+       else
+         move = Minimax.getInstance(lBoard, pieceColor).getMove();
                    
        // rysowanie kamienia
        gBoard.setPiece(lBoard, move.getA(), move.getB(), getColor());
@@ -56,6 +60,7 @@ public class PlayerComputer extends Player  {
        // zmiana wartosci pola (logicznego)
        lBoard.setFieldState(move.getA(), move.getB(), getColor());
    
+       
        try {
          Thread.sleep(10);
        } catch (InterruptedException e) {

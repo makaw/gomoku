@@ -4,19 +4,21 @@
  */
 package game;
 
-import gomoku.AppObserver;
-import gomoku.Settings;
-import gui.BoardGraphics;
-import gui.Console;
-import gui.GUI;
-import gui.Sounds;
 import java.awt.Color;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
+
 import javax.swing.SwingUtilities;
+
+import gomoku.AppObserver;
+import gomoku.Settings;
+import gui.BoardGraphics;
+import gui.Console;
+import gui.GUI;
+import gui.Sounds;
 import network.Client;
 import network.Command;
 
@@ -28,16 +30,8 @@ import network.Command;
  * @author Maciej Kawecki
  * 
  */
-public class Game  implements Observer {
-     
-   /** Stała używana do oznaczenia trybu rozgrywki: gracz kontra komputer */
-   public final static byte SINGLE_GAME = 1;
-   /** Stała używana do oznaczenia trybu rozgrywki: gracz kontra gracz (hot-seat) */
-   public final static byte HOTSEAT_GAME = 2;
-   /** Stała używana do oznaczenia trybu rozgrywki: gracz kontra gracz (gra sieciowa) */
-   public final static byte NETWORK_GAME = 3;        
-    
-    
+public class Game extends Thread implements Observer {
+
    /** Referencja do obiektu reprezentującego pierwszego z graczy */
    private Player player1;
    /** Referencja do obiektu reprezentującego drugiego z graczy */
@@ -51,7 +45,7 @@ public class Game  implements Observer {
    /** Referencja do obiektu służącego do odtwarzania dźwięków */
    private final Sounds sounds;
    /** Aktualny stan gry (trwa, oczekiwanie, restart) */
-   private byte gameState;   
+   private GameState gameState;   
    /** Podany przez użytkownika adres IP serwera do przekazania do obiektu klienta */
    private String serverIP;
    /** Referencja do obiektu służącego do komunikacji z tym wątkiem, 
@@ -59,6 +53,11 @@ public class Game  implements Observer {
    private final AppObserver gameSpy;
    /** Obiekt klienta w grze siociowej */
    private Client client;
+   /** Tryb gry */
+   private GameMode gameMode;
+   /** Ustawienia */
+   private Settings settings;
+   
    
    /**
     * Konstruktor obiektu odpowiedzialnego za przebieg rozgrywki, przypisuje referencje do obiektów GUI
@@ -70,10 +69,13 @@ public class Game  implements Observer {
     */
    public Game(BoardGraphics gBoard, Console console, Sounds sounds, AppObserver gameSpy) {
      
+	 super();
+	 setDaemon(true);
+	   
      this.gBoard = gBoard;
      this.console = console;
      this.sounds = sounds;
-     this.gameSpy = gameSpy;
+     this.gameSpy = gameSpy;     
          
    }
    
@@ -92,16 +94,13 @@ public class Game  implements Observer {
         // zmieniono stan gry
         case "state":  
        
-            GameState state = (GameState)obs.getObject();
-            
-            // zmiana stanu  
-            this.gameState = state.getState();
-       
+        	this.gameState = (GameState)obs.getObject();
+                   
             // wymuszenie końca ruchu graczy
             if (player1!=null) player1.forceEndTurn();
             if (player2!=null) player2.forceEndTurn();
             // zmiana adresu IP serwera
-            this.serverIP = state.getServerIP();
+            this.serverIP = gameState.getServerIP();
             console.networkButtonsEnable(false);    
                 
             break;
@@ -143,7 +142,7 @@ public class Game  implements Observer {
     * Metoda zwracająca aktualny stan gry
     * @return Aktualny stan gry
     */
-   public Byte getState() {
+   public GameState getGameState() {
        
       return gameState;  
        
@@ -166,7 +165,7 @@ public class Game  implements Observer {
     * @param gameMode Tryb nowej rozgrywki (gra z komputerem, hot-seat, serwer lub klient)
     * @param settings Referencja do aktualnych ustawień gry
     */
-   public void startNewGame(Byte gameMode, Settings settings) {
+   public void startNewGame(GameMode gameMode, Settings settings) {
    
        
      gameState = GameState.RUN;
@@ -174,7 +173,8 @@ public class Game  implements Observer {
      lBoard = new BoardLogic(settings);
 
      // przypisanie odpowiednich implementacji gracza w zależności od trybu rozgrywki
-     switch (gameMode) {
+     if (gameMode != null)
+     switch (gameMode) {     
 
          // komputer vs gracz
          case SINGLE_GAME:
@@ -338,7 +338,7 @@ public class Game  implements Observer {
          
          
          // odłączenie od serwera
-         if (gameState!=GameState.RUN && gameMode==NETWORK_GAME && client!=null) {
+         if (gameState!=GameState.RUN && gameMode==GameMode.NETWORK_GAME && client!=null) {
              
            try {
              client.sendCommand(new Command(Command.CMD_EXIT));
@@ -359,7 +359,7 @@ public class Game  implements Observer {
      } 
      
      // przywrócenie domyślnego kursora w razie przerwania gry sieciowej
-     if (gameMode == NETWORK_GAME && client != null)  {
+     if (gameMode == GameMode.NETWORK_GAME && client != null)  {
 
          gBoard.setDefaultMouseCursor();
          
@@ -369,15 +369,32 @@ public class Game  implements Observer {
      // pętla oczekiwania na rozpoczęcie nowej gry
      do {  
           
-       try {
-         // sleep jest po to, żeby podtrzymywać bieżący wątek
+       try {         
          Thread.sleep(10);
-       } catch (InterruptedException e) {}
+       } catch (InterruptedException e) { return; }
      
      } while (gameState!=GameState.RESTART);
          
      
        
+   }
+   
+   
+   public void run() {	   
+	   
+	  super.run(); 
+	  startNewGame(gameMode, settings);
+	   
+   }
+   
+   
+
+   public void setGameMode(GameMode gameMode) {
+	 this.gameMode = gameMode;
+   }
+
+   public void setSettings(Settings settings) {
+	 this.settings = settings;
    }
 
  

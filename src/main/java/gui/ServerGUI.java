@@ -5,14 +5,24 @@
 package gui;
 
 
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+
+import game.GameMode;
 import gomoku.AppObserver;
 import gomoku.Settings;
 import gui.dialogs.ConfirmDialog;
 import gui.dialogs.SettingsDialog;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import javax.swing.*;
 
 
 /**
@@ -169,7 +179,7 @@ public class ServerGUI extends JFrame implements IBaseGUI {
    * @param serverIP nie obsługiwane
    */
   @Override
-  public void restartGame(byte gameMode, String serverIP) {}
+  public void restartGame(GameMode gameMode, String serverIP) {}
   
    
   /**
