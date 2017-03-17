@@ -88,6 +88,7 @@ public class NewGameDialog extends SimpleDialog {
     	 
     	 JRadioButton jRadio = new JRadioButton(mode.toString(), mode == GameMode.DEFAULT); 
     	 jRadio.setFont(formsFont);
+    	 jRadio.setEnabled(mode.isEnabled());
     	 jRadio.setFocusPainted(false);
     	 jRadio.setActionCommand(String.valueOf(mode.getCode()));
     	 bGroup.add(jRadio);

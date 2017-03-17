@@ -19,10 +19,6 @@ public class Minimax {
    private final byte computerColor;   
    /** Referencja do logicznej warstwy planszy */
    private final BoardLogic board;
-   /** Maks-min  wynik dla algorytmu */
-   public final static int MAX_SCORE = 10000;   
-   /** Maksymalna głębokość rekurencji dla algorytmu */
-   private final static int MAX_DEPTH = 3;
    /** Lista pustych pól na planszy (możliwe ruchy) */ 
    private final List<BoardField> emptyFields;
    /** Lista ruchów */
@@ -68,18 +64,4 @@ public class Minimax {
   }
    
 
-   
-   
-  /**
-   * Metoda zwraca przyjęty indeks danego koloru w wykorzystywanej tablicy 2-wymiarowej
-   * @param color Kolor kamieni
-   * @return Przyjęty indeks koloru
-   */
-  private static int getColorIndex(byte color) {
-      
-    return (color==BoardField.WHITE) ? 0 : 1;  
-      
-  }
-
-    
 }

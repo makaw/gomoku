@@ -32,13 +32,18 @@ public enum GameMode {
    GameMode(int code) {
 	   this.code = code;
    }
+   
+   
+   public boolean isEnabled() {
+	   return this != SINGLE_GAME;
+   }
 	
 	
    public String toString() {
 	   
 	 switch (this) {
 	 	   
-	   case SINGLE_GAME: return "Rozpocznij gr\u0119 z komputerem *dumb AI";
+	   case SINGLE_GAME: return "Rozpocznij gr\u0119 z komputerem";
 	   case HOTSEAT_GAME: return "Rozpocznij gr\u0119 2-osobow\u0105 (hot-seat)";
 	   case NETWORK_GAME: return "Do\u0142\u0105cz do gry sieciowej (jako klient)";
 	 

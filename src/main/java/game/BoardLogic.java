@@ -136,9 +136,16 @@ public class BoardLogic {
       
        for (i=-settings.getPiecesInRow()+1;i<settings.getPiecesInRow();i++) {
        
-         // jeżeli pion to a jest stałe, jezeli poziom to b jest stałe
-         if (pColor.equals(getFieldState(dir!=1?a+i:a, dir!=2?(dir!=3?b+i:b-i):b))) cnt++;
+    	 // wsp. pola: jeżeli pion to a jest stałe, jezeli poziom to b jest stałe  
+    	 int a2 = dir!=1?a+i:a;
+    	 int b2 = dir!=2?(dir!=3?b+i:b-i):b;
+    	           
+         if (pColor.equals(getFieldState(a2, b2)) && a2<settings.getColsAndRows() 
+        		 && b2<settings.getColsAndRows() && a2>=0 && b2>=0) {
+           	 cnt++; 
+         }
          else cnt = 0;
+         
          // jeżeli jest już odpowiednia ilość kamieni, to wyjście z pętli         
          if (cnt.equals(settings.getPiecesInRow())) break;
    

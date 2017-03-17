@@ -68,8 +68,7 @@ public class Game extends Thread implements Observer {
     * potrzebna do ustawienia obserwacji stanu gry przez wątki sieciowe
     */
    public Game(BoardGraphics gBoard, Console console, Sounds sounds, AppObserver gameSpy) {
-     
-	 super();
+     	
 	 setDaemon(true);
 	   
      this.gBoard = gBoard;
@@ -381,8 +380,7 @@ public class Game extends Thread implements Observer {
    
    
    public void run() {	   
-	   
-	  super.run(); 
+	 
 	  startNewGame(gameMode, settings);
 	   
    }
