@@ -22,7 +22,7 @@ public class MouseHandler extends MouseAdapter  {
     /** Referencja do obiektu logicznej warstwy planszy */
     private final BoardLogic lBoard;
     /** Kolor kamieni gracza */
-    protected final byte pColor;
+    protected final BoardFieldState pColor;
     /** Flaga blokująca obsługę zdarzeń myszy */
     protected boolean lockedFlag;
     
@@ -32,7 +32,7 @@ public class MouseHandler extends MouseAdapter  {
      * @param lBoard Referencja do obiektu logicznej warstwy planszy
      * @param pColor Kolor kamieni gracza
      */
-    public MouseHandler(BoardGraphics gBoard, BoardLogic lBoard, byte pColor) {
+    public MouseHandler(BoardGraphics gBoard, BoardLogic lBoard, BoardFieldState pColor) {
 
        this.gBoard = gBoard; 
        this.lBoard = lBoard;
@@ -56,7 +56,7 @@ public class MouseHandler extends MouseAdapter  {
        // FIX
        if (a<0 || a>=lBoard.getColsAndRows() || b<0 || b>=lBoard.getColsAndRows()) return;
        
-       if (lockedFlag || (lBoard.getFieldState(a,b)!=BoardField.EMPTY)) return;  
+       if (lockedFlag || (lBoard.getFieldState(a,b)!=BoardFieldState.EMPTY)) return;  
        
        // w razie potrzeby tu wysłanie odpowiedniego komunikatu do serwera gry
        sendMoveToServer(a, b);          

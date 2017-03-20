@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>pl.net.kaw</groupId>
 	<artifactId>gomoku</artifactId>
-	<version>0.5-SNAPSHOT</version>
+	<version>0.6-SNAPSHOT</version>
 	<name>Gomoku</name>
 	<organization>
 		<name>Maciej Kawecki</name>
@@ -17,6 +17,19 @@
 
 	<dependencies>
 	
+		<!-- https://mvnrepository.com/artifact/fr.avianey/minimax4j -->
+		<dependency>
+ 		   <groupId>fr.avianey</groupId>
+ 		   <artifactId>minimax4j</artifactId>
+  		  <version>1.0.0</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
+		<dependency>
+   		 	<groupId>org.apache.commons</groupId>
+   		 	<artifactId>commons-lang3</artifactId>
+   		 	<version>3.0</version>
+		</dependency>
 
 	</dependencies>
 	

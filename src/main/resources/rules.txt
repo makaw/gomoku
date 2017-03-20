@@ -1,8 +1,6 @@
 Gomoku (jap. 5 punktów), nazywana również "Five in a Row", to gra logiczno-strategiczna wymyślona w Japonii w VII wieku p.n.e. 
 
-W wersji standardowej, gra toczy się na planszy 15x15 pól, gracze na przemian układają na wolnych polach kamienie (czarne i białe).
-
-Celem jest ułożenie dokładnie pięciu kamieni w ciągłej linii (pionowo, poziomo lub ukośnie). Ustawienie więcej niż 5 kamieni w linii, nie daje wygranej.
+W wersji standardowej, gra toczy się na planszy 15x15 pól, gracze na przemian układają na wolnych polach kamienie (czarne i białe). Celem jest ułożenie dokładnie pięciu kamieni w ciągłej linii (pionowo, poziomo lub ukośnie). 
 
 Jeżeli nikt nie zwycięży, a plansza zostanie zapełniona - jest remis.
 

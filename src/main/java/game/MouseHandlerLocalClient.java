@@ -30,7 +30,7 @@ public class MouseHandlerLocalClient extends MouseHandler  {
      * @param lBoard Referencja do obiektu logicznej warstwy planszy
      * @param pColor Kolor kamieni gracza
      */
-    public MouseHandlerLocalClient(BoardGraphics gBoard, BoardLogic lBoard, byte pColor) {
+    public MouseHandlerLocalClient(BoardGraphics gBoard, BoardLogic lBoard, BoardFieldState pColor) {
 
        super(gBoard, lBoard, pColor);
         
@@ -44,7 +44,7 @@ public class MouseHandlerLocalClient extends MouseHandler  {
      * @param pColor Kolor kamieni gracza
      */
      public MouseHandlerLocalClient(Client client, BoardGraphics gBoard, 
-                                         BoardLogic lBoard, byte pColor) {
+                                         BoardLogic lBoard, BoardFieldState pColor) {
 
        this(gBoard, lBoard, pColor);
        this.client = client;

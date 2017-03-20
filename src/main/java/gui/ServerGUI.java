@@ -107,7 +107,7 @@ public class ServerGUI extends JFrame implements IBaseGUI {
        @Override
        public void actionPerformed(final ActionEvent e) {   
           // potwierdzenie przez użytkownika 
-          boolean res = new ConfirmDialog(frame, "Zrestartowa\u0107 serwer ?").getResponse();  
+          boolean res = new ConfirmDialog(frame, "Zrestartowa\u0107 serwer ?").isConfirmed();  
           if (res) serverSpy.sendObject("state", "restart");
        }
     });
@@ -118,7 +118,7 @@ public class ServerGUI extends JFrame implements IBaseGUI {
     exitButton.addActionListener(new ActionListener() {
        @Override
        public void actionPerformed(final ActionEvent e) {   
-         boolean res = new ConfirmDialog(frame, "Czy na pewno zako\u0144czy\u0107 ?").getResponse();           
+         boolean res = new ConfirmDialog(frame, "Czy na pewno zako\u0144czy\u0107 ?").isConfirmed();           
          if (res) System.exit(0);
        }
     });    

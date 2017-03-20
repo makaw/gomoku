@@ -4,18 +4,22 @@
  */
 package gui;
 
-import gomoku.Gomoku;
-import gui.dialogs.ConfirmDialog;
-import gui.dialogs.NewGameDialog;
-import gui.dialogs.SettingsDialog;
 import java.awt.Dimension;
-import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
+
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.KeyStroke;
+
+import gomoku.Gomoku;
+import gui.dialogs.ConfirmDialog;
+import gui.dialogs.NewGameDialog;
+import gui.dialogs.SettingsDialog;
 
 /**
  *
@@ -111,7 +115,7 @@ public class MenuGame extends JMenu {
      @Override
      public void actionPerformed(final ActionEvent e) {
            
-        boolean res = new ConfirmDialog(frame, "Czy na pewno zako\u0144czy\u0107 ?").getResponse();
+        boolean res = new ConfirmDialog(frame, "Czy na pewno zako\u0144czy\u0107 ?").isConfirmed();
         // po potwierdzeniu przez użytkownika, zakończenie pracy aplikacji
         if (res) Gomoku.quitGomoku();
           

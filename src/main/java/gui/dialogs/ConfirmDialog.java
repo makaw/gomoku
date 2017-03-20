@@ -4,14 +4,20 @@
  */
 package gui.dialogs;
 
-import gui.SimpleDialog;
-import gui.ImageRes;
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.*;
+
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
 import gui.IBaseGUI;
+import gui.ImageRes;
+import gui.SimpleDialog;
 
 
 /**
@@ -24,7 +30,7 @@ import gui.IBaseGUI;
 @SuppressWarnings("serial")
 public class ConfirmDialog extends SimpleDialog {
     
-   /** Odpowiedź użytkownika: true jeżeli potwierdził, false jeżeli nie */ 
+   /** Odpowiedź użytkownika: true jeżeli potwierdził */ 
    private boolean confirmed;
    /** Pytanie do wyświetlenia w okienku */
    private final String question;
@@ -97,11 +103,7 @@ public class ConfirmDialog extends SimpleDialog {
    }
     
 
-   /**
-    * Metoda pobierająca odpowiedź użytkownika
-    * @return Odpowiedź użytkownika: true jeżeli potwierdził, false jeżeli nie
-    */ 
-   public boolean getResponse() {
+   public boolean isConfirmed() {
        
       return confirmed; 
        

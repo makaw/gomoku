@@ -123,8 +123,7 @@ public class NewGameDialog extends SimpleDialog {
              setBackground(new Color(0, 0, 0, 0));
              
              serverIP = new PromptDialog(frame, "Adres IP / host serwera gry:",
-                                    IConf.DEFAULT_HOST).getMessage();
-             
+            		 IConf.DEFAULT_HOST).getAnswer();
           }
           
            // zakończenie obecnej rozgrywki i rozpoczęcie nowej 

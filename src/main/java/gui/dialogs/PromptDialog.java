@@ -4,14 +4,21 @@
  */
 package gui.dialogs;
 
-import gui.SimpleDialog;
-import gui.ImageRes;
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.*;
+
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
+
 import gui.IBaseGUI;
+import gui.ImageRes;
+import gui.SimpleDialog;
 
 /**
  *
@@ -23,12 +30,12 @@ import gui.IBaseGUI;
 @SuppressWarnings("serial")
 public class PromptDialog extends SimpleDialog {
    
-   /** Treść wiadomości wprowadzona przez użytkownika */ 
-   private String message; 
+   /** Treść odpowiedzi wprowadzona przez użytkownika */ 
+   private String answer; 
    /** Pytanie do wyświetlenia w okienku */
    private final String question;
    /** Domyślna odpowiedź */
-   private final String defaultMsg;
+   private final String defaultAnswer;
        
    /**
     * Konstruktor, wywołanie konstruktora klasy nadrzędnej, wypełnienie wewn. pól 
@@ -48,13 +55,13 @@ public class PromptDialog extends SimpleDialog {
     * i wyświetlenie okienka
     * @param frame Referencja do interfejsu GUI
     * @param question Pytanie do wyświetlenia w okienku
-     * @param defaultMsg Domyślna odpowiedź
+     * @param defaultAnswer Domyślna odpowiedź
     */       
-   public PromptDialog(IBaseGUI frame, String question, String defaultMsg) {
+   public PromptDialog(IBaseGUI frame, String question, String defaultAnswer) {
        
      super(frame);
      this.question = question;
-     this.defaultMsg = defaultMsg;
+     this.defaultAnswer = defaultAnswer;
      super.showDialog(300, 125); 
             
    }    
@@ -71,8 +78,6 @@ public class PromptDialog extends SimpleDialog {
       JPanel p = new JPanel();
       p.setLayout(new BoxLayout(p, BoxLayout.X_AXIS));
       
-      
-      //JLabel ico = new JLabel(UIManager.getIcon("OptionPane.questionIcon")); 
       JLabel ico = new JLabel(ImageRes.getIcon("question.png"));
       ico.setBorder(new EmptyBorder(25, 5, 0, 5));
       p.add(ico);
@@ -83,7 +88,7 @@ public class PromptDialog extends SimpleDialog {
       p2.add(new JLabel(question));
       
       // przygotowanie pola tekstowego do wprowadzenia wiadomości
-      final JTextField msg = new JTextField(defaultMsg);
+      final JTextField msg = new JTextField(defaultAnswer);
       msg.setPreferredSize(new Dimension(200, 26));
       p2.setBorder(new EmptyBorder(5, 5, 0, 10)); 
       p2.add(msg);
@@ -98,7 +103,7 @@ public class PromptDialog extends SimpleDialog {
       buttonSend.addActionListener(new ActionListener() {
          @Override
          public void actionPerformed(final ActionEvent e) { 
-            message = msg.getText();
+            answer = msg.getText();
             dispose();
          }
       });
@@ -121,31 +126,13 @@ public class PromptDialog extends SimpleDialog {
       
    }
     
-   /**
-    * Metoda pobierająca treść wiadomości wprowadzonej przez użytkownika
-    * @return Treść wprowadzonej wiadomości
-    */
-   public String getMessage() {
+
+   public String getAnswer() {
        
-      return message; 
+      return answer; 
        
    }
    
-   /**
-    * Statyczna metoda formatująca wiadomość przed przesłaniem do konsoli
-    * @param msg Treść wprowadzonej wiadomości
-    * @return Sformatowana treść wiadomości
-    * @deprecated 
-    */
-   @Deprecated
-   public static String formatMsg(String msg) {
-       
-      final String sep = System.getProperty("line.separator")+ "---------------------------------------"
-                        + "---------------------------------------" + System.getProperty("line.separator");
-      return sep+msg+sep;
-       
-       
-   }
    
     
 }

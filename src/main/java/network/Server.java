@@ -4,22 +4,27 @@
  */
 package network;
 
-import gomoku.AppObserver;
-import gomoku.Settings;
-import gui.GUI;
-import gui.ServerGUI;
-import gui.ServerGUIConsole;
 import java.awt.Color;
-import java.io.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.lang.reflect.InvocationTargetException;
-import java.net.*;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
-import javax.swing.SwingUtilities; 
+
+import javax.swing.SwingUtilities;
+
+import gomoku.AppObserver;
 import gomoku.IConf;
+import gomoku.Settings;
+import gui.GUI;
+import gui.ServerGUI;
+import gui.ServerGUIConsole;
 
 
 /**
@@ -266,7 +271,7 @@ public class Server  implements Observer {
         case "settings":
             
            Settings s = (Settings)obs.getObject();
-           settings.setSettings(s.getColsAndRows(), s.getPiecesInRow(), s.getPiecesInRowStrict());                       
+           settings.setSettings(s.getColsAndRows(), s.getPiecesInRow());                       
            serverRestart();
            
            break;

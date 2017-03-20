@@ -51,12 +51,14 @@ public class Game extends Thread implements Observer {
    /** Referencja do obiektu służącego do komunikacji z tym wątkiem, 
     * potrzebna do ustawienia obserwacji stanu gry przez wątek serwera */
    private final AppObserver gameSpy;
-   /** Obiekt klienta w grze siociowej */
+   /** Obiekt klienta w grze sieciowej */
    private Client client;
    /** Tryb gry */
    private GameMode gameMode;
    /** Ustawienia */
    private Settings settings;
+   /** Ref. do GUI */
+   private final GUI frame;
    
    
    /**
@@ -74,9 +76,12 @@ public class Game extends Thread implements Observer {
      this.gBoard = gBoard;
      this.console = console;
      this.sounds = sounds;
-     this.gameSpy = gameSpy;     
+     this.gameSpy = gameSpy; 
+     
+     frame = ((GUI)(SwingUtilities.getWindowAncestor(console)));
          
    }
+   
    
    /**
    * Metoda ustawia referencje przekazane przez obserwatora
@@ -110,8 +115,7 @@ public class Game extends Thread implements Observer {
            setBoard((BoardGraphics)obs.getObject());
            
            break;
-           
-           
+                      
            
         // przesłanie wiadomości
         case "message":
@@ -163,48 +167,49 @@ public class Game extends Thread implements Observer {
     * Rozpoczęcie nowej rozgrywki.
     * @param gameMode Tryb nowej rozgrywki (gra z komputerem, hot-seat, serwer lub klient)
     * @param settings Referencja do aktualnych ustawień gry
+    * @throws NullPointerException Nie przypisano graczy / nie rozpoczęto rozgrywki
     */
-   public void startNewGame(GameMode gameMode, Settings settings) {
-   
-       
-     gameState = GameState.RUN;
-     // logika planszy dla przekazanych ustawień
+   private void startNewGame(GameMode gameMode, Settings settings) throws NullPointerException {
+         
+     gameState = GameState.RUN;     
      lBoard = new BoardLogic(settings);
 
-     // przypisanie odpowiednich implementacji gracza w zależności od trybu rozgrywki
-     if (gameMode != null)
+     // przypisanie odpowiednich implementacji gracza w zależności od trybu rozgrywki	 
      switch (gameMode) {     
 
-         // komputer vs gracz
-         case SINGLE_GAME:
+        // komputer vs gracz
+        case SINGLE_GAME:
              
-            player1 = new PlayerComputer(BoardField.BLACK, gBoard, lBoard, "Komputer");
-            player2 = new PlayerHuman(BoardField.WHITE, gBoard, lBoard, "Gracz [Ty]");
+           if (settings.isComputerStarts()) {
+             player1 = new PlayerComputer(BoardFieldState.BLACK, gBoard, lBoard, "Komputer");
+             player2 = new PlayerHuman(BoardFieldState.WHITE, gBoard, lBoard, "Gracz [Ty]");
+           }
+           else {        	  
+             player1 = new PlayerHuman(BoardFieldState.BLACK, gBoard, lBoard, "Gracz [Ty]");
+             player2 = new PlayerComputer(BoardFieldState.WHITE, gBoard, lBoard, "Komputer");
+           }
             
-            break;         
+           break;         
              
-         // gracz vs gracz
-         case HOTSEAT_GAME:
+        // gracz vs gracz
+        case HOTSEAT_GAME:
              
-            player1 = new PlayerHuman(BoardField.BLACK, gBoard, lBoard, "Gracz 1");
-            player2 = new PlayerHuman(BoardField.WHITE, gBoard, lBoard, "Gracz 2");
-            
-            break;  
+           player1 = new PlayerHuman(BoardFieldState.BLACK, gBoard, lBoard, "Gracz 1");
+           player2 = new PlayerHuman(BoardFieldState.WHITE, gBoard, lBoard, "Gracz 2");
+           
+           break;  
              
         
-         //  gracz (klient lokalny) vs gracz (klient zdalny)
-         case NETWORK_GAME:
-       
-             
-            try {
+        //  gracz (klient lokalny) vs gracz (klient zdalny)
+        case NETWORK_GAME:
+                    
+           try {
                 
               client = new Client(serverIP, gameSpy, console);  
               // jeżeli się udało połączyć, to zmiana ustawień gry
               Settings clientSettings = client.getSettings();
-              ((GUI)(SwingUtilities.getWindowAncestor(console)))
-                      .restartClientGameSettings(clientSettings.getColsAndRows());
-              settings.setSettings(clientSettings.getColsAndRows(), clientSettings.getPiecesInRow(), 
-                      clientSettings.getPiecesInRowStrict());   
+              frame.restartClientGameSettings(clientSettings.getColsAndRows());
+              settings.setSettings(clientSettings.getColsAndRows(), clientSettings.getPiecesInRow());
               gameSpy.sendObject("settings-main", clientSettings);
               
               // zmiana logiki planszy, bo zmiana ustawień
@@ -212,68 +217,53 @@ public class Game extends Thread implements Observer {
               
               // kto pierwszy ten zaczyna
               if (client.getNumber()==0) {
-                player1 = new PlayerLocal(client, BoardField.BLACK, gBoard, lBoard, "Gracz 1 [Ty] ");
-                player2 = new PlayerRemote(client, BoardField.WHITE, gBoard, lBoard, "Gracz 2");
+                player1 = new PlayerLocal(client, BoardFieldState.BLACK, gBoard, lBoard, "Gracz 1 [Ty] ");
+                player2 = new PlayerRemote(client, BoardFieldState.WHITE, gBoard, lBoard, "Gracz 2");
               }
               else {
-                player1 = new PlayerRemote(client, BoardField.BLACK, gBoard, lBoard, "Gracz 1");    
-                player2 = new PlayerLocal(client, BoardField.WHITE, gBoard, lBoard, "Gracz2 [Ty]");   
+                player1 = new PlayerRemote(client, BoardFieldState.BLACK, gBoard, lBoard, "Gracz 1");    
+                player2 = new PlayerLocal(client, BoardFieldState.WHITE, gBoard, lBoard, "Gracz2 [Ty]");   
               }
               
               
               console.networkButtonsEnable(true);
               
-            } catch (IOException e) {
+           } catch (IOException e) {
                
-               try {
-                  Thread.sleep(100);  
-               } 
-               catch (Exception ex) {} 
+              try {
+                 Thread.sleep(100);  
+              } 
+              catch (Exception ex) { return; } 
                
-               console.setMessageLn("Pr\u00f3ba po\u0142\u0105czenia nieudana.", Color.RED); 
-               console.networkButtonsEnable(false);
-               player1 = null;
-               player2 = null;
+              console.setMessageLn("Pr\u00f3ba po\u0142\u0105czenia nieudana.", Color.RED); 
+              console.networkButtonsEnable(false);
+              player1 = null;
+              player2 = null;
                
                 
-            } catch (ClassNotFoundException e) {             
-               System.err.println(e);
-            }
+           } catch (ClassNotFoundException e) {             
+              System.err.println(e);
+           }
             
-
-            break;
-             
-         
+           break;
+                     
      }
      
      
      // zatrzymanie, jeżeli brakuje graczy lub nie ma połąćzenia przy grze sieciowej
-     if (player1==null || player2==null) {
-           
-         gameState=GameState.WAIT;
-         console.setMessageLn("Wybierz \"Gra\"  \u279C \"Nowa gra\" aby " +
-                              "rozpocz\u0105\u0107.", Color.GRAY);
-
-         
-     }
+     if (player1==null || player2==null)  throw new NullPointerException();
+ 
+     // start, jeżeli wszystko w porządku
      
-     
-     // sygnał rozpoczęcia, jeżeli wszystko w porządku
-     else {
+     sounds.play(Sounds.SND_INFO); 
        
-       sounds.play(Sounds.SND_INFO); 
-       
-       try {
-         Thread.sleep(100);  
-       }
-       catch(InterruptedException e) {
-         System.err.println(e);
-       }       
-     
-       console.setMessageLn("START!", new Color(0x22, 0x8b, 0x22));  
-       console.newLine();
-         
+     try {
+       Thread.sleep(100);  
      }
+     catch(InterruptedException e) {}
+     
+     console.setMessageLn("START!", new Color(0x22, 0x8b, 0x22));  
+     console.newLine();      
 
      int moveNo = 1;            // nr ruchu
      List<BoardField> winRow;   // lista kamieni w ewentualnym wygrywającym rzędzie
@@ -284,12 +274,12 @@ public class Game extends Thread implements Observer {
      while (gameState==GameState.RUN) {  
                     
        // sekwencja zdarzeń dla każdego z graczy  
-       for(Player p:players) if (gameState==GameState.RUN) {
-         
+       for(Player p:players) if (gameState==GameState.RUN) {         
+    	   
          // komunikat na konsoli
          console.setMessage("Ruch #" + Integer.toString(moveNo) + ": ", Color.BLUE);
-         console.setMessage(p.getName(), (p.getColor()==BoardField.WHITE) ? Color.BLACK : Color.WHITE,
-                             (p.getColor()==BoardField.WHITE) ? Color.WHITE : Color.BLACK);
+         console.setMessage(p.getName(), (p.getColor()==BoardFieldState.WHITE) ? Color.BLACK : Color.WHITE,
+                           (p.getColor()==BoardFieldState.WHITE) ? Color.WHITE : Color.BLACK);
          
          // wykonanie ruchu przez gracza
          p.makeMove();   
@@ -298,13 +288,12 @@ public class Game extends Thread implements Observer {
          if (gameState!=GameState.RUN) break;
          
          // dokończenie komunikatu na konsoli - wykonany ruch 
-         console.setMessageLn("  \u279C  " + BoardGraphics.getFieldName(lBoard.lastField.getA(),
-                              lBoard.lastField.getB(), settings.getColsAndRows()), Color.RED);
+         console.setMessageLn("  \u279C  " + lBoard.getLastFieldName(), Color.RED);
          // dźwięk położenia kamienia
          sounds.play(Sounds.SND_MOVE);
          
          // sprawdzenie warunków końca gry (wygrana lub remis)
-         winRow = lBoard.getPieceRows();
+         winRow = lBoard.getWinningRow();
          if ((winRow != null || lBoard.freeFieldsAmount==0)) {
              
            // komunikat o wygranej 
@@ -329,13 +318,10 @@ public class Game extends Thread implements Observer {
            // kończący dzwonek :-)
            sounds.play(Sounds.SND_SUCCESS);
            // zatrzymanie rozgrywki
-           gameState=GameState.WAIT;
-           
-           
-             
+           gameState=GameState.WAIT;                      
+              
          }
-         
-         
+                  
          // odłączenie od serwera
          if (gameState!=GameState.RUN && gameMode==GameMode.NETWORK_GAME && client!=null) {
              
@@ -346,42 +332,50 @@ public class Game extends Thread implements Observer {
            client.endGame();
            
          }
-         
-           
-         moveNo++;
-         
-         
+                    
+         moveNo++;         
          
        }
-        
-        
+                
      } 
      
      // przywrócenie domyślnego kursora w razie przerwania gry sieciowej
      if (gameMode == GameMode.NETWORK_GAME && client != null)  {
 
-         gBoard.setDefaultMouseCursor();
+       gBoard.setDefaultMouseCursor();
          
      }
-     
-     
-     // pętla oczekiwania na rozpoczęcie nowej gry
-     do {  
-          
-       try {         
-         Thread.sleep(10);
-       } catch (InterruptedException e) { return; }
-     
-     } while (gameState!=GameState.RESTART);
-         
-     
-       
+  
    }
    
    
+   /**
+    * Uruchomienie wątku - nowej rozgrywki
+    */
+   @Override
    public void run() {	   
 	 
-	  startNewGame(gameMode, settings);
+	  try {
+		  
+	     startNewGame(gameMode, settings);
+	     
+	  } catch (NullPointerException e) {	    	 	    	
+		  
+	     gameState=GameState.WAIT;
+         console.setMessageLn("Wybierz \"Gra\"  \u279C \"Nowa gra\" aby " +
+                              "rozpocz\u0105\u0107.", Color.GRAY);
+
+	  }
+	     
+
+	  // pętla oczekiwania na rozpoczęcie nowej gry
+	  do {  
+	          
+	    try {         
+	       Thread.sleep(10);
+	    } catch (InterruptedException e) { return; }
+	     
+	  } while (gameState!=GameState.RESTART);
 	   
    }
    
@@ -390,14 +384,12 @@ public class Game extends Thread implements Observer {
    public void setGameMode(GameMode gameMode) {
 	 this.gameMode = gameMode;
    }
-
+   
+   
    public void setSettings(Settings settings) {
 	 this.settings = settings;
    }
 
- 
-   
-   
    
 }
 

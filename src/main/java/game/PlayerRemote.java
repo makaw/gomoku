@@ -31,7 +31,7 @@ public class PlayerRemote extends Player {
     * @param lBoard Referencja do obiektu logicznej warstwy planszy
     * @param name Nazwa gracza
     */   
-   public PlayerRemote(Client client, byte pieceColor, BoardGraphics gBoard, BoardLogic lBoard, String name)  {
+   public PlayerRemote(Client client, BoardFieldState pieceColor, BoardGraphics gBoard, BoardLogic lBoard, String name)  {
        
       super(pieceColor, gBoard, lBoard, name);
       this.client = client;

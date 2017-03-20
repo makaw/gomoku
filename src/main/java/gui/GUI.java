@@ -5,24 +5,37 @@
 package gui;
 
 
-import game.GameMode;
-import game.GameState;
-import gomoku.AppObserver;
-import gomoku.IConf;
-import gomoku.Settings;
-import gui.dialogs.ConfirmDialog;
-import gui.dialogs.NewGameDialog;
-import gui.dialogs.PromptDialog;
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Observable;
 import java.util.Observer;
+
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JMenuBar;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.UIManager;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 import javax.swing.plaf.metal.OceanTheme;
+
+import game.GameMode;
+import game.GameState;
+import gomoku.AppObserver;
+import gomoku.IConf;
+import gomoku.Settings;
+import gui.dialogs.ConfirmDialog;
+import gui.dialogs.PromptDialog;
 
 /**
  *
@@ -114,8 +127,7 @@ public class GUI extends JFrame implements IBaseGUI, Observer {
     msgButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(final ActionEvent e) {
-        String msg = new PromptDialog(GUI.this, 
-                                      "Tre\u015b\u0107 wiadomo\u015bci:").getMessage();
+        String msg = new PromptDialog(GUI.this, "Tre\u015b\u0107 wiadomo\u015bci:").getAnswer();
         if (msg!=null && !msg.isEmpty()) {
           gameSpy.sendObject("message", msg);
         } 
@@ -148,7 +160,7 @@ public class GUI extends JFrame implements IBaseGUI, Observer {
       @Override
       public void actionPerformed(final ActionEvent e) {
             
-         boolean res = new ConfirmDialog(GUI.this, "Czy na pewno roz\u0142\u0105czy\u0107 ?").getResponse(); 
+         boolean res = new ConfirmDialog(GUI.this, "Czy na pewno roz\u0142\u0105czy\u0107 ?").isConfirmed(); 
           
          if (res) 
          try {
@@ -289,7 +301,9 @@ public class GUI extends JFrame implements IBaseGUI, Observer {
     // przesłanie do wątka gry nowych ustawien i referencji do nowej planszy
     gameSpy.sendObject("settings-main", settings);
     gameSpy.sendObject("board", board);
-    gameMode = new NewGameDialog(this).getGameMode();
+    
+    console.setMessageLn("Wybierz \"Gra\"  \u279C \"Nowa gra\" aby " +
+                         "rozpocz\u0105\u0107.", Color.GRAY);
 
   }  
   

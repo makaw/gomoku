@@ -6,7 +6,15 @@ package gui;
 
 import java.awt.Color;
 import java.awt.Font;
-import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JRootPane;
+import javax.swing.WindowConstants;
 
 /**
  *
@@ -65,6 +73,37 @@ public abstract class SimpleDialog extends JDialog {
      setVisible(true); 
 
    }
+   
+   
+   /**
+    * Klasa wewn. - komponent przycisku zamykajacego okienko dialogowe
+    */
+   protected class CloseButton extends JButton {
+   
+    
+      public CloseButton(String title) {
+       
+        super(title);
+        setFocusPainted(false);
+        addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(final ActionEvent e) {
+           
+           dispose();
+          
+         }
+       });
+                    
+     } 
+    
+
+     public CloseButton() {
+           
+        this("Zamknij"); 
+           
+     }       
+    
+  }      
    
 
 }

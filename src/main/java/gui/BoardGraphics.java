@@ -4,12 +4,24 @@
  */
 package gui;
 
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.util.List;
+
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
+
 import game.BoardField;
+import game.BoardFieldState;
 import game.BoardLogic;
 import gomoku.IConf;
-import javax.swing.*;
-import java.awt.*;
-import java.util.List;
 
 /**
  *
@@ -98,12 +110,12 @@ public class BoardGraphics extends JLayeredPane {
 
     }
    
-    //  kropki na planszy dla oryg. wymiarów 15x15
-    if (colsAndRows == IConf.DEFAULT_COLS_AND_ROWS) {
-      for (i=3;i<=11;i+=4) for (j=3;j<=11;j+=4) 
+    //  kropki 
+    int tmp = colsAndRows;
+    while (tmp > 11) tmp-=4;
+    if (tmp == 11) 
+      for (i=3; i<=colsAndRows-4; i+=4) for (j=3; j<=colsAndRows-4; j+=4) 
         g2D.fillOval(24+PX_FIELD*i+8, 12+PX_FIELD*j+8, 6, 5);
-    }
-    
    
    
   }
@@ -119,7 +131,8 @@ public class BoardGraphics extends JLayeredPane {
    * @param pChecked true jeżeli kamień ma być wyróżniony (w razie wygranej), false jeżeli nie
    * @param cursor true jeżeli ustawiany jest kursor, false jeżeli kamień
    */
-  private void setElement(BoardLogic lBoard, int a, int b, byte pColor, boolean pChecked, boolean cursor) {
+  private void setElement(BoardLogic lBoard, int a, int b, BoardFieldState pColor,
+		  boolean pChecked, boolean cursor) {
       
      // usuniecie poprzedniego kursora-kamienia 
      if (tmpCursor!=null) remove(tmpCursor);
@@ -127,7 +140,7 @@ public class BoardGraphics extends JLayeredPane {
      // czy kursor myszy jest na planszy i czy nie wskazuje na zajete pole (nie dotyczy zaznaczonej linii)
      // !!!! czy nie trzeba Integer.compareTo ???
      if (a>=0 && b>=0 && colsAndRows.compareTo(a)>0 && colsAndRows.compareTo(b)>0 //a<colsAndRows && b<colsAndRows 
-         && (pChecked || lBoard.getFieldState(a,b)==BoardField.EMPTY)) {
+         && (pChecked || lBoard.getFieldState(a,b)==BoardFieldState.EMPTY)) {
         
        // zmiana kursora myszy na 'lape'  
        if (getCursor().getType()!=Cursor.HAND_CURSOR) setCursor(new Cursor(Cursor.HAND_CURSOR));  
@@ -195,7 +208,7 @@ public class BoardGraphics extends JLayeredPane {
    * @param pChecked true jeżeli kamień ma być wyróżniony (w razie wygranej), false jeżeli nie
    * @see BoardGraphics#setElement(game.BoardLogic, int, int, byte, boolean, boolean) 
    */
-  public void setPiece(BoardLogic lBoard, int a, int b, byte pColor, boolean pChecked) {
+  public void setPiece(BoardLogic lBoard, int a, int b, BoardFieldState pColor, boolean pChecked) {
       
     setElement(lBoard, a, b, pColor, pChecked, false);  
       
@@ -209,7 +222,7 @@ public class BoardGraphics extends JLayeredPane {
    * @param pColor Kolor ustawianego kamienia
    * @see BoardGraphics#setElement(game.BoardLogic, int, int, byte, boolean, boolean) 
    */  
-  public void setPiece(BoardLogic lBoard, int a, int b, byte pColor) {
+  public void setPiece(BoardLogic lBoard, int a, int b, BoardFieldState pColor) {
       
      setPiece(lBoard, a, b, pColor, false); 
       
@@ -223,7 +236,7 @@ public class BoardGraphics extends JLayeredPane {
    * @param pColor Kolor ustawianego kursora
    * @see BoardGraphics#setElement(game.BoardLogic, int, int, byte, boolean, boolean) 
    */    
-  public void setCursor(BoardLogic lBoard, int a, int b, byte pColor) {
+  public void setCursor(BoardLogic lBoard, int a, int b, BoardFieldState pColor) {
       
      setElement(lBoard, a, b, pColor, false, true);  
       
@@ -235,7 +248,7 @@ public class BoardGraphics extends JLayeredPane {
    * @param pColor Kolor ustawianych kamieni
    * @see BoardGraphics#setPiece(game.BoardLogic, int, int, byte, boolean) 
    */
-  public void setPiecesRow(List<BoardField> list, byte pColor) {
+  public void setPiecesRow(List<BoardField> list, BoardFieldState pColor) {
         
     for(BoardField field:list) {
        
@@ -283,18 +296,6 @@ public class BoardGraphics extends JLayeredPane {
      
   }
   
-  /**
-   * Statyczna metoda zwracająca nazwę (np.A1) wskazanego pola planszy
-   * @param a Indeks a (kolumna) pola planszy
-   * @param b Indeks b (wiersz) pola planszy
-   * @param colsAndRows Ilość kolumn i wierszy planszy
-   * @return Nazwa (np.A1) wskazanego pola planszy
-   */
-  public static String getFieldName(int a, int b, int colsAndRows) {
-      
-     return Character.toString((char)('A' + a)) + Integer.toString(colsAndRows-b);
-      
-  }
   
   
 }

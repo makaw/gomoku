@@ -19,7 +19,7 @@ import gui.BoardGraphics;
 public abstract class Player {
     
    /** Kolor kamieni gracza - biały lub czarny */
-   protected final byte pieceColor;  
+   protected final BoardFieldState pieceColor;  
    /** Nazwa gracza */
    protected final String name;
    /** Referencja do obiektu będącego graficzną reprezentacją planszy */
@@ -38,7 +38,7 @@ public abstract class Player {
     * @param lBoard Referencja do obiektu logicznej warstwy planszy
     * @param name Nazwa gracza
     */
-   public Player(byte pieceColor, BoardGraphics gBoard, BoardLogic lBoard, String name) {
+   public Player(BoardFieldState pieceColor, BoardGraphics gBoard, BoardLogic lBoard, String name) {
        
      this.pieceColor = pieceColor;
      this.gBoard = gBoard;
@@ -63,11 +63,12 @@ public abstract class Player {
     */
    public abstract void makeMove();
 
+   
    /**
     * Metoda pobierająca kolor kamieni gracza
     * @return Kolor kamieni gracza
     */
-   public byte getColor() {  
+   public BoardFieldState getColor() {  
        
      return pieceColor; 
    
@@ -80,20 +81,9 @@ public abstract class Player {
     */
    public String getName() {
        
-      return name + " (" + getColorName() + ")";
+      return name + " (" + pieceColor.getName() + ")";
        
    }
       
-   
-   /**
-    * Metoda zwracająca nazwę koloru kamieni gracza
-    * @return Nazwa koloru kamieni gracza
-    */
-   private String getColorName() {
-       
-     return (pieceColor==BoardField.WHITE) ? "bia\u0142e" : "czarne";
-       
-   }
-   
     
 }

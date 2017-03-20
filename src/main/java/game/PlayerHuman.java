@@ -25,7 +25,7 @@ public class PlayerHuman extends Player {
     * @param lBoard Referencja do obiektu logicznej warstwy planszy
     * @param name Nazwa gracza
     */
-   public PlayerHuman(byte pieceColor, BoardGraphics gBoard, BoardLogic lBoard, String name) {
+   public PlayerHuman(BoardFieldState pieceColor, BoardGraphics gBoard, BoardLogic lBoard, String name) {
        
      super(pieceColor, gBoard, lBoard, name);
        

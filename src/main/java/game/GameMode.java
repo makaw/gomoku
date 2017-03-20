@@ -26,7 +26,7 @@ public enum GameMode {
 	
    private final int code;
    
-   public static final GameMode DEFAULT = NETWORK_GAME;
+   public static final GameMode DEFAULT = SINGLE_GAME;
    
    
    GameMode(int code) {
@@ -35,7 +35,7 @@ public enum GameMode {
    
    
    public boolean isEnabled() {
-	   return this != SINGLE_GAME;
+	   return true;
    }
 	
 	

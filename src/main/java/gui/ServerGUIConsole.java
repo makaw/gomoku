@@ -4,10 +4,14 @@
  */
 package gui;
 
-
-import javax.swing.*;
 import java.awt.Color;
-import javax.swing.text.*;
+
+import javax.swing.JTextPane;
+import javax.swing.text.DefaultCaret;
+import javax.swing.text.Style;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyleContext;
+import javax.swing.text.StyledDocument;
 
 /**
  *

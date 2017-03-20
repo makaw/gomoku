@@ -57,26 +57,28 @@ public final class Gomoku implements Observer {
     });
     
     
-    // na starcie odpalenie okna z wyborem trybu gry
-    //new NewGameDialog(gui, true);
     new RulesDialog(gui);
-  
-    do {
-    	
+    
 
+    gameSpy.addObserver(this);	
+  
+    do {    	
+    	
        game = new Game(gui.getBoard(), gui.getConsole(), gui.getSounds(), gameSpy);
         
        // ustawienie obserwatorów - dot. zmiany stanu gry oraz ustawień
        gameSpy.addObserver(game);
-       gameSpy.addObserver(this);	
 
        // uruchomienie nowej gry 
        game.setSettings(settings);
        game.setGameMode(gui.getGameMode());
        game.run();
+       
        // po zakończeniu gry, oczekiwanie na rozpoczęcie nowej
        do { } while (game.getGameState()!=GameState.RESTART);
+       
        game.interrupt();
+       gameSpy.deleteObserver(game);
        
     }  while (true);
     
@@ -99,15 +101,15 @@ public final class Gomoku implements Observer {
           
         case "board":
             
-          game.setBoard((BoardGraphics)obs.getObject());
-        
+          game.setBoard((BoardGraphics)obs.getObject());          
           break;
           
         case "settings-main":
             
           Settings s = (Settings)obs.getObject();
-          settings.setSettings(s.getColsAndRows(), s.getPiecesInRow(), s.getPiecesInRowStrict());
-          gui.getSettings().setSettings(s.getColsAndRows(), s.getPiecesInRow(), s.getPiecesInRowStrict());
+          settings.setSettings(s.getColsAndRows(), s.getPiecesInRow(), s.isComputerStarts());
+          gui.getSettings().setSettings(s.getColsAndRows(), s.getPiecesInRow(), s.isComputerStarts());                    
+          
           break;
      
      

@@ -80,8 +80,8 @@ public class ServerThread extends Thread {
                  
                  Settings settings = server.getSettings();
              
-                 output.writeObject(new Command(Command.CMD_SETTINGS, new SettingsVar(settings.getColsAndRows(), 
-                         settings.getPiecesInRow(), settings.getPiecesInRowStrict())));
+                 output.writeObject(new Command(Command.CMD_SETTINGS,
+                		 new SettingsVar(settings.getColsAndRows(), settings.getPiecesInRow())));
                  output.flush();
                  break;
                  

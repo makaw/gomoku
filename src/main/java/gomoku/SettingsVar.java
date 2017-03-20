@@ -20,8 +20,6 @@ public class SettingsVar implements Serializable {
   protected int colsAndRows;  
   /** Ilość kamieni w rzędzie wymagana do wygranej */
   protected int piecesInRow;
-  /** Czy do wygranej wymagane jest DOKŁADNIE n kamieni w rzędzie  */
-  protected boolean piecesInRowStrict; 
 
     
   private final static long serialVersionUID = 1L;
@@ -31,7 +29,7 @@ public class SettingsVar implements Serializable {
    */
   public SettingsVar() {
       
-     this(IConf.DEFAULT_COLS_AND_ROWS, IConf.DEFAULT_PIECES_IN_ROW, IConf.DEFAULT_PIECES_IN_ROW_STRICT);
+     this(IConf.DEFAULT_COLS_AND_ROWS, IConf.DEFAULT_PIECES_IN_ROW);
       
   }    
   
@@ -40,13 +38,11 @@ public class SettingsVar implements Serializable {
    * Konstruktor obiektu, ustawiający podane wartości
    * @param colsAndRows Ilość wierszy i kolumn planszy
    * @param piecesInRow Ilość kamieni w rzędzie wymagana do wygranej 
-   * @param piecesInRowStrict Czy do wygranej wymagane jest DOKŁADNIE n kamieni w rzędzie
    */
-  public SettingsVar(int colsAndRows, int piecesInRow, boolean piecesInRowStrict) {
+  public SettingsVar(int colsAndRows, int piecesInRow) {
       
      this.colsAndRows = colsAndRows;
      this.piecesInRow = piecesInRow;
-     this.piecesInRowStrict = piecesInRowStrict;
       
   }      
     

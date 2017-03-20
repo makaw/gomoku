@@ -4,10 +4,11 @@
  */
 package gui;
 
-import game.BoardField;
 import java.awt.Image;
 
 import javax.swing.ImageIcon;
+
+import game.BoardFieldState;
 
 /**
  *
@@ -46,12 +47,12 @@ public class ImageRes {
    * @param checked Jeżeli true kamień wyróżniony, jeżeli false to nie
    * @return Obrazek z odpowiednim kamieniem
    */
-  public static Image getImgPiece(byte pColor, boolean checked) {
+  public static Image getImgPiece(BoardFieldState pColor, boolean checked) {
       
     if (checked)
-      return (pColor==BoardField.WHITE) ?  WHITE_PIECE_CHECKED : BLACK_PIECE_CHECKED;
+      return (pColor==BoardFieldState.WHITE) ?  WHITE_PIECE_CHECKED : BLACK_PIECE_CHECKED;
     else
-      return (pColor==BoardField.WHITE) ?  WHITE_PIECE : BLACK_PIECE;  
+      return (pColor==BoardFieldState.WHITE) ?  WHITE_PIECE : BLACK_PIECE;  
  
   }
 
@@ -61,9 +62,9 @@ public class ImageRes {
    * @param pColor Kolor kamienia w kursorze
    * @return Obrazek kursora planszy
    */
-  public static Image getImgCursor(byte pColor) {
+  public static Image getImgCursor(BoardFieldState pColor) {
       
-     return (pColor==BoardField.WHITE) ? CURSOR_WHITE_PIECE : CURSOR_BLACK_PIECE;
+     return (pColor==BoardFieldState.WHITE) ? CURSOR_WHITE_PIECE : CURSOR_BLACK_PIECE;
       
   }
   
