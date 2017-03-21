@@ -29,13 +29,10 @@ public class BoardLogic {
   private final BoardField[] fields;
   /** Referencja do ostatnio zapełnionego pola planszy */
   private BoardField lastField;  
-  /** Aktualny stan planszy - linie poziome, pionowe i ukośne */
+  /** Aktualny stan planszy - linie poziome, pionowe i ukośne (repr. znakowa) */
   private String horizLine = "", vertLine = "", sketchLLine = "", sketchRLine = "";
   /** Wszystkie rozważane ciągi kamieni */
-  private final String[] allListB, allListW;
-  
-  /** Wiersz pustych pól */
-  private static String emptyLine = "";
+  private final String[] allListB, allListW;  
   
   
   /**
@@ -59,25 +56,23 @@ public class BoardLogic {
     	        
        fields[indeks+b] = new BoardField(a, b);
       
-       horizLine += "0";  
-       vertLine += "0";
+       horizLine += "0";  vertLine += "0";
        
-       if (b<=a) { sketchLLine += "0"; }
-       if (b>=a) { sketchRLine += "0"; }
+       if (b<=a) sketchLLine += "0"; else sketchLLine += "x";
+       if (b>=a) sketchRLine += "0"; else sketchRLine += "x";
        
-      }
+      }      
       
-      emptyLine += "0";
-      
-      horizLine += "|";
-      vertLine += "|";
-      sketchLLine += "|";
-      sketchRLine += "|";
+      horizLine += "|";   vertLine += "|";
+      sketchLLine += "|";  sketchRLine += "|";
      
     }    
     
+    sketchLLine += sketchRLine.substring(settings.getColsAndRows()+1);
+    sketchRLine = sketchLLine;
+    
 	allListB = getAllRows(BoardFieldState.BLACK);		
-    allListW = getAllRows(BoardFieldState.WHITE);    
+    allListW = getAllRows(BoardFieldState.WHITE);      
     
   }
    
@@ -128,15 +123,31 @@ public class BoardLogic {
       changed = true;
       lastField = new BoardField(a, b, state);     
       
+      int cr = settings.getColsAndRows() + 1;
+      
       StringBuilder tmp = new StringBuilder(horizLine);
-      tmp.setCharAt(b*(settings.getColsAndRows()+1) + a, state.getCode());
+      tmp.setCharAt(b*cr + a, state.getCode());
       horizLine = tmp.toString();
       
       tmp = new StringBuilder(vertLine);
-      tmp.setCharAt(a*(settings.getColsAndRows()+1) + b, state.getCode());
+      tmp.setCharAt(a*cr + b, state.getCode());
       vertLine = tmp.toString();      
-              
-            
+      
+      
+      try {
+        tmp = new StringBuilder(sketchLLine);
+        tmp.setCharAt((a+b)*cr + a, state.getCode());
+        sketchLLine = tmp.toString();
+      }
+      catch (Exception e) { System.err.println(e); }
+      
+      try {
+        tmp = new StringBuilder(sketchRLine);
+        tmp.setCharAt((a-b)*cr + a + (cr) * (cr-2), state.getCode());        
+        sketchRLine = tmp.toString();
+      }
+      catch (Exception e) { System.err.println(e); }
+      
     }
     
     // wyjątek - a lub b poza zakresem
@@ -335,7 +346,8 @@ public class BoardLogic {
 
 	String success = "";
 	for (int i=0; i<settings.getPiecesInRow(); i++) success += pColor.toString();
-	return horizLine.contains(success) || vertLine.contains(success);
+	return horizLine.contains(success) || vertLine.contains(success)
+			|| sketchLLine.contains(success) || sketchRLine.contains(success);
 	  
   }
   
@@ -356,24 +368,27 @@ public class BoardLogic {
 	String m[] = pColor == BoardFieldState.BLACK ? allListB : allListW;	
 	
 
-	for (int i=0;i<2;i++) {
+	for (int i=0;i<4;i++) {
 		
-	  String line = i == 0 ? horizLine : vertLine;
-	  line = line.replace(emptyLine, "");
+	  String line = (i == 0 ? horizLine : (i == 1 ? vertLine : (i==2 ? sketchLLine : sketchRLine)));
+	  line = line.replaceAll("[0]{" + settings.getColsAndRows() + "}", "");  
+	  if (i>1) line = line.replaceAll("x*",  "");
 	  
 	  for (String match : m)  {
 
 		  int cnt = StringUtils.countMatches(match, t);
 		  
 		  // bonusy ...
-		  boolean near1 = match.startsWith("0") && match.endsWith("0") && cnt+2 == settings.getPiecesInRow();
-		  boolean near2 = cnt+1 == settings.getPiecesInRow();
+		  boolean near1 = cnt+2 == settings.getPiecesInRow();
+		  boolean near2 = near1 && match.startsWith("0") && match.endsWith("0");
+		  boolean near3 = !near1 && cnt+1 == settings.getPiecesInRow();
 		  
 		  double mcnt = StringUtils.countMatches(line, match);
-		  if (near1) { mcnt+=4; }
-		  if (near2) { mcnt+=6; }
+		  if (near1) { mcnt += 2; }
+		  if (near2) { mcnt += 2; }
+		  if (near3) { mcnt += 2; }
 		  
-		  score += cnt * Math.pow(2, mcnt-1);
+		  score += cnt * Math.pow(mcnt, 2);
 		   
 	  }
 	  
@@ -412,22 +427,20 @@ public class BoardLogic {
   /**
    * Wszystkie możliwe ciągi (bez powt.)
    * @param elems Elementy składowe
-   * @param listLen Długość listy
+   * @param len Długość listy
    * @return Tablica możliwych ciagów znaków
    */
-  private static String[] getAllRows(String[] elems, int listLen) {      
+  private static String[] getAllRows(String[] elems, int len) {      
       
-     if (listLen == 1) return elems;       
+     if (len == 1) return elems;       
 
-     String[] rows = new String[(int) Math.pow(elems.length, listLen)];
-     String[] subrows = getAllRows(elems, listLen - 1);
-          
-     int index = 0;
-     for (int i = 0; i < elems.length; i++)
-       for(int j = 0; j < subrows.length; j++) {                  
-         rows[index] = elems[i] + subrows[j];
-         index++;
-       }
+     String[] rows = new String[(int) Math.pow(elems.length, len)];
+     String[] subrows = getAllRows(elems, len - 1);          
+     int el = elems.length, sl = subrows.length;
+     
+     for (int i = 0; i < el; i++)
+       for(int j = 0; j < sl; j++)                   
+         rows[i*sl + j] = elems[i] + subrows[j];
          
      return rows;
           

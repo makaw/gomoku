@@ -62,6 +62,8 @@ public class RulesDialog extends SimpleDialog {
     @Override
     protected void getContent()  {
         
+       setTitle("Gomoku - o programie");	
+    	
        setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
        JPanel p = new JPanel(new FlowLayout(FlowLayout.CENTER));
        p.setBorder(new EmptyBorder(10, 10, 10, 10));

@@ -24,7 +24,9 @@ import gomoku.IConf;
 import gomoku.Settings;
 import gui.GUI;
 import gui.ServerGUI;
-import gui.ServerGUIConsole;
+import gui.BaseConsole;
+import gui.dialogs.DialogType;
+import gui.dialogs.InfoDialog;
 
 
 /**
@@ -325,11 +327,15 @@ public class Server  implements Observer {
   public void setServerSocket() {
       
       try { 
-          serverSocket = new ServerSocket(IConf.SERVER_PORT);
+    	  
+        serverSocket = new ServerSocket(IConf.SERVER_PORT);
+        
       } catch (IOException e) {
+    	  
+        gui.getServerConsole().setMessageLn(e.getMessage(), Color.RED);
+        new InfoDialog(gui, e.getMessage(), DialogType.WARNING);
+        System.exit(0);
           
-          System.err.println("Wyj\u015bcie z programu : "+e);
-          System.exit(0);
       }
       
   }
@@ -359,7 +365,7 @@ public class Server  implements Observer {
       System.exit(0);  
     }
     
-    ServerGUIConsole console = server.gui.getServerConsole();
+    BaseConsole console = server.gui.getServerConsole();
     console.setMessageLn("Gomoku Server v."+IConf.VERSION_SERVER, Color.GRAY);
     console.setMessageLn("--------------------------------", Color.GRAY);  
    

@@ -15,23 +15,22 @@ import javax.swing.text.StyledDocument;
 
 /**
  *
- * Szablon obiektu reprezentującego konsolę do wyświetlania komunikatów 
- * w GUI serwera.
+ * Podstawowa konsola (GUI serwera)
  * 
  * @author Maciej Kawecki
  * 
  */
 @SuppressWarnings("serial")
-public class ServerGUIConsole extends JTextPane  {
+public class BaseConsole extends JTextPane  {
       
    /** Flaga blokująca wyprowadzanie na konsolę komunikatów */ 
-   private final Boolean lockedFlag; 
+   protected final Boolean lockedFlag; 
 
    
    /**
     * Konstruktor obiektu reprezentującego konsolę, przygotowuje komponent do użycia
     */
-   protected ServerGUIConsole() {
+   protected BaseConsole() {
        
       super();
       setEditable(false);

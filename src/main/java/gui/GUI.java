@@ -111,6 +111,7 @@ public class GUI extends JFrame implements IBaseGUI, Observer {
     GridBagConstraints gbc = new GridBagConstraints();
     panelConsole.setLayout(gb);
 
+    
     gbc.fill = GridBagConstraints.BOTH;
     gbc.gridwidth = GridBagConstraints.RELATIVE;
     gbc.gridwidth = 1;
@@ -203,6 +204,7 @@ public class GUI extends JFrame implements IBaseGUI, Observer {
     panelConsole.add(new JScrollPane(console, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
                                      JScrollPane.HORIZONTAL_SCROLLBAR_NEVER));
     
+    
     // zagnieżdżenie graficznej planszy w panelu
     panelBoard = new JPanel(new GridLayout(1,1));
     panelBoard.add(board);
@@ -214,7 +216,7 @@ public class GUI extends JFrame implements IBaseGUI, Observer {
     JMenuBar menu = new JMenuBar();
     menu.add(menuGame);
     menu.add(new MenuHelp(this));
-    setJMenuBar(menu);
+    setJMenuBar(menu);    
     
     pack();
     setSize(F_WIDTH, F_HEIGHT);
@@ -302,8 +304,7 @@ public class GUI extends JFrame implements IBaseGUI, Observer {
     gameSpy.sendObject("settings-main", settings);
     gameSpy.sendObject("board", board);
     
-    console.setMessageLn("Wybierz \"Gra\"  \u279C \"Nowa gra\" aby " +
-                         "rozpocz\u0105\u0107.", Color.GRAY);
+    console.newGameMsg();    
 
   }  
   

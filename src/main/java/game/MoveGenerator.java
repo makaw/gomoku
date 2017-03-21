@@ -23,11 +23,9 @@ public class MoveGenerator extends IA<BoardField> {
    /** Wybrany algorytm */
    private final static Algorithm algo = Algorithm.NEGASCOUT;	
    /** Maksymalna głębokość rekurencji */
-   private final static int MAX_DEPTH = 2;	
-   
+   protected final static int MAX_DEPTH = 2;	   
    /** Maksymalny możliwy wynik (wygrana) */
-   protected final static int MAX_SCORE = Integer.MAX_VALUE - 1;
-   
+   protected final static int MAX_SCORE = Integer.MAX_VALUE - 1;   
    /** Współczynnik obrony */
    private final static double DEFENCE = 0.8;
 	
@@ -122,7 +120,7 @@ public class MoveGenerator extends IA<BoardField> {
 	  next();
 	  int score2 = board.getScore(currentPlayer);
 	  previous();
-	  gameOver = Math.abs(score1) == MAX_SCORE || board.getFreeFieldsAmount() == 0;
+	  gameOver = score1 == MAX_SCORE || board.getFreeFieldsAmount() == 0;
 	  return gameOver ? score1 : score1 - score2 * DEFENCE;
 	}
 	

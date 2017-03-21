@@ -7,7 +7,7 @@ package network;
 
 import gomoku.Settings;
 import gomoku.SettingsVar;
-import gui.ServerGUIConsole;
+import gui.BaseConsole;
 import java.awt.Color;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -25,7 +25,7 @@ public class ServerThread extends Thread {
   /** Numer obsługiwanego klienta (0-1) */
   private final int clientNumber;  
   /** Referencja do konsoli GUI */
-  private final ServerGUIConsole console;
+  private final BaseConsole console;
   /** Referencja do obiektu głównego serwera */
   private final Server server;
   /** Referencja do gniazdka klienckiego */
@@ -38,7 +38,7 @@ public class ServerThread extends Thread {
    * @param server Referencja do obiektu głównego serwera
    * @param clientNumber Numer obsługiwanego klienta
    */
-  public ServerThread(ServerGUIConsole console, Socket socket, Server server, int clientNumber)  {
+  public ServerThread(BaseConsole console, Socket socket, Server server, int clientNumber)  {
       
     this.server = server;
     this.socket = socket;

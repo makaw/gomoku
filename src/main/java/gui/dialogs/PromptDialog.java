@@ -17,7 +17,6 @@ import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
 import gui.IBaseGUI;
-import gui.ImageRes;
 import gui.SimpleDialog;
 
 /**
@@ -62,7 +61,7 @@ public class PromptDialog extends SimpleDialog {
      super(frame);
      this.question = question;
      this.defaultAnswer = defaultAnswer;
-     super.showDialog(300, 125); 
+     super.showDialog(300, 165); 
             
    }    
    
@@ -78,7 +77,7 @@ public class PromptDialog extends SimpleDialog {
       JPanel p = new JPanel();
       p.setLayout(new BoxLayout(p, BoxLayout.X_AXIS));
       
-      JLabel ico = new JLabel(ImageRes.getIcon("question.png"));
+      JLabel ico = new JLabel(DialogType.PROMPT.getIcon());
       ico.setBorder(new EmptyBorder(25, 5, 0, 5));
       p.add(ico);
       

@@ -4,17 +4,18 @@
  */
 package network;
 
+import java.awt.Color;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
+
 import game.GameState;
 import gomoku.AppObserver;
 import gomoku.IConf;
 import gomoku.Settings;
 import gomoku.SettingsVar;
 import gui.Console;
-import java.awt.Color;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.Socket;
 
 /**
  *
@@ -222,9 +223,7 @@ public final class Client {
     
     console.newLine();
     console.setMessageLn("Zerwanie po\u0142\u0105czenia przez serwer.", Color.RED);
-    console.setMessageLn("Wybierz \"Gra\"  \u279C \"Nowa gra\" aby " +
-                              "rozpocz\u0105\u0107.", Color.GRAY);
-   
+    console.newGameMsg();    
              
     ping.stopPinging();
     console.networkButtonsEnable(false);

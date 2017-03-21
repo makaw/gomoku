@@ -5,7 +5,6 @@
 package gui.dialogs;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -68,13 +67,8 @@ public class SettingsDialog extends SimpleDialog {
     protected void getContent()  {
         
        setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
-       JLabel t =  new JLabel("Ustawienia" + (frame.isServer() ? " (serwer)" : ""));
-       t.setAlignmentX(Component.CENTER_ALIGNMENT);
-       t.setBorder(new EmptyBorder(10, 0, 20, 0)); 
+       setTitle("Gomoku: ustawienia" + (frame.isServer() ? " (serwer)" : ""));
        
-       add(t);
-       
-       // panel do umieszczenia pól wyboru typu JComboBox
        JPanel p = new JPanel(new GridLayout(2,2));
        
        JLabel label = new JLabel("Wielko\u015b\u0107 planszy:");
@@ -156,7 +150,6 @@ public class SettingsDialog extends SimpleDialog {
        add(tx);       
        
        
-       // przygotowanie przycisków Zastosuj i Anuluj
        JButton buttonChange = new JButton("Zastosuj");
        buttonChange.addActionListener(new ActionListener() {
           @Override

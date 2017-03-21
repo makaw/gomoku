@@ -19,6 +19,8 @@ import gui.BoardGraphics;
 import gui.Console;
 import gui.GUI;
 import gui.Sounds;
+import gui.dialogs.DialogType;
+import gui.dialogs.InfoDialog;
 import network.Client;
 import network.Command;
 
@@ -239,7 +241,7 @@ public class Game extends Thread implements Observer {
               console.networkButtonsEnable(false);
               player1 = null;
               player2 = null;
-               
+              new InfoDialog(frame, "Pr\u00f3ba po\u0142\u0105czenia nieudana.", DialogType.WARNING);
                 
            } catch (ClassNotFoundException e) {             
               System.err.println(e);
@@ -301,7 +303,16 @@ public class Game extends Thread implements Observer {
                
              console.newLine();  
              console.setMessageLn("WYGRYWA " + p.getName().toUpperCase() + " !!!", Color.RED);
+             console.newGameMsg();
+             
              gBoard.setPiecesRow(winRow, p.getColor());
+             
+             boolean win = (gameMode == GameMode.SINGLE_GAME && p instanceof PlayerHuman) 
+            		 || gameMode == GameMode.HOTSEAT_GAME 
+            		 || (gameMode == GameMode.NETWORK_GAME && p instanceof PlayerLocal);
+             
+             new InfoDialog(frame, "Koniec gry (ruch\u00f3w: " + String.valueOf(moveNo) + ").\n\n"
+             		+ "Wygrywa " + p.getName() + ".", win ? DialogType.WIN : DialogType.LOOSE);
              
            }
            
@@ -310,6 +321,10 @@ public class Game extends Thread implements Observer {
                
              console.newLine();  
              console.setMessageLn("REMIS!", Color.RED);  
+             console.newGameMsg();
+             
+             new InfoDialog(frame, "Koniec gry (ruch\u00f3w: " + String.valueOf(moveNo) + ").\n\n"
+             		+ "Gra zako\u0144czona remisem.", DialogType.DRAW);
              
            }
 
@@ -362,8 +377,7 @@ public class Game extends Thread implements Observer {
 	  } catch (NullPointerException e) {	    	 	    	
 		  
 	     gameState=GameState.WAIT;
-         console.setMessageLn("Wybierz \"Gra\"  \u279C \"Nowa gra\" aby " +
-                              "rozpocz\u0105\u0107.", Color.GRAY);
+	     console.newGameMsg();
 
 	  }
 	     

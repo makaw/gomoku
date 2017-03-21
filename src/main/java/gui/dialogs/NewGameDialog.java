@@ -35,36 +35,22 @@ import gui.SimpleDialog;
 @SuppressWarnings("serial")
 public class NewGameDialog extends SimpleDialog {
 
-  /** Wartość true, jeżeli jest to start aplikacji, żeby móc się przywitać ;-) */  
-  private final boolean firstTime; 
   /** Wybrany przez użytkownika tryb nowej gry */
   private GameMode gameMode;
   
   /**
-    * Konstruktor, wywołanie konstruktora klasy nadrzędnej, wypełnienie wewn. pól 
-    * i wyświetlenie okienka
+    * Konstruktor
     * @param frame Referencja do interfejsu GUI
-    * @param firstTime Wartość true, jeżeli jest to start aplikacji
     */      
-  public NewGameDialog(IBaseGUI frame, boolean firstTime) {
+  public NewGameDialog(IBaseGUI frame) {
       
      super(frame);
-     this.firstTime = firstTime;
-     gameMode = GameMode.SINGLE_GAME;
+     gameMode = GameMode.DEFAULT;
      super.showDialog(320, 220);
        
   }
   
-  /**
-   * Konstruktor wołany jeżeli nie jest to start aplikacji. 
-   * Wywołanie konstruktora klasy nadrzędnej, wypełnienie wewn. pól i wyświetlenie okienka
-   * @param frame Referencja do interfejsu GUI
-   */
-  public NewGameDialog(IBaseGUI frame) {
-      
-     this(frame, false);    
-      
-  }
+
   
   /**
    * Metoda wyświetlająca zawartość okienka
@@ -73,9 +59,9 @@ public class NewGameDialog extends SimpleDialog {
   protected final void getContent() {
 
      setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
+     setTitle("Gomoku - nowa gra");
      
-     JLabel title = new JLabel((firstTime ? "Witaj! " : "") + "Wybierz tryb " + 
-                               (firstTime ? "" : "nowej ") + "rozgrywki:");
+     JLabel title = new JLabel("Wybierz tryb nowej rozgrywki:");
      title.setBorder(new EmptyBorder(20, 0, 20, 0));
      title.setAlignmentX(Component.CENTER_ALIGNMENT);
      add(title);
@@ -157,10 +143,7 @@ public class NewGameDialog extends SimpleDialog {
      
   }
   
-  /**
-   * Metoda pobierająca wybrany przez użytkownika tryb nowej gry
-   * @return Odpowiedź użytkownika 
-   */   
+  
   public GameMode getGameMode() {
       
     return gameMode;  

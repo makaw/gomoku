@@ -16,7 +16,6 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import gui.IBaseGUI;
-import gui.ImageRes;
 import gui.SimpleDialog;
 
 
@@ -46,7 +45,7 @@ public class ConfirmDialog extends SimpleDialog {
      super(frame);
      confirmed = false;
      this.question = question;
-     super.showDialog(300, 120); 
+     super.showDialog(300, 150); 
             
    } 
    
@@ -64,17 +63,14 @@ public class ConfirmDialog extends SimpleDialog {
       p.setLayout(new BoxLayout(p, BoxLayout.X_AXIS));
       p.setPreferredSize(new Dimension(130, 70));
       
-      //JLabel ico = new JLabel(UIManager.getIcon("OptionPane.questionIcon")); 
-      JLabel ico = new JLabel(ImageRes.getIcon("question.png"));
+      JLabel ico = new JLabel(DialogType.CONFIRM.getIcon());
       ico.setBorder(new EmptyBorder(25, 0, 0, 20));
       p.add(ico);
       
-      // wyświetlenie pytania
       p.add(new JLabel(question, JLabel.CENTER));
       
       add(p); 
        
-      // przygotowanie przycisków Tak/Nie
       JButton buttonYes = new JButton("Tak");
       buttonYes.setFocusPainted(false);
       buttonYes.addActionListener(new ActionListener() {

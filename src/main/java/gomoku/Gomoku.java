@@ -4,15 +4,16 @@
  */
 package gomoku;
 
-import game.Game;
-import game.GameState;
-import gui.BoardGraphics;
-import gui.GUI;
-import gui.dialogs.RulesDialog;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Observable;
 import java.util.Observer;
+
 import javax.swing.SwingUtilities;
+
+import game.Game;
+import gui.BoardGraphics;
+import gui.GUI;
+import gui.dialogs.RulesDialog;
 import network.Server;
 
 
@@ -72,12 +73,8 @@ public final class Gomoku implements Observer {
        // uruchomienie nowej gry 
        game.setSettings(settings);
        game.setGameMode(gui.getGameMode());
-       game.run();
-       
-       // po zakończeniu gry, oczekiwanie na rozpoczęcie nowej
-       do { } while (game.getGameState()!=GameState.RESTART);
-       
-       game.interrupt();
+       game.start();
+       game.join();
        gameSpy.deleteObserver(game);
        
     }  while (true);

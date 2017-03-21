@@ -40,7 +40,7 @@ public class ServerGUI extends JFrame implements IBaseGUI {
   /** Wysokość okna aplikacji w pikselach */
   private static final int F_HEIGHT = 320;   
   /** Referencja do obiektu konsoli w GUI serwera */
-  private final ServerGUIConsole console;
+  private final BaseConsole console;
   /** Referencja do obiektu zawierającego ustawienia gry po stronie serwera */
   private final Settings serverSettings;
   /** Referencja do obiektu służącego do komunikacji z wątkami 
@@ -74,7 +74,7 @@ public class ServerGUI extends JFrame implements IBaseGUI {
       
     getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
   
-    console = new ServerGUIConsole(); 
+    console = new BaseConsole(); 
       
     getContentPane().add(console);
       
@@ -143,7 +143,7 @@ public class ServerGUI extends JFrame implements IBaseGUI {
    * Metoda zwraca referencję do konsoli w GUI serwera
    * @return Referencja do obiektu konsoli GUI serwera
    */
-  public ServerGUIConsole getServerConsole() {
+  public BaseConsole getServerConsole() {
         
     return console;  
         
@@ -173,18 +173,10 @@ public class ServerGUI extends JFrame implements IBaseGUI {
   }  
   
   
-  /**
-   * Tylko nadpisanie pustą metodą
-   * @param gameMode nie obsługiwane
-   * @param serverIP nie obsługiwane
-   */
   @Override
   public void restartGame(GameMode gameMode, String serverIP) {}
   
-   
-  /**
-   * Tylko nadpisanie pustą metodą
-   */
+     
   @Override
   public void restartGameSettings() {
   
