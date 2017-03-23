@@ -25,13 +25,14 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 import javax.swing.text.StyledDocument;
 
+import gomoku.IConf;
 import gomoku.Settings;
 import gui.IBaseGUI;
 import gui.SimpleDialog;
 
 /**
  *
- * Szablon obiektu wywołującego okienko dialogowe z formularzem zmiany ustawień gry
+ * Okienko dialogowe z formularzem zmiany ustawień gry
  * 
  * @author Maciej Kawecki
  * 
@@ -46,9 +47,8 @@ public class SettingsDialog extends SimpleDialog {
     
   
     /**
-     * Konstruktor, wywołanie konstruktora klasy nadrzędnej, wypełnienie wewn. pól 
-     * i wyświetlenie okienka
-     * @param frame Referencja do interfejsu GUI
+     * Konstruktor 
+     * @param frame Interfejs GUI
      */        
     public SettingsDialog(IBaseGUI frame) {
      
@@ -74,8 +74,16 @@ public class SettingsDialog extends SimpleDialog {
        JLabel label = new JLabel("Wielko\u015b\u0107 planszy:");
        label.setFont(formsFont);
        p.add(label);
-       String[] options = {"7\u00d77", "9\u00d79", "11\u00d711", "13\u00d713", "15\u00d715"};
-       final Integer[] boardOptionIndex = new Integer[] {7, 9, 11, 13, 15};
+       
+       int j = 0;
+       int k = (IConf.MAX_COLS_AND_ROWS - IConf.MIN_COLS_AND_ROWS) / 2 + 1;
+       String[] options = new String[k];
+       Integer[] boardOptionIndex = new Integer[k];
+       for (int i = IConf.MIN_COLS_AND_ROWS; i <= IConf.MAX_COLS_AND_ROWS; i+=2) {
+    	 options[j] = String.valueOf(i) + " \u00d7 " + String.valueOf(i);   
+    	 boardOptionIndex[j++] = i;
+       }
+       
        final JComboBox<String> boardSize = new JComboBox<>(options);
        boardSize.setFont(formsFont);
        boardSize.setSelectedIndex(Arrays.asList(boardOptionIndex).indexOf(settings.getColsAndRows()));
@@ -85,8 +93,17 @@ public class SettingsDialog extends SimpleDialog {
        label = new JLabel("Warunek wygranej:");
        label.setFont(formsFont);
        p.add(label);
-       options = new String[] {"3 kamienie", "4 kamienie", "5 kamieni", "6 kamieni"};
-       final Integer[] piecesOptionIndex = new Integer[] {3, 4, 5, 6};
+       
+       
+       k = IConf.MAX_PIECES_IN_ROW - IConf.MIN_PIECES_IN_ROW + 1;
+       options = new String[k];
+       Integer[] piecesOptionIndex = new Integer[k];
+       for (int i = 0; i < k; i++) {
+    	 j = i + IConf.MIN_PIECES_IN_ROW;  
+    	 options[i] = "rz\u0105d " + String.valueOf(j) + " kamieni";
+    	 piecesOptionIndex[i] = j;
+       }
+       
        final JComboBox<String> piecesInLine = new JComboBox<>(options);
        piecesInLine.setFont(formsFont);
        piecesInLine.setSelectedIndex(Arrays.asList(piecesOptionIndex).indexOf(settings.getPiecesInRow()));

@@ -9,7 +9,7 @@ import java.io.Serializable;
 
 /**
  *
- * Szablon bazowego podstawowego obiektu przechowującego ustawienia gry
+ * Szablon bazowego obiektu ustawień gry
  * 
  * @author Maciej Kawecki
  * 
@@ -25,7 +25,7 @@ public class SettingsVar implements Serializable {
   private final static long serialVersionUID = 1L;
   
   /**
-   * Konstruktor obiektu, ustawiający domyślne wartości
+   * Konstruktor, ustawiający domyślne wartości
    */
   public SettingsVar() {
       
@@ -35,7 +35,7 @@ public class SettingsVar implements Serializable {
   
   
   /**
-   * Konstruktor obiektu, ustawiający podane wartości
+   * Konstruktor
    * @param colsAndRows Ilość wierszy i kolumn planszy
    * @param piecesInRow Ilość kamieni w rzędzie wymagana do wygranej 
    */

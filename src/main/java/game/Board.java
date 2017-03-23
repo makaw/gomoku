@@ -7,19 +7,17 @@ package game;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
-
 import gomoku.Settings;
 
 
 /**
  *
- * Szablon obiektu odpowiedzialnego za warstwę logiczną planszy 
+ * Warstwa logiczna planszy 
  * 
  * @author Maciej Kawecki
  * 
  */
-public class BoardLogic {
+public class Board {
 
   /** Ilość pozostałych na planszy wolnych pól */
   protected int freeFieldsAmount;  
@@ -29,18 +27,16 @@ public class BoardLogic {
   private final BoardField[] fields;
   /** Referencja do ostatnio zapełnionego pola planszy */
   private BoardField lastField;  
-  /** Aktualny stan planszy - linie poziome, pionowe i ukośne (repr. znakowa) */
-  private String horizLine = "", vertLine = "", sketchLLine = "", sketchRLine = "";
-  /** Wszystkie rozważane ciągi kamieni */
-  private final String[] allListB, allListW;  
+  
+  /** Aktualny stan planszy  */
+  private final BoardScoring scoring;
   
   
   /**
-   * Konstruktor obiektu logicznej warstwy planszy, tworzący wewnętrzną tablicę 
-   * stanu pól planszy, i inicjujący pozostałe zmienne i obiekty
-   * @param settings Referencja do obiektu zawierającego ustawienia gry
+   * Konstruktor
+   * @param settings Referencja do obiektu ustawień gry
    */
-  public BoardLogic(Settings settings) {
+  public Board(Settings settings) {
     
     this.settings = settings;
     
@@ -50,32 +46,17 @@ public class BoardLogic {
     
     for (int a=0; a<settings.getColsAndRows(); a++) {
         
-      int indeks = a*settings.getColsAndRows();
-     
-      for (int b=0; b<settings.getColsAndRows(); b++) {
-    	        
-       fields[indeks+b] = new BoardField(a, b);
-      
-       horizLine += "0";  vertLine += "0";
-       
-       if (b<=a) sketchLLine += "0"; else sketchLLine += "x";
-       if (b>=a) sketchRLine += "0"; else sketchRLine += "x";
-       
-      }      
-      
-      horizLine += "|";   vertLine += "|";
-      sketchLLine += "|";  sketchRLine += "|";
-     
-    }    
-    
-    sketchLLine += sketchRLine.substring(settings.getColsAndRows()+1);
-    sketchRLine = sketchLLine;
-    
-	allListB = getAllRows(BoardFieldState.BLACK);		
-    allListW = getAllRows(BoardFieldState.WHITE);      
+      int indeks = a*settings.getColsAndRows();     
+      for (int b=0; b<settings.getColsAndRows(); b++) 
+    	 fields[indeks+b] = new BoardField(a, b);
+
+    }        
+	
+    scoring = new BoardScoring(settings);
     
   }
    
+  
   
   
   /**
@@ -100,9 +81,9 @@ public class BoardLogic {
       
   }
   
+  
   /**
-   * Metoda próbująca zmienić stan wskazanego pola planszy; w razie sukcesu 
-   * zapamiętująca indeksy i stan do czasu następnej zmiany.
+   * Metoda próbująca zmienić stan wskazanego pola planszy
    * @param a Indeks a (kolumna) pola
    * @param b Indeks b (wiersz) pola
    * @param state Docelowa wartość(stan) pola
@@ -123,37 +104,12 @@ public class BoardLogic {
       changed = true;
       lastField = new BoardField(a, b, state);     
       
-      int cr = settings.getColsAndRows() + 1;
-      
-      StringBuilder tmp = new StringBuilder(horizLine);
-      tmp.setCharAt(b*cr + a, state.getCode());
-      horizLine = tmp.toString();
-      
-      tmp = new StringBuilder(vertLine);
-      tmp.setCharAt(a*cr + b, state.getCode());
-      vertLine = tmp.toString();      
-      
-      
-      try {
-        tmp = new StringBuilder(sketchLLine);
-        tmp.setCharAt((a+b)*cr + a, state.getCode());
-        sketchLLine = tmp.toString();
-      }
-      catch (Exception e) { System.err.println(e); }
-      
-      try {
-        tmp = new StringBuilder(sketchRLine);
-        tmp.setCharAt((a-b)*cr + a + (cr) * (cr-2), state.getCode());        
-        sketchRLine = tmp.toString();
-      }
-      catch (Exception e) { System.err.println(e); }
+      scoring.update(a, b, state);
       
     }
     
     // wyjątek - a lub b poza zakresem
     catch (Exception e) {   }
-
-    
     
     return changed;
 
@@ -178,7 +134,7 @@ public class BoardLogic {
      if (settings.getFieldsAmount() - freeFieldsAmount < piecesNum)
        return null;
      
-     if (!hasWon(pColor)) return null;
+     if (!scoring.hasWon(pColor)) return null;
      
      int i,j,dir;
      List<BoardField> winRow = new ArrayList<>();
@@ -235,7 +191,7 @@ public class BoardLogic {
    * Metoda znajdująca "wygrywający" rząd zawierający pole z ostatniego ruchu. 
    * @return null jeżeli nie ma wygranej, lub w razie wygranej lista par indeksów 
    * pól wchodzących w skład  wygrywającego rzędu, w celu oznaczenia ich na planszy.
-   * @see BoardLogic#getWinningRow(int, int, java.lang.Byte) 
+   * @see Board#getWinningRow(int, int, BoardFieldState)
    */
   public List<BoardField> getWinningRow() {
     
@@ -264,7 +220,7 @@ public class BoardLogic {
 
   
   /**
-   * Statyczna metoda zwracająca nazwę (np.A1) wskazanego pola planszy
+   * Metoda zwracająca nazwę (np.A1) wskazanego pola planszy
    * @param field Pole planszy
    * @return Nazwa (np.A1) wskazanego pola
    */
@@ -288,35 +244,31 @@ public class BoardLogic {
   
   
   //-----------------------------------------------------------------------------------
-  // metody dodatkowe dla Minimax
+  //metody dodatkowe dla Minimax
+
   
-  
-  /**
-   * Metoda zwracająca ilość kolumn i wierszy planszy z bieżących ustawień gry (dla PlayerComputer)
-   * @return Ilość kolumn i wierszy planszy.
-   */
-  protected int getColsAndRows() {
-      
-    return settings.getColsAndRows();
-      
+  /**   
+   * Punktacja sytuacji na planszy
+   * @param pColor Kolor gracza dla którego liczona jest punktacja
+   * @return Aktualna punktacja planszy dla danego gracza
+   */  
+  protected int getScore(BoardFieldState pColor) {
+	  return scoring.getScore(pColor);
   }
   
-  /**
-   * Metoda zwracająca ilość wszystkich pól planszy
-   * @return Ilość wszystkich pól planszy
-   */
-  protected int getFieldsAmount() {
-      
-     return settings.getFieldsAmount();
-      
+ 
+  protected int getColsAndRows() {	  
+	 return settings.getColsAndRows();  	  
   }
-  
   
   protected int getFreeFieldsAmount() {
-	  
-	 return freeFieldsAmount; 
-	  
+	 return freeFieldsAmount;
   }
+  
+  protected int getFieldsAmount() {
+	 return settings.getFieldsAmount();
+  }
+  
   
   /**
    * Metoda zwracająca listę pustych pól planszy
@@ -334,117 +286,9 @@ public class BoardLogic {
      
      return emptyFields;
       
-  }
+  }  
   
   
-  /**
-   * Czy wygrywa
-   * @param pColor Kolor kamieni
-   * @return True jeżeli wygrana
-   */
-  protected boolean hasWon(BoardFieldState pColor) {	  
-
-	String success = "";
-	for (int i=0; i<settings.getPiecesInRow(); i++) success += pColor.toString();
-	return horizLine.contains(success) || vertLine.contains(success)
-			|| sketchLLine.contains(success) || sketchRLine.contains(success);
-	  
-  }
-  
-  
-  
-  /**   
-   * Punktacja sytuacji na planszy (dla MiniMax). 
-   * @param pColor Kolor gracza dla którego liczona jest punktacja
-   * @return Aktualna punktacja planszy dla danego gracza
-   */
-  protected int getScore(BoardFieldState pColor) {
-	  
-	int score = 0;
-	String t = pColor.toString();
-
-	if (hasWon(pColor)) return MoveGenerator.MAX_SCORE;
-	
-	String m[] = pColor == BoardFieldState.BLACK ? allListB : allListW;	
-	
-
-	for (int i=0;i<4;i++) {
-		
-	  String line = (i == 0 ? horizLine : (i == 1 ? vertLine : (i==2 ? sketchLLine : sketchRLine)));
-	  line = line.replaceAll("[0]{" + settings.getColsAndRows() + "}", "");  
-	  if (i>1) line = line.replaceAll("x*",  "");
-	  
-	  for (String match : m)  {
-
-		  int cnt = StringUtils.countMatches(match, t);
-		  
-		  // bonusy ...
-		  boolean near1 = cnt+2 == settings.getPiecesInRow();
-		  boolean near2 = near1 && match.startsWith("0") && match.endsWith("0");
-		  boolean near3 = !near1 && cnt+1 == settings.getPiecesInRow();
-		  
-		  double mcnt = StringUtils.countMatches(line, match);
-		  if (near1) { mcnt += 2; }
-		  if (near2) { mcnt += 2; }
-		  if (near3) { mcnt += 2; }
-		  
-		  score += cnt * Math.pow(mcnt, 2);
-		   
-	  }
-	  
-	}
-	  
-	return score;
-    
-  }
-  
-  
-  /**
-   * Wszystkie możliwe ciągi bez wygrywających i z co najmniej 2-oma kamieniami
-   * @param pColor Kolor kamieni
-   * @return Tablica ciągów znaków
-   */
-  private String[] getAllRows(BoardFieldState pColor) {
-	  
-	 String t = pColor.toString();
-	 String[] row = getAllRows(new String[] { t,  "0"}, settings.getPiecesInRow());
-	 
-	 List<String> tmp = new ArrayList<>();
-	 
-	 for (String s: row) {
-		 
-	   int i = StringUtils.countMatches(s, t);
-	   if (i>1 && i<settings.getPiecesInRow()) tmp.add(s);
-		 
-	 }
-	 
-	 String tmps[] = new String[tmp.size()];
-	 return tmp.toArray(tmps);
-	  
-  }
-  
-  
-  /**
-   * Wszystkie możliwe ciągi (bez powt.)
-   * @param elems Elementy składowe
-   * @param len Długość listy
-   * @return Tablica możliwych ciagów znaków
-   */
-  private static String[] getAllRows(String[] elems, int len) {      
-      
-     if (len == 1) return elems;       
-
-     String[] rows = new String[(int) Math.pow(elems.length, len)];
-     String[] subrows = getAllRows(elems, len - 1);          
-     int el = elems.length, sl = subrows.length;
-     
-     for (int i = 0; i < el; i++)
-       for(int j = 0; j < sl; j++)                   
-         rows[i*sl + j] = elems[i] + subrows[j];
-         
-     return rows;
-          
-  }
 
 }
   

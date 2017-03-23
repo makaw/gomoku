@@ -41,25 +41,20 @@ public class ServerGUI extends JFrame implements IBaseGUI {
   private static final int F_HEIGHT = 320;   
   /** Referencja do obiektu konsoli w GUI serwera */
   private final BaseConsole console;
-  /** Referencja do obiektu zawierającego ustawienia gry po stronie serwera */
+  /** Ustawienia gry po stronie serwera */
   private final Settings serverSettings;
-  /** Referencja do obiektu służącego do komunikacji z wątkami 
-   * odpowiedzialnymi za pracę serwera w razie zmiany ustawień */
+  /** Obserwator - komunikacja z wątkami serwera */
   private final AppObserver serverSpy;
   
   
   /**
-   * Konstruktor budujący graficzny interfejs użytkownika i wywołujący 
-   * okno z wyborem trybu nowej gry
-   * @param serverSpy Referencja do obiektu służącego do komunikacji z wątkami 
-   * odpowiedzialnymi za pracę serwera 
-   * @param serverSettings  Referencja do obiektu zawierającego ustawienia gry 
-   * po stronie serwera
+   * Konstruktor
+   * @param serverSpy  Obserwator - komunikacja z wątkami serwera
+   * @param serverSettings Ustawienia gry po stronie serwera
    */      
   public ServerGUI(final AppObserver serverSpy, Settings serverSettings) {
      
-    super("Gomoku Server");
-    
+    super("Gomoku Server");    
     
     this.serverSettings = serverSettings;
     this.serverSpy = serverSpy;
@@ -139,20 +134,14 @@ public class ServerGUI extends JFrame implements IBaseGUI {
 
   }
     
-  /**
-   * Metoda zwraca referencję do konsoli w GUI serwera
-   * @return Referencja do obiektu konsoli GUI serwera
-   */
-  public BaseConsole getServerConsole() {
+
+  public BaseConsole getConsole() {
         
     return console;  
         
   }
 
-  /**
-   * Metoda zwraca obiekt ustawień gry po stronie serwera
-   * @return Obiekt ustawień gry po stronie serwera
-   */
+  
   @Override
   public Settings getSettings() {
         

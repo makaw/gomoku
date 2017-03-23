@@ -39,6 +39,7 @@ public enum GameMode {
    }
 	
 	
+   @Override
    public String toString() {
 	   
 	 switch (this) {
@@ -59,7 +60,7 @@ public enum GameMode {
    
    /**
     * Metoda zwraca odpowiedni obiekt dla kodu
-    * @param Kod
+    * @param code Kod
     * @return Obiekt stanu
     */
    public static GameMode get(int code) {

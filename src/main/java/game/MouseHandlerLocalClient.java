@@ -20,31 +20,31 @@ import network.Command;
  */
 public class MouseHandlerLocalClient extends MouseHandler  {
     
-    
+    /** Klient serwera */
     private Client client;
     
     
     /**
-     * Konstruktor inicjalizujący pola wewnętrzne klasy: zmienne i referencje
-     * @param gBoard Referencja do obiektu będącego graficzną reprezentacją planszy
-     * @param lBoard Referencja do obiektu logicznej warstwy planszy
+     * Konstruktor 
+     * @param gBoard Graficzna reprezentacja planszy
+     * @param lBoard Logiczna warstwa planszy
      * @param pColor Kolor kamieni gracza
      */
-    public MouseHandlerLocalClient(BoardGraphics gBoard, BoardLogic lBoard, BoardFieldState pColor) {
+    public MouseHandlerLocalClient(BoardGraphics gBoard, Board lBoard, BoardFieldState pColor) {
 
        super(gBoard, lBoard, pColor);
         
     }    
     
     /**
-     * Konstruktor inicjalizujący pola wewnętrzne klasy: zmienne i referencje
-     * @param client
-     * @param gBoard Referencja do obiektu będącego graficzną reprezentacją planszy
-     * @param lBoard Referencja do obiektu logicznej warstwy planszy
+     * Konstruktor 
+     * @param client Klient serwera 
+     * @param gBoard Graficzna reprezentacja planszy
+     * @param lBoard Logiczna warstwa planszy
      * @param pColor Kolor kamieni gracza
      */
      public MouseHandlerLocalClient(Client client, BoardGraphics gBoard, 
-                                         BoardLogic lBoard, BoardFieldState pColor) {
+                                         Board lBoard, BoardFieldState pColor) {
 
        this(gBoard, lBoard, pColor);
        this.client = client;
@@ -61,7 +61,7 @@ public class MouseHandlerLocalClient extends MouseHandler  {
     @Override
     protected void sendMoveToServer(int a, int b) {
 
-        if (!client.getPing().getPingOut())
+        if (!client.getPing().isPingOut())
         
         try {
             client.sendCommand(new Command(Command.CMD_MOVE, new BoardField(a, b, pColor)));

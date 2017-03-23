@@ -36,8 +36,8 @@ public class MenuGame extends JMenu {
     
     
    /**
-    * Konstruktor budujący menu "Gra" aplikacji
-    * @param frame Referencja do interfejsu GUI
+    * Konstruktor  
+    * @param frame Interfejs GUI
     */
    protected MenuGame(final IBaseGUI frame) {
        
@@ -53,7 +53,6 @@ public class MenuGame extends JMenu {
        @Override  
        public void actionPerformed(final ActionEvent e) {
            
-          // wywołanie okna z wyborem trybu nowej gry 
           new NewGameDialog(frame);
          
        }
@@ -97,13 +96,11 @@ public class MenuGame extends JMenu {
        @Override  
        public void actionPerformed(final ActionEvent e) {
            
-          // wywołanie okna z wyborem ustawień 
           new SettingsDialog(frame);
          
        }
      });       
      
-     //menuItem.setEnabled(false);
 
      addSeparator(); 
 
@@ -115,8 +112,7 @@ public class MenuGame extends JMenu {
      @Override
      public void actionPerformed(final ActionEvent e) {
            
-        boolean res = new ConfirmDialog(frame, "Czy na pewno zako\u0144czy\u0107 ?").isConfirmed();
-        // po potwierdzeniu przez użytkownika, zakończenie pracy aplikacji
+        boolean res = new ConfirmDialog(frame, "Czy na pewno zako\u0144czy\u0107 ?").isConfirmed();        
         if (res) Gomoku.quitGomoku();
           
        }
@@ -130,8 +126,5 @@ public class MenuGame extends JMenu {
    }
    
    
-   
-   
-    
     
 }

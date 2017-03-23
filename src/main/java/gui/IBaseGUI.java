@@ -10,8 +10,7 @@ import gomoku.Settings;
 
 /**
  *
- * Skrócony interfejs szablonu obiektu budującego graficzny interfejs użytkownika, 
- * udostępnia metody potrzebne do budowy okienek dialogowych
+ * Skrócony interfejs klas GUI
  * 
  * @author Maciej Kawecki
  * 

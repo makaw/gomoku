@@ -25,7 +25,7 @@ public abstract class Player {
    /** Referencja do obiektu będącego graficzną reprezentacją planszy */
    protected final BoardGraphics gBoard;
    /** Referencja do obiektu logicznej warstwy planszy */
-   protected final BoardLogic lBoard;
+   protected final Board lBoard;
    /** Zmienna wymuszająca zakończenie ruchu w razie zakończenia gry */
    protected boolean gameRestarted;
    
@@ -38,7 +38,7 @@ public abstract class Player {
     * @param lBoard Referencja do obiektu logicznej warstwy planszy
     * @param name Nazwa gracza
     */
-   public Player(BoardFieldState pieceColor, BoardGraphics gBoard, BoardLogic lBoard, String name) {
+   public Player(BoardFieldState pieceColor, BoardGraphics gBoard, Board lBoard, String name) {
        
      this.pieceColor = pieceColor;
      this.gBoard = gBoard;

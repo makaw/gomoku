@@ -26,8 +26,8 @@ import gui.dialogs.RulesDialog;
 public class MenuHelp extends JMenu {
     
    /**
-    * Konstruktor budujący menu "Pomoc" aplikacji
-    * @param frame Referencja do interfejsu GUI
+    * Konstruktor 
+    * @param frame Interfejs GUI
     */    
    protected MenuHelp(final IBaseGUI frame) {
        

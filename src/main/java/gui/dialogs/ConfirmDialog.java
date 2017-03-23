@@ -21,7 +21,7 @@ import gui.SimpleDialog;
 
 /**
  *
- * Szablon obiektu wywołującego okienko dialogowe z prośbą o potwierdzenie
+ * Okienko dialogowe z prośbą o potwierdzenie
  * 
  * @author Maciej Kawecki
  * 
@@ -35,9 +35,8 @@ public class ConfirmDialog extends SimpleDialog {
    private final String question;
     
   /**
-    * Konstruktor, wywołanie konstruktora klasy nadrzędnej, wypełnienie wewn. pól 
-    * i wyświetlenie okienka
-    * @param frame Referencja do interfejsu GUI
+    * Konstruktor 
+    * @param frame Interfejs GUI
     * @param question Pytanie do wyświetlenia w okienku
     */    
    public ConfirmDialog(IBaseGUI frame, String question) {

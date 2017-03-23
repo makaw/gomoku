@@ -20,7 +20,7 @@ import javax.swing.JLayeredPane;
 
 import game.BoardField;
 import game.BoardFieldState;
-import game.BoardLogic;
+import game.Board;
 import gomoku.IConf;
 
 /**
@@ -48,9 +48,7 @@ public class BoardGraphics extends JLayeredPane {
 
   
   /**
-   * Konstruktor obiektu odpowiedzialnego za graficzną reprezentację planszy, 
-   * rysuje planszę wykorzystując konstruktor klasy nadrzędnej oraz ustawia 
-   * rozmiary planszy i ładuje obrazki kamieni i kursorów
+   * Konstruktor
    * @param colsAndRows Ilość kolumn i wierszy
    */
   public BoardGraphics(int colsAndRows) {
@@ -59,7 +57,7 @@ public class BoardGraphics extends JLayeredPane {
     this.colsAndRows = colsAndRows;
     setPreferredSize(new Dimension(B_WIDTH, B_HEIGHT)); 
     tmpCursor = null;
-
+    
   }
   
   /**
@@ -131,15 +129,14 @@ public class BoardGraphics extends JLayeredPane {
    * @param pChecked true jeżeli kamień ma być wyróżniony (w razie wygranej), false jeżeli nie
    * @param cursor true jeżeli ustawiany jest kursor, false jeżeli kamień
    */
-  private void setElement(BoardLogic lBoard, int a, int b, BoardFieldState pColor,
+  private void setElement(Board lBoard, int a, int b, BoardFieldState pColor,
 		  boolean pChecked, boolean cursor) {
       
      // usuniecie poprzedniego kursora-kamienia 
      if (tmpCursor!=null) remove(tmpCursor);
   
      // czy kursor myszy jest na planszy i czy nie wskazuje na zajete pole (nie dotyczy zaznaczonej linii)
-     // !!!! czy nie trzeba Integer.compareTo ???
-     if (a>=0 && b>=0 && colsAndRows.compareTo(a)>0 && colsAndRows.compareTo(b)>0 //a<colsAndRows && b<colsAndRows 
+     if (a>=0 && b>=0 && colsAndRows.compareTo(a)>0 && colsAndRows.compareTo(b)>0 
          && (pChecked || lBoard.getFieldState(a,b)==BoardFieldState.EMPTY)) {
         
        // zmiana kursora myszy na 'lape'  
@@ -206,9 +203,9 @@ public class BoardGraphics extends JLayeredPane {
    * @param b Indeks b (wiersz) pola
    * @param pColor Kolor ustawianego kamienia
    * @param pChecked true jeżeli kamień ma być wyróżniony (w razie wygranej), false jeżeli nie
-   * @see BoardGraphics#setElement(game.BoardLogic, int, int, byte, boolean, boolean) 
+   * @see BoardGraphics#setElement(Board, int, int, BoardFieldState, boolean, boolean)
    */
-  public void setPiece(BoardLogic lBoard, int a, int b, BoardFieldState pColor, boolean pChecked) {
+  public void setPiece(Board lBoard, int a, int b, BoardFieldState pColor, boolean pChecked) {
       
     setElement(lBoard, a, b, pColor, pChecked, false);  
       
@@ -220,9 +217,9 @@ public class BoardGraphics extends JLayeredPane {
    * @param a Indeks a (kolumna) pola
    * @param b Indeks b (wiersz) pola
    * @param pColor Kolor ustawianego kamienia
-   * @see BoardGraphics#setElement(game.BoardLogic, int, int, byte, boolean, boolean) 
+   * @see BoardGraphics#setElement(Board, int, int, BoardFieldState, boolean, boolean)
    */  
-  public void setPiece(BoardLogic lBoard, int a, int b, BoardFieldState pColor) {
+  public void setPiece(Board lBoard, int a, int b, BoardFieldState pColor) {
       
      setPiece(lBoard, a, b, pColor, false); 
       
@@ -234,9 +231,9 @@ public class BoardGraphics extends JLayeredPane {
    * @param a Indeks a (kolumna) pola
    * @param b Indeks b (wiersz) pola
    * @param pColor Kolor ustawianego kursora
-   * @see BoardGraphics#setElement(game.BoardLogic, int, int, byte, boolean, boolean) 
+   * @see BoardGraphics#setElement(Board, int, int, BoardFieldState, boolean, boolean)
    */    
-  public void setCursor(BoardLogic lBoard, int a, int b, BoardFieldState pColor) {
+  public void setCursor(Board lBoard, int a, int b, BoardFieldState pColor) {
       
      setElement(lBoard, a, b, pColor, false, true);  
       
@@ -246,7 +243,7 @@ public class BoardGraphics extends JLayeredPane {
    * Metoda ustawiająca na planszy rząd wyróżnionych kamieni w razie wygranej
    * @param list Lista indeksów pól składających się na wygrywający rząd
    * @param pColor Kolor ustawianych kamieni
-   * @see BoardGraphics#setPiece(game.BoardLogic, int, int, byte, boolean) 
+   * @see BoardGraphics#setPiece(Board, int, int, BoardFieldState, boolean)
    */
   public void setPiecesRow(List<BoardField> list, BoardFieldState pColor) {
         
@@ -278,8 +275,7 @@ public class BoardGraphics extends JLayeredPane {
    */
   
   public static int getFieldA(int x) {
-
-     //x = col
+     
      return (int) Math.floor((((float)x - PX_BOARD_MARGIN/2 - ImageRes.IMG_PIECES_WIDTH/2)/PX_FIELD));
   
   }

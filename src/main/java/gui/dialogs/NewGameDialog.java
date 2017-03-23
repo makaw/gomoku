@@ -27,7 +27,7 @@ import gui.SimpleDialog;
 
 /**
  *
- * Szablon obiektu wywołującego okienko dialogowe z formularzem wyboru trybu nowej gry
+ * Okienko dialogowe z formularzem wyboru trybu nowej gry
  * 
  * @author Maciej Kawecki
  * 
@@ -40,7 +40,7 @@ public class NewGameDialog extends SimpleDialog {
   
   /**
     * Konstruktor
-    * @param frame Referencja do interfejsu GUI
+    * @param frame Interfejs GUI
     */      
   public NewGameDialog(IBaseGUI frame) {
       

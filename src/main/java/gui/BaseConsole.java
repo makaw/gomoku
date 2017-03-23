@@ -27,9 +27,6 @@ public class BaseConsole extends JTextPane  {
    protected final Boolean lockedFlag; 
 
    
-   /**
-    * Konstruktor obiektu reprezentującego konsolę, przygotowuje komponent do użycia
-    */
    protected BaseConsole() {
        
       super();

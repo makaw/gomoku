@@ -27,7 +27,7 @@ import network.Command;
 
 /**
  *
- * Szablon obiektu kontrolującego przebieg rozgrywki
+ * Wątek kontrolujący przebieg rozgrywki
  * 
  * @author Maciej Kawecki
  * 
@@ -38,11 +38,11 @@ public class Game extends Thread implements Observer {
    private Player player1;
    /** Referencja do obiektu reprezentującego drugiego z graczy */
    private Player player2;
-   /** Referencja do obiektu logicznej warstwy planszy */
-   private BoardLogic lBoard;
-   /** Referencja do obiektu będącego graficzną reprezentacją planszy */
+   /** Logicznej warstwa planszy */
+   private Board lBoard;
+   /** Graficzna reprezentacja planszy */
    private BoardGraphics gBoard;
-   /** Referencja do obiektu reprezentującego konsolę do wyświetlania komunikatów */
+   /** Konsola do wyświetlania komunikatów */
    private final Console console;
    /** Referencja do obiektu służącego do odtwarzania dźwięków */
    private final Sounds sounds;
@@ -50,8 +50,7 @@ public class Game extends Thread implements Observer {
    private GameState gameState;   
    /** Podany przez użytkownika adres IP serwera do przekazania do obiektu klienta */
    private String serverIP;
-   /** Referencja do obiektu służącego do komunikacji z tym wątkiem, 
-    * potrzebna do ustawienia obserwacji stanu gry przez wątek serwera */
+   /** Obserwacja stanu gry przez wątek serwera */
    private final AppObserver gameSpy;
    /** Obiekt klienta w grze sieciowej */
    private Client client;
@@ -64,12 +63,11 @@ public class Game extends Thread implements Observer {
    
    
    /**
-    * Konstruktor obiektu odpowiedzialnego za przebieg rozgrywki, przypisuje referencje do obiektów GUI
-    * @param gBoard Referencja do graficznej reprezentacji planszy
-    * @param console Referencja do obiektu reprezentującego konsolę do wyświetlania komunikatów
+    * Konstruktor 
+    * @param gBoard Graficzna reprezentacja planszy
+    * @param console Konsola do wyświetlania komunikatów
     * @param sounds Referencja do obiektu służącego do odtwarzania dźwięków
-    * @param gameSpy Referencja do obiektu służącego do komunikacji z tym wątkiem, 
-    * potrzebna do ustawienia obserwacji stanu gry przez wątki sieciowe
+    * @param gameSpy Referencja do obiektu służącego do komunikacji z tym wątkiem 
     */
    public Game(BoardGraphics gBoard, Console console, Sounds sounds, AppObserver gameSpy) {
      	
@@ -143,10 +141,7 @@ public class Game extends Thread implements Observer {
      
    }
    
-   /**
-    * Metoda zwracająca aktualny stan gry
-    * @return Aktualny stan gry
-    */
+
    public GameState getGameState() {
        
       return gameState;  
@@ -154,10 +149,6 @@ public class Game extends Thread implements Observer {
    }
 
    
-   /**
-    * Metoda ustanawiająca nową referencję do graficznej reprezentacji planszy
-    * @param board Nowa referencja do graficznej reprezentacji planszy
-    */
    public void setBoard(BoardGraphics board) {
        
       gBoard = board; 
@@ -167,14 +158,15 @@ public class Game extends Thread implements Observer {
    
    /**
     * Rozpoczęcie nowej rozgrywki.
-    * @param gameMode Tryb nowej rozgrywki (gra z komputerem, hot-seat, serwer lub klient)
-    * @param settings Referencja do aktualnych ustawień gry
+    * @param gameMode Tryb nowej rozgrywki 
+    * @param settings Aktualne ustawienia gry
     * @throws NullPointerException Nie przypisano graczy / nie rozpoczęto rozgrywki
     */
    private void startNewGame(GameMode gameMode, Settings settings) throws NullPointerException {
          
      gameState = GameState.RUN;     
-     lBoard = new BoardLogic(settings);
+     lBoard = new Board(settings);
+     frame.getStatusBar().setVisible(false);
 
      // przypisanie odpowiednich implementacji gracza w zależności od trybu rozgrywki	 
      switch (gameMode) {     
@@ -190,6 +182,8 @@ public class Game extends Thread implements Observer {
              player1 = new PlayerHuman(BoardFieldState.BLACK, gBoard, lBoard, "Gracz [Ty]");
              player2 = new PlayerComputer(BoardFieldState.WHITE, gBoard, lBoard, "Komputer");
            }
+           
+           frame.getStatusBar().setVisible(true);
             
            break;         
              
@@ -215,7 +209,7 @@ public class Game extends Thread implements Observer {
               gameSpy.sendObject("settings-main", clientSettings);
               
               // zmiana logiki planszy, bo zmiana ustawień
-              lBoard = new BoardLogic(clientSettings);
+              lBoard = new Board(clientSettings);
               
               // kto pierwszy ten zaczyna
               if (client.getNumber()==0) {
@@ -241,7 +235,6 @@ public class Game extends Thread implements Observer {
               console.networkButtonsEnable(false);
               player1 = null;
               player2 = null;
-              new InfoDialog(frame, "Pr\u00f3ba po\u0142\u0105czenia nieudana.", DialogType.WARNING);
                 
            } catch (ClassNotFoundException e) {             
               System.err.println(e);
@@ -364,9 +357,7 @@ public class Game extends Thread implements Observer {
    }
    
    
-   /**
-    * Uruchomienie wątku - nowej rozgrywki
-    */
+
    @Override
    public void run() {	   
 	 
@@ -380,7 +371,7 @@ public class Game extends Thread implements Observer {
 	     console.newGameMsg();
 
 	  }
-	     
+	  
 
 	  // pętla oczekiwania na rozpoczęcie nowej gry
 	  do {  

@@ -37,7 +37,7 @@ public class InfoDialog extends SimpleDialog {
  
    /**
     * Konstruktor
-    * @param frame Ref. do GUI
+    * @param frame Interfejs GUI
     * @param text Treść wiadomości
     * @param type Typ okna
     */

@@ -20,11 +20,11 @@ import network.MessageReader;
  */
 public class PlayerLocal extends Player {
     
+	/** Referencja do obiektu klienta */ 
    private final Client client;
 
    /**
-    * Konstruktor - wywołanie konstruktora z bazowej klasy abstrakcyjnej, 
-    * przypisanie wartości/referencji do wewnętrznych pól klasy
+    * Konstruktor 
     * @param client Referencja do obiektu klienta
     * @param pieceColor Kolor kamieni gracza
     * @param gBoard Referencja do obiektu będącego graficzną reprezentacją planszy
@@ -32,7 +32,7 @@ public class PlayerLocal extends Player {
     * @param name Nazwa gracza
     */
    public PlayerLocal(Client client, BoardFieldState pieceColor, 
-                BoardGraphics gBoard, BoardLogic lBoard, String name) {
+                BoardGraphics gBoard, Board lBoard, String name) {
        
      super(pieceColor, gBoard, lBoard, name);
      this.client = client;
@@ -48,7 +48,7 @@ public class PlayerLocal extends Player {
        
      super.forceEndTurn();
      
-     if (!client.getPing().getPingOut())
+     if (!client.getPing().isPingOut())
      try {
         client.sendCommand(new Command(Command.CMD_EXIT));        
      } catch (Exception e) {

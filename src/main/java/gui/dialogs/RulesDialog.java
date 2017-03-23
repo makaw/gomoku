@@ -6,15 +6,21 @@ package gui.dialogs;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.font.TextAttribute;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -30,6 +36,9 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 import javax.swing.text.StyledDocument;
 
+import edu.stanford.ejalbert.BrowserLauncher;
+import edu.stanford.ejalbert.exception.BrowserLaunchingInitializingException;
+import edu.stanford.ejalbert.exception.UnsupportedOperatingSystemException;
 import gomoku.IConf;
 import gui.IBaseGUI;
 import gui.ImageRes;
@@ -37,7 +46,7 @@ import gui.SimpleDialog;
 
 /**
  *
- * Szablon obiektu wywołującego okienko dialogowe z regułami gry Gomoku
+ * Okienko dialogowe z regułami gry Gomoku
  * 
  * @author Maciej Kawecki
  * 
@@ -46,8 +55,8 @@ import gui.SimpleDialog;
 public class RulesDialog extends SimpleDialog {
     
    /**
-    * Konstruktor, wywołanie konstruktora klasy nadrzędnej i wyświetlenie okienka
-    * @param frame Referencja do interfejsu GUI
+    * Konstruktor 
+    * @param frame Interfejs GUI
     */     
     public RulesDialog(IBaseGUI frame) {
      
@@ -69,12 +78,33 @@ public class RulesDialog extends SimpleDialog {
        p.setBorder(new EmptyBorder(10, 10, 10, 10));
        JLabel ico = new JLabel(ImageRes.getIcon("icon.png"));
        p.add(ico);
-       JPanel p0 = new JPanel(new GridLayout(2, 1, 0, 10));      
+       JPanel p0 = new JPanel(new GridLayout(3, 1, 0, 10));      
        p0.add(new JLabel("Gomoku v." + IConf.VERSION));
        JLabel lab = new JLabel("Autor: M. Kawecki " + IConf.YEARS);
        lab.setFont(formsFont);
        p0.add(lab);
-       p0.setBorder(new EmptyBorder(0, 25, 0, 0));
+       
+       lab = new JLabel("https://github.com/makaw/gomoku");
+       lab.setCursor(new Cursor(Cursor.HAND_CURSOR));
+       Map<TextAttribute, Integer> fontAttr = new HashMap<>();
+       fontAttr.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
+       lab.setFont(formsFont.deriveFont(fontAttr));
+       lab.setForeground(new Color(0x330066));
+       p0.add(lab);
+                 
+       lab.addMouseListener(new MouseAdapter() {
+         @Override
+         public void mouseClicked(MouseEvent e) {
+           try {
+              new BrowserLauncher().openURLinBrowser("https://github.com/makaw/gomoku");
+           }  catch (BrowserLaunchingInitializingException | UnsupportedOperatingSystemException ex) {
+              System.err.println(ex);
+           }
+         }
+       });          
+       
+       
+       p0.setBorder(new EmptyBorder(0, 15, 0, 0));
        p.add(p0);
        add(p);
        

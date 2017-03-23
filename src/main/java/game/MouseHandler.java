@@ -17,22 +17,22 @@ import java.awt.event.MouseEvent;
  */
 public class MouseHandler extends MouseAdapter  {
     
-    /** Referencja do obiektu będącego graficzną reprezentacją planszy */
+    /** Graficzna reprezentacja planszy */
     private final BoardGraphics gBoard;
-    /** Referencja do obiektu logicznej warstwy planszy */
-    private final BoardLogic lBoard;
+    /** Logiczna warstwa planszy */
+    private final Board lBoard;
     /** Kolor kamieni gracza */
     protected final BoardFieldState pColor;
     /** Flaga blokująca obsługę zdarzeń myszy */
     protected boolean lockedFlag;
     
     /**
-     * Konstruktor inicjalizujący pola wewnętrzne klasy: zmienne i referencje
-     * @param gBoard Referencja do obiektu będącego graficzną reprezentacją planszy
-     * @param lBoard Referencja do obiektu logicznej warstwy planszy
+     * Konstruktor 
+     * @param gBoard Graficzna reprezentacja planszy
+     * @param lBoard Logiczna warstwa planszy
      * @param pColor Kolor kamieni gracza
      */
-    public MouseHandler(BoardGraphics gBoard, BoardLogic lBoard, BoardFieldState pColor) {
+    public MouseHandler(BoardGraphics gBoard, Board lBoard, BoardFieldState pColor) {
 
        this.gBoard = gBoard; 
        this.lBoard = lBoard;
@@ -41,11 +41,7 @@ public class MouseHandler extends MouseAdapter  {
         
     }
     
-    /**
-     * Metoda obsługująca zdarzenie kliknięcia myszy: narysowanie kamienia na planszy 
-     * i zmiana wartości odpowiedniego pola logicznego
-     * @param me Obiekt opisujący zdarzenie myszy
-     */
+
     @Override
     public void mouseClicked(MouseEvent me) { 
         
@@ -74,18 +70,14 @@ public class MouseHandler extends MouseAdapter  {
     
     /**
      * Metoda wysyłająca do serwera komendę postawienia kamienia
-     * w wybranym miejscu planszy. Metoda pusta, do nadpisania przez klasy dziedziczące.
+     * w wybranym miejscu planszy. Do nadpisania przez klasy dziedziczące.
      * @param a Indeks a (kolumna) pola na planszy
      * @param b Indeks b (wiersz) pola na planszy
      */
     protected void sendMoveToServer(int a, int b) {}
     
+
     
-   
-    /**
-     * Metoda obsługująca zdarzenie przesunięcia myszy: rysowanie kursora na planszy 
-     * @param me Obiekt opisujący zdarzenie myszy
-     */   
     @Override
     public void mouseMoved(MouseEvent me) {
          

@@ -11,7 +11,7 @@ import java.net.SocketException;
 
 /**
  *
- * Szablon obiektu wątku odbierającego wiadomości dla lokalnego gracza - klienta
+ * Wątek odbierający wiadomości dla lokalnego gracza - klienta
  * 
  * @author Maciej Kawecki
  * 
@@ -23,7 +23,7 @@ public class MessageReader extends Thread {
   
   
   /**
-   * Konstruktor, inicjalizacja wewnętrznych atrybutów
+   * Konstruktor 
    * @param client Referencja do obiektu klienta
    */
   public MessageReader(Client client) {
@@ -35,13 +35,8 @@ public class MessageReader extends Thread {
   }
   
   
-  /**
-   * Metoda uruchamiająca (odbieranie wiadomości)
-   */
   @Override
-  public void run() {
-   
-   //if (!client.getLockMsgReader()) return;   
+  public void run() {   
       
    try {
           
@@ -64,8 +59,6 @@ public class MessageReader extends Thread {
 
    
   }
-  
-  
   
   
 

@@ -21,7 +21,7 @@ import gui.SimpleDialog;
 
 /**
  *
- * Szablon obiektu wywołującego okienko dialogowe do wprowadzenia wiadomości przez użytkownika
+ * Okienko dialogowe do wprowadzenia wiadomości przez użytkownika
  * 
  * @author Maciej Kawecki
  * 
@@ -37,10 +37,9 @@ public class PromptDialog extends SimpleDialog {
    private final String defaultAnswer;
        
    /**
-    * Konstruktor, wywołanie konstruktora klasy nadrzędnej, wypełnienie wewn. pól 
-    * i wyświetlenie okienka
-    * @param frame Referencja do interfejsu GUI
-     * @param question Pytanie do wyświetlenia w okienku
+    * Konstruktor 
+    * @param frame Interfejs GUI
+    * @param question Pytanie do wyświetlenia w okienku
     */       
    public PromptDialog(IBaseGUI frame, String question) {
        
@@ -50,11 +49,10 @@ public class PromptDialog extends SimpleDialog {
     
   
    /**
-    * Konstruktor, wywołanie konstruktora klasy nadrzędnej, wypełnienie wewn. pól 
-    * i wyświetlenie okienka
-    * @param frame Referencja do interfejsu GUI
+    * Konstruktor 
+    * @param frame Interfejs GUI
     * @param question Pytanie do wyświetlenia w okienku
-     * @param defaultAnswer Domyślna odpowiedź
+    * @param defaultAnswer Domyślna odpowiedź
     */       
    public PromptDialog(IBaseGUI frame, String question, String defaultAnswer) {
        

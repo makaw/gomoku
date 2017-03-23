@@ -10,7 +10,7 @@ import java.util.TimerTask;
 
 /**
  *
- * Szablon obiektu timera wysyłającego pingi do serwera
+ * Szablon obiektu timera, wysyłającego pingi do serwera
  * 
  * @author Maciej Kawecki
  * 
@@ -26,7 +26,7 @@ public class Ping extends Timer {
   
   
   /**
-   * Konstruktor, inicjalizacja wewnętrznych atrybutów
+   * Konstruktor 
    * @param client Referencja do obiektu klienta
    */
   public Ping(Client client) {
@@ -34,6 +34,7 @@ public class Ping extends Timer {
     this.client = client;  
       
   }
+  
   
   /**
    * Metoda uruchamiająca cykliczne zadanie (ping do serwera)
@@ -62,15 +63,12 @@ public class Ping extends Timer {
   }
   
 
-  /**
-   * Metoda informuje czy już wystąpił brak odpowiedzi na ping
-   * @return true jeżeli już wystąpił brak odpowiedzi na ping
-   */
-  public boolean getPingOut() {
+  public boolean isPingOut() {
       
     return pingOut;  
       
   }
+  
   
   /**
    * Metoda zatrzymuje pingowanie

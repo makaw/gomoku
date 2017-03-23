@@ -31,16 +31,14 @@ public final class Gomoku implements Observer {
   private GUI gui;  
   /** Obiekt reprezentujący rozgrywkę */
   private Game game;
-  /** Obiekt służący do komunikacji z wątkiem GUI w zakresie zmiany stanu gry */
+  /** Obserwator - komunikacja z wątkiem GUI w zakresie zmiany stanu gry */
   private AppObserver gameSpy;
-  /** Obiekt przechowujący ustawienia gry */
+  /** Ustawienia gry */
   private final Settings settings;
   
   
   /**
-   * Konstruktor klasy głównej, inicjalizacja obiektów, w tym bezpieczne wywołanie 
-   * interfejsu graficznego, ustawienie obserwatorów do komunikacji wątków, pętla 
-   * uruchamiająca rozgrywkę
+   * Konstruktor  
    * @throws InterruptedException
    * @throws InvocationTargetException 
    */
@@ -115,6 +113,7 @@ public final class Gomoku implements Observer {
      
   }  
   
+   
   /**
    *   Statyczna metoda kończąca działanie programu
    */
@@ -126,7 +125,7 @@ public final class Gomoku implements Observer {
   
 
   /** 
-   * Metoda main wołana przez system w trakcie uruchamiania aplikacji, uruchomienie okna klienta.
+   * Metoda main, uruchomienie okna klienta.
    * @param args Argumenty przekazane do aplikacji. Wywołanie z parametrem -s 
    * spowoduje uruchomienie statycznej metody main() z klasy Server, czyli uruchomienie serwera.
    * @see network.Server
@@ -142,7 +141,7 @@ public final class Gomoku implements Observer {
      } catch (InterruptedException e) {
         System.err.println("Problem podczas wywo\u0142ania interfejsu graficznego: "+e);
      } catch (InvocationTargetException e) {
-        System.err.println("Problem z wywo\u0142ania interfejsu graficznego: "+e);
+        System.err.println("Problem z wywo\u0142aniem interfejsu graficznego: "+e);        
      }
      
   }

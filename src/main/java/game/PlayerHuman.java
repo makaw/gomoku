@@ -18,14 +18,13 @@ public class PlayerHuman extends Player {
     
 
    /**
-    * Konstruktor - wywołanie konstruktora z bazowej klasy abstrakcyjnej, 
-    * przypisanie wartości/referencji do wewnętrznych pól klasy
+    * Konstruktor
     * @param pieceColor Kolor kamieni gracza
     * @param gBoard Referencja do obiektu będącego graficzną reprezentacją planszy
     * @param lBoard Referencja do obiektu logicznej warstwy planszy
     * @param name Nazwa gracza
     */
-   public PlayerHuman(BoardFieldState pieceColor, BoardGraphics gBoard, BoardLogic lBoard, String name) {
+   public PlayerHuman(BoardFieldState pieceColor, BoardGraphics gBoard, Board lBoard, String name) {
        
      super(pieceColor, gBoard, lBoard, name);
        

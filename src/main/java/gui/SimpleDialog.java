@@ -20,15 +20,14 @@ import javax.swing.WindowConstants;
 @SuppressWarnings("serial")
 public abstract class SimpleDialog extends JDialog {
    
-   /** Referencja do interfejsu GUI */
+   /** Interfejs GUI */
    protected final IBaseGUI frame;
    /** Czcionka wykorzystywana w okienkach dialogowych */
    protected final Font formsFont, formsFontB;
     
    /**
-    * Konstruktor (dla rozszerzających klas), przypisanie referencji do GUI 
-    * do wewnętrznego pola klasy, definicja czcionki
-    * @param frame Referencja do interfejsu GUI
+    * Konstruktor (dla rozszerzających klas) 
+    * @param frame Interfejs GUI
     */
    
    protected SimpleDialog(IBaseGUI frame) {

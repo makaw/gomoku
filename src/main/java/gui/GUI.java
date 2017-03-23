@@ -19,6 +19,7 @@ import java.net.Socket;
 import java.util.Observable;
 import java.util.Observer;
 
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -49,19 +50,19 @@ public class GUI extends JFrame implements IBaseGUI, Observer {
   
   
   /** Szerokość okna aplikacji w pikselach */
-  private static final int F_WIDTH = 395;
+  protected static final int F_WIDTH = 395;
   /** Wysokość okna aplikacji w pikselach */
-  private static final int F_HEIGHT = 560;       
+  protected static final int F_HEIGHT = 558;       
   
-  /** Obiekt będący graficzną reprezentacją planszy */  
+  /** Graficzna reprezentacja planszy */  
   private BoardGraphics board;
-  /** Obiekt reprezentujący konsolę */
+  /** Konsola */
   private final Console console;
   /** Wybrany tryb gry */
   private GameMode gameMode;
   /** Obiekt służący do odtwarzania dźwięków */  
   private Sounds sounds;
-  /** Referencja do obiektu służącego do komunikacji z wątkiem kontrolującym przebieg gry  w zakresie zmiany stanu gry */
+  /** Obserwator do komunikacji z wątkiem kontrolującym przebieg gry  */
   private final AppObserver gameSpy;
   /** Obiekt przechowujący ustawienia gry */
   private final Settings settings;
@@ -70,7 +71,9 @@ public class GUI extends JFrame implements IBaseGUI, Observer {
   /** Obiekt przycisku do wysyłania wiadomości w grze sieciowej */
   private final JButton msgButton;
   /** Przycisk rozłączenia z serwerem */
-  private final JButton disconButton;
+  private final JButton dscButton;
+  /** Pasek statusu */
+  private final StatusBar statusBar;
   /** Menu gra */
   private final MenuGame menuGame;
   /** Gniazdko dla klienta */
@@ -79,10 +82,8 @@ public class GUI extends JFrame implements IBaseGUI, Observer {
    
   
   /**
-   * Konstruktor budujący graficzny interfejs użytkownika i wywołujący 
-   * okno z wyborem trybu nowej gry
-   * @param gameSpy Referencja do obiektu służącego do komunikacji z wątkiem kontrolującym 
-   * przebieg gry
+   * Konstruktor
+   * @param gameSpy Obserwator - komunikacja z wątkiem kontrolującym przebieg gry
    */  
   public GUI(final AppObserver gameSpy) {
       
@@ -119,6 +120,7 @@ public class GUI extends JFrame implements IBaseGUI, Observer {
     gbc.weightx = 1.0;
     gbc.weighty = 1.0;
   
+    
     JPanel panelButtons = new JPanel(new GridLayout(3,1));
   
     // przycisk do wysyłania wiadomości
@@ -154,10 +156,10 @@ public class GUI extends JFrame implements IBaseGUI, Observer {
     menuGame = new MenuGame(this);
     
     // przycisk rozłączenia z serwerem
-    disconButton = new JButton("", ImageRes.getIcon("disconnect.png"));
-    disconButton.setFocusPainted(false);
-    disconButton.setToolTipText("Roz\u0142\u0105cz z serwerem");
-    disconButton.addActionListener(new ActionListener() {
+    dscButton = new JButton("", ImageRes.getIcon("disconnect.png"));
+    dscButton.setFocusPainted(false);
+    dscButton.setToolTipText("Roz\u0142\u0105cz z serwerem");
+    dscButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(final ActionEvent e) {
             
@@ -166,7 +168,7 @@ public class GUI extends JFrame implements IBaseGUI, Observer {
          if (res) 
          try {
            socket.close();
-           disconButton.setEnabled(false);
+           dscButton.setEnabled(false);
            menuGame.getNewGameItem().setEnabled(true);
          } 
          catch (IOException ex) {
@@ -177,12 +179,12 @@ public class GUI extends JFrame implements IBaseGUI, Observer {
        
     });
             
-    disconButton.setEnabled(false);
+    dscButton.setEnabled(false);
 
     
     panelButtons.add(sndButton);
     panelButtons.add(msgButton);
-    panelButtons.add(disconButton);
+    panelButtons.add(dscButton);
 
     panelButtons.setPreferredSize(new Dimension(40, 104));    
     gb.setConstraints(panelButtons, gbc);
@@ -194,9 +196,9 @@ public class GUI extends JFrame implements IBaseGUI, Observer {
     gbc.gridheight = 1;
     
  
-    console = new Console(msgButton, disconButton, menuGame.getNewGameItem());
-    console.setPreferredSize(new Dimension(F_WIDTH-70, 104));
-    console.setSize(new Dimension(F_WIDTH-70, 64));
+    console = new Console(msgButton, dscButton, menuGame.getNewGameItem());
+    console.setPreferredSize(new Dimension(F_WIDTH-70, 102));
+    //console.setSize(new Dimension(F_WIDTH-70, 64));
   
     gb.setConstraints(console, gbc);
     panelConsole.add(console);
@@ -208,9 +210,16 @@ public class GUI extends JFrame implements IBaseGUI, Observer {
     // zagnieżdżenie graficznej planszy w panelu
     panelBoard = new JPanel(new GridLayout(1,1));
     panelBoard.add(board);
+
+    JPanel csPanel = new JPanel();
+    csPanel.setLayout(new BoxLayout(csPanel, BoxLayout.Y_AXIS));
+    
+    statusBar = new StatusBar(this); 
+    csPanel.add(statusBar);    
+    csPanel.add(panelConsole);
     
     getContentPane().add(panelBoard, BorderLayout.NORTH);
-    getContentPane().add(panelConsole, BorderLayout.SOUTH);
+    getContentPane().add(csPanel, BorderLayout.SOUTH);
 
     // stworzenie glownego menu aplikacji
     JMenuBar menu = new JMenuBar();
@@ -226,7 +235,7 @@ public class GUI extends JFrame implements IBaseGUI, Observer {
     // witamy sie :-)
     console.setMessageLn("Dzie\u0144 dobry :-)", Color.BLACK); 
     
-    gameSpy.addObserver(this);
+    gameSpy.addObserver(this);    
 
   } 
 
@@ -274,6 +283,20 @@ public class GUI extends JFrame implements IBaseGUI, Observer {
     
   }
   
+  
+  /**
+   * Zatrzymanie rozgrywki
+   */
+  public void cancelGame() {
+	  
+	  gameSpy.sendObject("state", GameState.WAIT);
+	  console.setMessageLn("\nPrzerwano gr\u0119.", Color.RED);
+	  console.newGameMsg();
+	  board.setCursor(null);
+	  
+  }
+  
+  
   /**
    * Metoda obsługująca zmianę ustawień przez użytkownika: zatrzymanie bieżącej rozgrywki, 
    * powiadomienie wątku kontrolującego przebieg gry o zmianie stanu, wyczyszczenie konsoli, przygotowanie 
@@ -304,7 +327,7 @@ public class GUI extends JFrame implements IBaseGUI, Observer {
     gameSpy.sendObject("settings-main", settings);
     gameSpy.sendObject("board", board);
     
-    console.newGameMsg();    
+    console.newGameMsg();       
 
   }  
   
@@ -340,50 +363,39 @@ public class GUI extends JFrame implements IBaseGUI, Observer {
   }    
 
  
-  /**
-   * Metoda pobierająca referencję do obiektu konsoli
-   * @return Referencja do obiektu konsoli
-   */
   public Console getConsole() {
       
      return console; 
       
   }
   
-  /**
-   * Metoda pobierająca referencję do graficznej reprezentacji planszy
-   * @return Referencja do graficznej reprezentacji planszy
-   */
+  
+  public StatusBar getStatusBar() {
+	  
+	 return statusBar; 
+	  
+  }
+  
+  
   public BoardGraphics getBoard() {
       
     return board; 
       
   }
   
-  /**
-   * Metoda pobierająca tryb bieżącej rozgrywki
-   * @return Tryb bieżącej rozgrywki
-   */
   public GameMode getGameMode() {
       
     return gameMode; 
       
   }  
   
-  /**
-   *Metoda pobierająca referencję do obiektu odtwarzającego dźwięki
-   * @return Referencja do obiektu odtwarzającego dźwięki
-   */
   public Sounds getSounds() {
       
     return sounds;  
       
   }
 
-  /**
-   * Metoda pobierająca referencję do ustawień gry
-   * @return Referencja do ustawień gry
-   */
+  
   @Override
   public Settings getSettings() {
       
@@ -437,7 +449,7 @@ public class GUI extends JFrame implements IBaseGUI, Observer {
          case "socket": 
              
            socket = (Socket)obs.getObject();
-           disconButton.setEnabled(true);
+           dscButton.setEnabled(true);
            menuGame.getNewGameItem().setEnabled(false);           
            
            break;

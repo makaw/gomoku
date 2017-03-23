@@ -51,15 +51,16 @@ public class Server  implements Observer {
   List<Socket> serverSocketList;
   /** True jeżeli konieczny jest restart, false jeżeli nie */
   private boolean restart;
-  /** Referencja do obiektu do komunikacji z innymi wątkami (GUI) - obserwatora */
+  /** Obserwator do komunikacji z innymi wątkami */
   private AppObserver serverSpy;
-  /** Referencja do obiektu reprezentującego graficzny interfejs użytkownika serwera */
+  /** Referencja do GUI serwera */
   private ServerGUI gui;
   /** Ustawienia gry po stronie serwera */
   private final Settings settings;
   
+  
   /**
-   * Konstruktor obiektu serwera głównego
+   * Konstruktor
    * @throws InterruptedException Problem z uruchomieniem wątku GUI
    * @throws InvocationTargetException Problem z uruchomieniem wątku GUI
    */
@@ -205,17 +206,17 @@ public class Server  implements Observer {
       for (Socket s: serverSocketList) {
         
         // przesłanie powitania do klienta, żeby sprawdzić czy się czasem nie rozłączył  
-        gui.getServerConsole().setMessageLn("Komunikat powitania do klienta "+(n+1)+"....", new Color(0xa5, 0x2a, 0x2a));
+        gui.getConsole().setMessageLn("Komunikat powitania do klienta "+(n+1)+"....", new Color(0xa5, 0x2a, 0x2a));
         ObjectOutputStream out = getOutputStream(n); 
         try {
            out.writeObject(new Command(Command.CMD_START));
            out.flush();
         } catch (IOException ex) {
-           gui.getServerConsole().setMessageLn("Klient "+(n+1)+" roz\u0142\u0105czy\u0142 si\u0119.", Color.RED);
+           gui.getConsole().setMessageLn("Klient "+(n+1)+" roz\u0142\u0105czy\u0142 si\u0119.", Color.RED);
            serverRestart();
         }
       
-        ServerThread sThread = new ServerThread(this.gui.getServerConsole(), s, this, n);
+        ServerThread sThread = new ServerThread(this.gui.getConsole(), s, this, n);
         serverThreadList.add(sThread);
         sThread.start();
         n++;
@@ -288,8 +289,8 @@ public class Server  implements Observer {
    */  
   protected void serverRestart() {
       
-     gui.getServerConsole().setMessageLn("Serwer zrestartowany, zerwane połączenia.", Color.RED);
-     gui.getServerConsole().newLine(); 
+     gui.getConsole().setMessageLn("Serwer zrestartowany, zerwane połączenia.", Color.RED);
+     gui.getConsole().newLine(); 
 
      restart = true;
      
@@ -324,6 +325,9 @@ public class Server  implements Observer {
   }
   
   
+  /**
+   * Ustawienie gniazda
+   */
   public void setServerSocket() {
       
       try { 
@@ -332,7 +336,7 @@ public class Server  implements Observer {
         
       } catch (IOException e) {
     	  
-        gui.getServerConsole().setMessageLn(e.getMessage(), Color.RED);
+        gui.getConsole().setMessageLn(e.getMessage(), Color.RED);
         new InfoDialog(gui, e.getMessage(), DialogType.WARNING);
         System.exit(0);
           
@@ -343,10 +347,8 @@ public class Server  implements Observer {
   
       
  /** 
-   * Metoda main wołana przez system w trakcie uruchamiania aplikacji. 
-   * Wywołuje konstruktor, który bezpiecznie uruchamia interfejs graficzny, 
-   * oczekuje na podłączenie klientów, 
-   * aby w końcu uruchomić dedykowane dla nich wątki serwera.
+   * Metoda main: uruchamia interfejs graficzny, oczekuje na podłączenie klientów, 
+   * i uruchamia dedykowane dla nich wątki serwera.
    * Metoda jest wołana przez głowną klasę projektu Gomoku, w razie wywołania 
    * z parametrem -s.
    * @param args Parametry wejściowe (nie obsługiwane)
@@ -365,7 +367,7 @@ public class Server  implements Observer {
       System.exit(0);  
     }
     
-    BaseConsole console = server.gui.getServerConsole();
+    BaseConsole console = server.gui.getConsole();
     console.setMessageLn("Gomoku Server v."+IConf.VERSION_SERVER, Color.GRAY);
     console.setMessageLn("--------------------------------", Color.GRAY);  
    

@@ -14,25 +14,40 @@
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 	</properties>
+	
 
 	<dependencies>
 	
 		<!-- https://mvnrepository.com/artifact/fr.avianey/minimax4j -->
 		<dependency>
- 		   <groupId>fr.avianey</groupId>
- 		   <artifactId>minimax4j</artifactId>
-  		  <version>1.0.0</version>
+ 		 	<groupId>fr.avianey</groupId>
+ 		  	<artifactId>minimax4j</artifactId>
+  		   	<version>1.0.0</version>
 		</dependency>
-
+		
 		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
 		<dependency>
    		 	<groupId>org.apache.commons</groupId>
    		 	<artifactId>commons-lang3</artifactId>
    		 	<version>3.0</version>
 		</dependency>
-
+		
+		<!-- https://mvnrepository.com/artifact/edu.stanford.ejalbert/BrowserLauncher2 -->
+		<dependency>
+			<groupId>edu.stanford.ejalbert</groupId>
+			<artifactId>BrowserLauncher2</artifactId>
+			<version>1.3</version>
+		</dependency>		
+		<dependency>
+			<groupId>edu.stanford.ejalbert</groupId>
+			<artifactId>BrowserLauncher2</artifactId>
+			<version>1.3</version>
+			<classifier>sources</classifier>
+		</dependency>		
+		
 	</dependencies>
 	
+
 	<url>https://github.com/makaw/gomoku</url>
 	<description>Gra logiczno-strategiczna Gomoku, tryb lokalny lub sieciowy</description>
 </project>

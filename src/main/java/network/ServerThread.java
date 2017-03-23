@@ -15,7 +15,7 @@ import java.net.Socket;
 
 /**
  *
- * Szablon obiektu wątku serwera dedykowanego konkretnemu klientowi
+ * Wątek serwera dedykowany konkretnemu klientowi
  * 
  * @author Maciej Kawecki
  * 
@@ -31,8 +31,9 @@ public class ServerThread extends Thread {
   /** Referencja do gniazdka klienckiego */
   private final Socket socket;
   
+  
   /**
-   * Konstruktor szablonu obiektu wątku serwera dedykowanego konkretnemu klientowi.
+   * Konstruktor 
    * @param console Referencja do konsoli GUI
    * @param socket Rereferencja do gniazdka klienckiego
    * @param server Referencja do obiektu głównego serwera
@@ -49,9 +50,7 @@ public class ServerThread extends Thread {
     
   }  
   
-  /**
-   * Nadpisana metoda run z klasy Thread, wołana po uruchomieniu wątku
-   */
+
   @Override
   public void run() {
       

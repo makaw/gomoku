@@ -117,7 +117,6 @@ public final class Client {
   /**
    * Metoda pobiera referencję do timera pingującego serwer
    * @return Referencja do timera pingującego serwer
-   * @since 1.1
    */
   public Ping getPing() {
       
@@ -156,7 +155,7 @@ public final class Client {
   */
   public void sendCommand(Command cmd) throws IOException, ClassNotFoundException {
     
-    if ((ping==null || !ping.getPingOut()) && cmd instanceof Command) {
+    if ((ping==null || !ping.isPingOut()) && cmd instanceof Command) {
       output.writeObject(cmd);
       output.flush();
     }

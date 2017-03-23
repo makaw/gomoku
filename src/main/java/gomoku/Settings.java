@@ -20,7 +20,7 @@ public class Settings extends SettingsVar {
     
     
   /**
-   * Konstruktor obiektu, ustawiający domyślne wartości
+   * Konstruktor, ustawiający domyślne wartości
    */
   public Settings() {
       
@@ -30,7 +30,7 @@ public class Settings extends SettingsVar {
     
   
   /**
-   * Konstruktor obiektu, ustawiający podane wartości
+   * Konstruktor 
    * @param colsAndRows Ilość wierszy i kolumn planszy
    * @param piecesInRow Ilość kamieni w rzędzie wymagana do wygranej 
    */
@@ -42,7 +42,7 @@ public class Settings extends SettingsVar {
   }        
     
   /**
-   * Konstruktor obiektu, ustawiający podane wartości
+   * Konstruktor 
    * @param settings Podane ustawienia jako obiekt klasy bazowej
    */
   public Settings(SettingsVar settings) {

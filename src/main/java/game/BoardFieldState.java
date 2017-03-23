@@ -69,13 +69,27 @@ public enum BoardFieldState {
 	   
    }
    
-	
+   
+   @Override
    public String toString() {
 	   
 	 return String.valueOf(code);
 	   
    }
    
+   
+   /**
+    * Wygrywający rząd
+    * @param cnt Długość rzędu (ustawienia)
+    * @return Wygrywający rząd jako ciąg znaków
+    */
+   public String getWinningRow(int cnt) {
+	   
+	  String row = ""; 
+	  for (int i=0; i<cnt; i++) row += this.toString();
+	  return row;
+	   
+   }
    
    
 }

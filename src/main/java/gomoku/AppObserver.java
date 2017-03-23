@@ -37,20 +37,14 @@ public class AppObserver extends Observable  {
       
    }
    
-   /**
-    * Metoda pobierająca klucz przesyłanego obiektu
-    * @return Klucz przesyłanego obiektu
-    */
+   
    public String getKey() {
        
      return key;  
        
    }
    
-   /**
-    * Metoda zwracająca przesyłany obiekt
-    * @return Przesyłany obiekt
-    */
+   
    public Object getObject() {
        
      return object;  
