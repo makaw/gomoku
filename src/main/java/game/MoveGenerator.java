@@ -125,8 +125,11 @@ public class MoveGenerator extends IA<BoardField> {
 	 next();
 	 int score2 = board.getScore(currentPlayer);
 	 previous();
-	 gameOver = score1 == MAX_SCORE || board.getFreeFieldsAmount() == 0;
-	 return gameOver ? score1 : score1 - score2 * DEFENCE;
+	 
+	 boolean win1 = score1 == MAX_SCORE;
+	 gameOver = win1 || score2 == MAX_SCORE || board.getFreeFieldsAmount() == 0;
+	 
+	 return win1 ? score1 : score1 - score2* DEFENCE;	 
 	 
    }
 	

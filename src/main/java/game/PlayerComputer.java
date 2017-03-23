@@ -87,11 +87,12 @@ public class PlayerComputer extends Player  {
   	    	
   	      try {  	    	  
 			BoardField move = get();
+			lBoard.setLastField(move);
 			// rysowanie kamienia
 		    gBoard.setPiece(lBoard, move.getA(), move.getB(), getColor());
 		    gBoard.repaint();    
 		    // zmiana wartosci pola (logicznego)
-		    lBoard.setFieldState(move.getA(), move.getB(), getColor());		    		      
+		    lBoard.setFieldState(move.getA(), move.getB(), getColor());
 		  } 
   	      catch (InterruptedException | ExecutionException | CancellationException e) {	}
   	      finally {			  

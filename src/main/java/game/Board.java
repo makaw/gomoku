@@ -27,7 +27,8 @@ public class Board {
   private final BoardField[] fields;
   /** Referencja do ostatnio zapełnionego pola planszy */
   private BoardField lastField;  
-  
+  /** Lista pustych pól */
+  private final List<BoardField> emptyFields;
   /** Aktualny stan planszy  */
   private final BoardScoring scoring;
   
@@ -41,14 +42,16 @@ public class Board {
     this.settings = settings;
     
     freeFieldsAmount = settings.getFieldsAmount();
-    
+    emptyFields = new ArrayList<>();
     fields = new BoardField[freeFieldsAmount];
     
     for (int a=0; a<settings.getColsAndRows(); a++) {
         
       int indeks = a*settings.getColsAndRows();     
-      for (int b=0; b<settings.getColsAndRows(); b++) 
+      for (int b=0; b<settings.getColsAndRows(); b++) {    	
     	 fields[indeks+b] = new BoardField(a, b);
+    	 emptyFields.add(fields[indeks+b]);
+      }
 
     }        
 	
@@ -96,13 +99,21 @@ public class Board {
     try {
          
       int index = getIndex(a, b);  
+      
+      if (state != BoardFieldState.EMPTY) {
+    	freeFieldsAmount--;
+    	emptyFields.remove(fields[index]);
+      }
+      else {
+    	freeFieldsAmount++;
+    	emptyFields.add(fields[index]);
+      }
+      
       fields[index].setState(state); 
       
-      if (state != BoardFieldState.EMPTY) freeFieldsAmount--;
-      else freeFieldsAmount++;
       
       changed = true;
-      lastField = new BoardField(a, b, state);     
+      lastField = fields[index];
       
       scoring.update(a, b, state);
       
@@ -119,8 +130,7 @@ public class Board {
   
 
   /**
-   * Metoda znajdująca "wygrywający" rząd zawierający wskazane pole. 
-   * Sprawdzane są od góry 4 kierunki: skos góra,  pion, poziom, skos dół.
+   * Metoda znajdująca "wygrywający" rząd zawierający wskazane pole.
    * @param a Indeks a (kolumna) pola
    * @param b Indeks b (wiersz) pola
    * @param pColor Sprawdzany kolor
@@ -233,7 +243,7 @@ public class Board {
   
   
   /**
-   * Statyczna metoda zwracająca nazwę (np.A1) pola planszy z ostatniego ruchu
+   * Metoda zwracająca nazwę (np.A1) pola planszy z ostatniego ruchu
    * @return Nazwa (np.A1) pola
    */
   public String getLastFieldName() {
@@ -244,7 +254,7 @@ public class Board {
   
   
   //-----------------------------------------------------------------------------------
-  //metody dodatkowe dla Minimax
+  // metody dodatkowe dla AI
 
   
   /**   
@@ -269,26 +279,14 @@ public class Board {
 	 return settings.getFieldsAmount();
   }
   
+  protected void setLastField(BoardField lastField) {
+	 this.lastField = lastField;
+  }
   
-  /**
-   * Metoda zwracająca listę pustych pól planszy
-   * @return Lista pustych pól planszy
-   */
   protected List<BoardField> getEmptyFields() {
-      
-     ArrayList<BoardField> emptyFields = new ArrayList<>();
-
-     for (int i=0; i<settings.getFieldsAmount();i++) {
-         
-       if (fields[i].getState()==BoardFieldState.EMPTY) emptyFields.add(fields[i]);  
-         
-     }
-     
-     return emptyFields;
-      
+	 return new ArrayList<>(emptyFields);      
   }  
-  
-  
+    
 
 }
   

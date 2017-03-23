@@ -19,8 +19,7 @@ import gomoku.Settings;
 * @author Maciej Kawecki
 * 
 */
-@SuppressWarnings("serial")
-public class BoardScoring extends ArrayList<String> {
+public class BoardScoring {
 
   /** Indeksy linii -  poziome, pionowe i ukośne L-R */
   private final static int HORIZ = 0, VERT = 1, SKETCH_L = 2, SKETCH_R = 3;	
@@ -41,8 +40,7 @@ public class BoardScoring extends ArrayList<String> {
    * @param settings Referencja do obiektu zawierającego ustawienia gry
    */  
   public BoardScoring(Settings settings) {
-	  
-	super();  
+	  	
 	this.settings = settings;
 	
 	for (int a=0; a<settings.getColsAndRows(); a++) {       
@@ -77,10 +75,10 @@ public class BoardScoring extends ArrayList<String> {
 
 	String success = pColor == BoardFieldState.BLACK ? successB : successW;  
 	  
-	return StringUtils.contains(boardLines[HORIZ], success)
-			|| StringUtils.contains(boardLines[VERT], success)
-			|| StringUtils.contains(boardLines[SKETCH_L], success)
-			|| StringUtils.contains(boardLines[SKETCH_R], success);
+	return boardLines[HORIZ].contains(success)
+			|| boardLines[VERT].contains(success)
+			|| boardLines[SKETCH_L].contains(success)
+			|| boardLines[SKETCH_R].contains(success);
 	  
   }  
   
@@ -113,7 +111,7 @@ public class BoardScoring extends ArrayList<String> {
       boardLines[SKETCH_R] = tmp.toString();
     }
     catch (Exception e) {
-     e.printStackTrace();
+      System.err.println(e);
     }
     
   }
@@ -178,11 +176,12 @@ public class BoardScoring extends ArrayList<String> {
 	  
 	int score = 0;
 	String pStr = pColor.toString();
+	String opStr = pColor.getOpposite().toString();
 	String matches[] = pColor == BoardFieldState.BLACK ? allRowsB : allRowsW;		
 
 	for (String line : boardLines) {
 		
-	  line = line.replaceAll("[0x]{" + settings.getColsAndRows() + "}", "");
+	  line = line.replaceAll("[0x"+opStr+"]{" + settings.getColsAndRows() + "}", "");
 	  
 	  for (String match : matches)  {
 
@@ -195,8 +194,8 @@ public class BoardScoring extends ArrayList<String> {
 		  
 		  double mcnt =  StringUtils.countMatches(line, match);
 		  if (near1) { mcnt *= 2; } 
-		  if (near2) { mcnt *= 2; } 
-		  if (near3) { mcnt *= 8; }  
+		  if (near2) { mcnt *= 4; } 
+		  if (near3) { mcnt *= 16; }  
 		  
 		  score += cnt * mcnt; 
 		   

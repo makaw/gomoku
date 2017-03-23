@@ -80,5 +80,19 @@ public class BoardField implements Serializable, Move {
    }
    
    
+   @Override
+   public boolean equals(Object object) {
+	   
+	 try {
+	   BoardField field = (BoardField) object;
+	   return field.a == a && field.b == b && field.state == state;
+	 }
+	 catch (ClassCastException e) {
+	   return false;
+	 }
+	   
+   }
+   
+   
 
 }
