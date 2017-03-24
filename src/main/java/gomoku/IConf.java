@@ -42,7 +42,7 @@ public interface IConf {
    /** Nr wersji aplikacji */
    String VERSION = "0.6"; 
    /** Nr wersji serwera aplikacji */
-   String VERSION_SERVER = "0.5";
+   String VERSION_SERVER = "0.6";
    /** Rok(lata) stworzenia aplikacji */
    String YEARS = "2015-17";
       

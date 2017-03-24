@@ -29,7 +29,6 @@ public class MessageReader extends Thread {
   public MessageReader(Client client) {
       
     this.client = client; 
-    // zginie razem z klientem
     setDaemon(true);
       
   }

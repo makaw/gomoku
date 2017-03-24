@@ -113,7 +113,7 @@ public class MenuGame extends JMenu {
      public void actionPerformed(final ActionEvent e) {
            
         boolean res = new ConfirmDialog(frame, "Czy na pewno zako\u0144czy\u0107 ?").isConfirmed();        
-        if (res) Gomoku.quitGomoku();
+        if (res) System.exit(0);
           
        }
      });          

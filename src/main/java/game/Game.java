@@ -71,8 +71,6 @@ public class Game extends Thread implements Observer {
     */
    public Game(BoardGraphics gBoard, Console console, Sounds sounds, AppObserver gameSpy) {
      	
-	 setDaemon(true);
-	   
      this.gBoard = gBoard;
      this.console = console;
      this.sounds = sounds;
@@ -160,9 +158,9 @@ public class Game extends Thread implements Observer {
     * Rozpoczęcie nowej rozgrywki.
     * @param gameMode Tryb nowej rozgrywki 
     * @param settings Aktualne ustawienia gry
-    * @throws NullPointerException Nie przypisano graczy / nie rozpoczęto rozgrywki
+    * @throws Exception Nie przypisano graczy / nie rozpoczęto rozgrywki
     */
-   private void startNewGame(GameMode gameMode, Settings settings) throws NullPointerException {
+   private void startNewGame(GameMode gameMode, Settings settings) throws Exception {
          
      gameState = GameState.RUN;     
      lBoard = new Board(settings);
@@ -224,21 +222,27 @@ public class Game extends Thread implements Observer {
               
               console.networkButtonsEnable(true);
               
-           } catch (IOException e) {
+           } catch (Exception e) {
                
               try {
                  Thread.sleep(100);  
               } 
-              catch (Exception ex) { return; } 
+              catch (InterruptedException ex) {}
                
-              console.setMessageLn("Pr\u00f3ba po\u0142\u0105czenia nieudana.", Color.RED); 
+              console.setMessage("Pr\u00f3ba po\u0142\u0105czenia nieudana.", Color.RED); 
+              
+              if (e instanceof ClassNotFoundException) System.err.println(e);
+              if (!(e instanceof IOException))
+            	  console.setMessage(" Jest ju\u017c komplet klient\u00f3w.", Color.RED); 
+              
+              console.newLine();
+              
               console.networkButtonsEnable(false);
               player1 = null;
               player2 = null;
                 
-           } catch (ClassNotFoundException e) {             
-              System.err.println(e);
            }
+           
             
            break;
                      
@@ -246,10 +250,9 @@ public class Game extends Thread implements Observer {
      
      
      // zatrzymanie, jeżeli brakuje graczy lub nie ma połąćzenia przy grze sieciowej
-     if (player1==null || player2==null)  throw new NullPointerException();
+     if (player1==null || player2==null)  throw new Exception();
  
-     // start, jeżeli wszystko w porządku
-     
+
      sounds.play(Sounds.SND_INFO); 
        
      try {
@@ -365,7 +368,7 @@ public class Game extends Thread implements Observer {
 		  
 	     startNewGame(gameMode, settings);
 	     
-	  } catch (NullPointerException e) {	    	 	    	
+	  } catch (Exception e) {	    	 	    	
 		  
 	     gameState=GameState.WAIT;
 	     console.newGameMsg();

@@ -39,8 +39,8 @@ public final class Gomoku implements Observer {
   
   /**
    * Konstruktor  
-   * @throws InterruptedException
-   * @throws InvocationTargetException 
+   * @throws InterruptedException Problem z uruchomieniem wątku GUI
+   * @throws InvocationTargetException Problem z uruchomieniem wątku GUI
    */
   private Gomoku() throws InterruptedException, InvocationTargetException {
 
@@ -114,15 +114,6 @@ public final class Gomoku implements Observer {
   }  
   
    
-  /**
-   *   Statyczna metoda kończąca działanie programu
-   */
-  public static void quitGomoku() {
-      
-     System.exit(0); 
-      
-  }
-  
 
   /** 
    * Metoda main, uruchomienie okna klienta.

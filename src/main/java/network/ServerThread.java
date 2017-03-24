@@ -45,7 +45,7 @@ public class ServerThread extends Thread {
     this.socket = socket;
     this.clientNumber = clientNumber;
     this.console = console;
-    // daemon, czyli automatycznie zakończy działanie wraz z głownym wątkiem serwera
+
     setDaemon(true);
     
   }  

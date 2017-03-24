@@ -274,7 +274,7 @@ public class GUI extends JFrame implements IBaseGUI, Observer {
     console.clear();   
     
     if (gameMode == GameMode.NETWORK_GAME) 
-      console.setMessageLn("Wybrano tryb sieciowy. Oczekiwanie na do\u0142\u0105czenie 2. gracza ....", Color.DARK_GRAY);
+      console.setMessageLn("Wybrano tryb sieciowy.", Color.DARK_GRAY);
               
     else {
       console.setMessageLn("Wybrano tryb gry.", Color.GRAY);    
@@ -443,19 +443,25 @@ public class GUI extends JFrame implements IBaseGUI, Observer {
       
      AppObserver obs = (AppObserver)object;
      
-     // przekazanie referencji do utworzonego gniazdka klienta
+     // przekazanie referencji do utworzonego gniazdka klienta / informacja
      switch (obs.getKey()) {
          
          case "socket": 
              
            socket = (Socket)obs.getObject();
            dscButton.setEnabled(true);
-           menuGame.getNewGameItem().setEnabled(false);           
-           
+           menuGame.getNewGameItem().setEnabled(false);            
            break;
-      
-         
-     }  
+          
+         case "socket-state":
+        	 
+           String state = obs.getObject().toString();
+           if (state.equals("wait"))
+             console.setMessageLn("OK, oczekiwanie na do\u0142\u0105czenie 2. gracza ....", Color.DARK_GRAY);
+           break;
+           
+     }
+           
      
    }
 

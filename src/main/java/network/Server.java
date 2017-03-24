@@ -31,8 +31,9 @@ import gui.dialogs.InfoDialog;
 
 /**
  *
+ * Serwer gry.
  * Klasa główna zawierająca metodę main() - wywołanie interfejsu graficznego, 
- * uruchomianie serwera. Reprezentuje głowny serwer.
+ * uruchomianie serwera. 
  * 
  * @author Maciej Kawecki
  * 
@@ -57,6 +58,8 @@ public class Server  implements Observer {
   private ServerGUI gui;
   /** Ustawienia gry po stronie serwera */
   private final Settings settings;
+  /** Wątek odrzucający połączenia nadmiarowych klientów */
+  private ServerDenyThread denyThread;
   
   
   /**
@@ -160,19 +163,15 @@ public class Server  implements Observer {
   }  
   
   
-  /**
-   * Metoda dla statycznej klasy main; zwraca referencję do gniazdka serwerowego
-   * @return Referencja do gniazdka serwerowego
-   */
-  private ServerSocket getServerSocket() {
+
+  protected ServerSocket getServerSocket() {
       
     return serverSocket;  
       
   }
   
   /**
-   * Metoda dla statycznej klasy main; 
-   * zapamiętuje gniazdko klienta do późniejszego uruchomienia dedykowanego wątku serwera
+   * Metoda zapamiętuje gniazdko klienta do późniejszego uruchomienia dedykowanego wątku serwera
    * @param socket Gniazdko klienta
    */
   private void addNewSocket(Socket socket) {
@@ -182,8 +181,7 @@ public class Server  implements Observer {
   }
   
   /**
-   * Metoda dla statycznej klasy main; 
-   * usuwa gniazdko klienta z listy
+   * Metoda usuwa gniazdko klienta z listy
    * @param socket Gniazdko klienta
    */  
   private void removeSocket(Socket socket) {
@@ -216,7 +214,7 @@ public class Server  implements Observer {
            serverRestart();
         }
       
-        ServerThread sThread = new ServerThread(this.gui.getConsole(), s, this, n);
+        ServerThread sThread = new ServerThread(gui.getConsole(), s, this, n);
         serverThreadList.add(sThread);
         sThread.start();
         n++;
@@ -230,10 +228,7 @@ public class Server  implements Observer {
       
   }
   
-  /**
-   * Metoda pobiera obiekt komunikacji z innymi wątkami (Observable)
-   * @return Obiekt komunikacji z innymi wątkami (Observable)
-   */
+
   protected AppObserver getServerSpy() {
       
     return serverSpy;  
@@ -241,10 +236,7 @@ public class Server  implements Observer {
   }
   
   
-  /**
-   * Metoda pobiera ustawienia gry po stronie serwera
-   * @return Ustawienia gry po stronie serwera
-   */
+
   protected Settings getSettings() {
       
     return settings;
@@ -285,7 +277,7 @@ public class Server  implements Observer {
   
   
   /**
-   * Restart w razie utracenia połączenia z którymś z klientów, bo to zatrzymuje rozgrywkę
+   * Restart serwera
    */  
   protected void serverRestart() {
       
@@ -294,33 +286,36 @@ public class Server  implements Observer {
 
      restart = true;
      
-     if (serverThreadList.size()<2)  {
+     try {
          
-         try {
-             serverSocket.close();
-         } catch (Exception e) {
-             System.err.println("IOExc restart: "+e);
-         }
+       try {
+          serverSocket.close();
+       } catch (Exception e) {
+          System.err.println("IOExc restart: "+e);
+       }
        
-         do {          
-             try {
-                 Thread.sleep(50);
-             } catch (Exception e) {}
-           
-         } while (!serverSocket.isClosed());
+       do {          
+           try {
+             Thread.sleep(50);
+           } catch (InterruptedException e) {}           
+       } while (!serverSocket.isClosed());
          
          
-         setServerSocket();
-         
-     }
+       setServerSocket();
+                 
+     } catch (NullPointerException e) {  }
+
+     if (denyThread.isAlive()) denyThread.interrupt();
      
      for (ServerThread t: serverThreadList) t.interrupt();
-     for (Socket s: serverSocketList) try {
+     for (Socket s: serverSocketList) 
+       try {
          s.close();
-         } catch (IOException ex) {}
+       } catch (Exception ex) {}
          
      serverThreadList.clear();
      serverSocketList.clear();
+     
      
   }
   
@@ -371,23 +366,23 @@ public class Server  implements Observer {
     console.setMessageLn("Gomoku Server v."+IConf.VERSION_SERVER, Color.GRAY);
     console.setMessageLn("--------------------------------", Color.GRAY);  
    
-    server.setServerSocket();
+    server.setServerSocket();    
+    
+    server.restart = false;
     
     do {
-    
-
-      server.restart = false;
       
       try {
         Thread.sleep(150);
       } catch (Exception e) {}
       
+
       console.setMessageLn("Oczekiwanie na po\u0142\u0105czenia na porcie " + IConf.SERVER_PORT + " ...", Color.DARK_GRAY); 
       
       int clients = 0;
       Socket socketOld = null;
-      
-      while (clients<2)  {
+                
+      while (clients < 2)  {
           
         try {  
        
@@ -409,33 +404,42 @@ public class Server  implements Observer {
           
           console.setMessageLn("Zaakceptowano po\u0142\u0105czenie z " + socket.getInetAddress(), Color.BLUE);
      
+          ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
           server.setInputStream(clients, new ObjectInputStream(socket.getInputStream()));
-          server.setOutputStream(clients, new ObjectOutputStream(socket.getOutputStream()));
-          // dodanie wątku na listę
+          server.setOutputStream(clients, out);          
+          out.writeObject(new Command(Command.CMD_PING));
+          out.flush();
+                    
           server.addNewSocket(socket);
           clients++;
           socketOld = socket;
+          
+          if (clients == 2) {
+              
+              server.startServerThreads();
+                    
+              console.setMessageLn("Jest ju\u017c dw\u00f3ch graczy, rozpocz\u0119cie gry,"
+              		+ " odrzucanie kolejnych klient\u00f3w", Color.BLACK);
+              console.newLine();
+              
+              // odrzucanie kolejnych klientów 
+              server.denyThread = new ServerDenyThread(server, console);
+              server.denyThread.start();
+              
+           }
+          
+           server.restart = false;
           
         }        
         
         catch (IOException e) {
         
            server.restart = true;
+        	
            break;
             
         }
      
-        
-        if (clients==2) {
-            
-           server.startServerThreads();
-                 
-           console.setMessageLn("Jest ju\u017c dw\u00f3ch graczy, bezczynno\u015b\u0107"
-                              + " serwera g\u0142\u00f3wnego", Color.BLACK);
-           console.newLine();
-           
-        }
-      
       } 
       
       
@@ -447,6 +451,7 @@ public class Server  implements Observer {
         catch (Exception e) {}    
 
       }
+      
       
     }  while(true);
     

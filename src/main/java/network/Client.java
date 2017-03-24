@@ -19,7 +19,7 @@ import gui.Console;
 
 /**
  *
- * Szablon obiektu reprezentującego klienta serwera gry
+ * Klient serwera gry
  * 
  * @author Maciej Kawecki
  * 
@@ -55,9 +55,11 @@ public final class Client {
    * @param console Referencja do konsoli GUI
    * @throws java.io.IOException Podłączanie gniazdka
    * @throws java.lang.ClassNotFoundException W razie nieprawidłowej komendy z serwera
+   * @throws Exception Odmowa połączenia (komplet klientów)
    * (nie można zrzutować otrzymanych danych)
    */  
-  public Client(String serverIP, AppObserver gameSpy, Console console) throws IOException, ClassNotFoundException {    
+  public Client(String serverIP, AppObserver gameSpy, Console console)
+		  throws IOException, ClassNotFoundException, Exception {    
    
      // podłączenie gniazdka
      this.serverIP = serverIP;
@@ -67,36 +69,35 @@ public final class Client {
      
      this.gameSpy = gameSpy;
      this.console = console;
-     
-     
-     gameSpy.sendObject("socket", socket);
-     
+          
+     gameSpy.sendObject("socket", socket);     
+
      // oczekiwanie na powitanie z serwera
-     do {
-         
-       Command cmd = getResponse();
-       if (cmd.getCommand() == Command.CMD_START) break;
-       
-     } while (true);
+     Command cmd = getResponse();
+     if (cmd.getCommand() == Command.CMD_EXIT)
+  	   throw new Exception("odmowa po\u0142\u0105czenia: jest ju\u017c komplet klient\u00f3w");
      
+     gameSpy.sendObject("socket-state", "wait");     
+     while (cmd.getCommand() != Command.CMD_START) {         
+       cmd = getResponse();       
+     } 
 
      // przesłanie do serwera zapytania o numer gracza
      sendCommand(new Command(Command.CMD_NUMBER));
      do {
          
-       Command cmd = getResponse();
+       cmd = getResponse();
        if (cmd.getCommand()==Command.CMD_NUMBER)
          number = (Integer)(cmd.getCommandData());
        
      } while (number==null);
-     
-     //System.out.println("my number is "+number);
+          
      // przesłanie do serwera zapytania o ustawienia gry
      sendCommand(new Command(Command.CMD_SETTINGS));
      
      do {
          
-       Command cmd = (Command)(input.readObject());
+       cmd = (Command)(input.readObject());
        if (cmd.getCommand()==Command.CMD_SETTINGS)
          settingsVar = (SettingsVar)(cmd.getCommandData());
        
@@ -114,30 +115,20 @@ public final class Client {
   }
   
   
-  /**
-   * Metoda pobiera referencję do timera pingującego serwer
-   * @return Referencja do timera pingującego serwer
-   */
   public Ping getPing() {
       
     return ping;
       
   }  
   
-  /**
-   * Metoda pobiera referencję do obiektu gniazdka
-   * @return Referencja do obiektu gniazdka
-   */  
+ 
   protected Socket getSocket() {
       
      return socket;  
       
   }
   
-  /**
-   * Metoda pobiera referencję do obiektu konsoli
-   * @return Referencja do obiektu konsoli
-   */
+
   public Console getConsole() {
       
      return console;  
@@ -186,10 +177,7 @@ public final class Client {
       
   }
   
-  /**
-   * Metoda zwracająca numer klienta nadany przez serwer
-   * @return Numer klienta nadany przez serwer
-   */
+
   public int getNumber() {
       
      return number; 
