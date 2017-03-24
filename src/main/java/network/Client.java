@@ -49,14 +49,13 @@ public final class Client {
 
   
   /**
-   * Konstruktor szablonu obiektu klienta w grze sieciowej
+   * Konstruktor obiektu klienta w grze sieciowej
    * @param serverIP Adres IP (lub nazwa hosta) serwera zdalnego
    * @param gameSpy Referencja do obserwatora stanu gry
    * @param console Referencja do konsoli GUI
    * @throws java.io.IOException Podłączanie gniazdka
    * @throws java.lang.ClassNotFoundException W razie nieprawidłowej komendy z serwera
    * @throws Exception Odmowa połączenia (komplet klientów)
-   * (nie można zrzutować otrzymanych danych)
    */  
   public Client(String serverIP, AppObserver gameSpy, Console console)
 		  throws IOException, ClassNotFoundException, Exception {    
@@ -74,8 +73,7 @@ public final class Client {
 
      // oczekiwanie na powitanie z serwera
      Command cmd = getResponse();
-     if (cmd.getCommand() == Command.CMD_EXIT)
-  	   throw new Exception("odmowa po\u0142\u0105czenia: jest ju\u017c komplet klient\u00f3w");
+     if (cmd.getCommand() == Command.CMD_EXIT) throw new Exception();
      
      gameSpy.sendObject("socket-state", "wait");     
      while (cmd.getCommand() != Command.CMD_START) {         

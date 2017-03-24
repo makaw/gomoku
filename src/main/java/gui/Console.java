@@ -48,7 +48,7 @@ public class Console extends BaseConsole {
    /**
     * Metoda usuwająca całą zawartość konsoli
     */
-   public void clear() {
+   public synchronized void clear() {
     
      // krótka przerwa na ewentualne dokończenie innych operacji na konsoli  
      try {
@@ -58,21 +58,13 @@ public class Console extends BaseConsole {
        System.err.println(e);
      }       
      
-     // synchronizacja, żeby uniknąć jednoczesnego dostępu metod piszących w konsoli
-     synchronized(this) { 
-         
-       if (lockedFlag) return;
-         
-       StyledDocument doc =  getStyledDocument();  
-       try {       
-           doc.remove(0, doc.getLength());
-       } catch (BadLocationException e) {
-           System.err.println(e.getMessage());
-       }
-     
-       
+     StyledDocument doc =  getStyledDocument();  
+     try {       
+         doc.remove(0, doc.getLength());
+     } catch (BadLocationException e) {
+         System.err.println(e.getMessage());
      }
-
+     
      
    }
    

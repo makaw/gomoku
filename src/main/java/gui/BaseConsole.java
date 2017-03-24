@@ -23,9 +23,10 @@ import javax.swing.text.StyledDocument;
 @SuppressWarnings("serial")
 public class BaseConsole extends JTextPane  {
       
-   /** Flaga blokująca wyprowadzanie na konsolę komunikatów */ 
-   protected final Boolean lockedFlag; 
-
+   /** Obiekt dokumentu do wprowadzania tekstu */
+   protected final StyledDocument doc;	
+   /** Styl tekstu */
+   protected final Style style;
    
    protected BaseConsole() {
        
@@ -34,10 +35,11 @@ public class BaseConsole extends JTextPane  {
       setBackground(new Color(0xff, 0xef, 0xcd));
       // pozycja kursora zawsze na koncu pola tekstowego
       ((DefaultCaret)this.getCaret()).setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
-      lockedFlag = false;
       
+      doc = getStyledDocument(); 
+      style = StyleContext.getDefaultStyleContext().getStyle(
+              StyleContext.DEFAULT_STYLE);
       
-       
    } 
       
    /**
@@ -46,49 +48,29 @@ public class BaseConsole extends JTextPane  {
     * @param textColor Kolor tekstu
     * @param bgColor Kolor tła tekstu
     */
-   public void setMessage(String msg, Color textColor, Color bgColor) {
+   public synchronized void setMessage(String msg, Color textColor, Color bgColor) {
 
-     // synchronizacja, żeby uniknąć jednoczesnego dostępu metod piszących w konsoli
-     synchronized(this) {
-     
-       if (lockedFlag) return;
-       
-       
-       StyledDocument doc =  getStyledDocument();  
-       
-       Style style = StyleContext.getDefaultStyleContext().getStyle(
-                     StyleContext.DEFAULT_STYLE);
+     StyleConstants.setFontSize(style, 12);     
+     StyleConstants.setForeground(style, textColor);
+     StyleConstants.setBackground(style, bgColor);       
 
-       StyleConstants.setFontSize(style, 12);     
-       StyleConstants.setForeground(style, textColor);
-       StyleConstants.setBackground(style, bgColor);       
-
-        // umieszczenie linii tekstu
-       try {
-         doc.insertString(doc.getLength(), msg, style);
-       }
-       catch(Exception e) {
-         System.err.println(e);
-       }
-       
+     // umieszczenie linii tekstu
+     try {
+       doc.insertString(doc.getLength(), msg, style);
      }
-     
-     // krótka przerwa na dokończenie operacji
+     catch(Exception e) {
+       System.err.println(e);
+     }     
+
      try {
       Thread.sleep(30);  
      }
-     catch(InterruptedException e) {}
-     
+     catch(InterruptedException e) {}     
  
    }
    
    
-   /**
-    * Metoda wypisująca komunikat na konsoli na domyślnym tle
-    * @param msg Treść komunikatu
-    * @param textColor Kolor tekstu
-    * @see Console#setMessage(java.lang.String, java.awt.Color, java.awt.Color) 
-    */
+
    public void setMessage(String msg,  Color textColor) {
    
       setMessage(msg, textColor, this.getBackground());
@@ -106,22 +88,17 @@ public class BaseConsole extends JTextPane  {
     */   
    public void setMessageLn(String msg,  Color textColor, Color bgColor) {
    
-      setMessage(msg+System.getProperty("line.separator"), textColor, bgColor);
+      setMessage(msg + System.getProperty("line.separator"), textColor, bgColor);
       
    }
    
-   /**
-    * Metoda wypisująca komunikat na konsoli na domyślnym tle i przechodząca 
-    * do nowego wiersza
-    * @param msg Treść komunikatu
-    * @param textColor Kolor tekstu
-    * @see Console#setMessage(java.lang.String, java.awt.Color) 
-    */   
+
    public void setMessageLn(String msg,  Color textColor) {
    
-      setMessage(msg+System.getProperty("line.separator"), textColor);
+      setMessageLn(msg, textColor, this.getBackground());
       
    }   
+   
    
    /**
     * Metoda przechodząca do nowego wiersza konsoli
