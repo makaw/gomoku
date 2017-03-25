@@ -71,20 +71,22 @@ public class PlayerLocal extends Player {
      msgReader.start();
      
      // ustawienie obsługi zdarzeń myszy
-     final MouseHandlerLocalClient mouseHandler1
+     final MouseHandlerLocalClient moveHandler
               = new MouseHandlerLocalClient(client, gBoard, lBoard, pieceColor);   
-     final MouseHandlerLocalClient mouseHandler2
+     final MouseHandlerLocalClient cursorHandler
               = new MouseHandlerLocalClient(client, gBoard, lBoard, pieceColor);      
-     gBoard.addMouseListener(mouseHandler1);
-     gBoard.addMouseMotionListener(mouseHandler2);
+     gBoard.addMouseListener(moveHandler);
+     gBoard.addMouseMotionListener(cursorHandler);
 
      // oczekiwanie na ustawienie kamienia lub wymuszenie zakończenia ruchu
      Integer tmp = lBoard.freeFieldsAmount;
      do {} while (!gameRestarted && tmp.equals(lBoard.freeFieldsAmount));
     
+     lastMove = moveHandler.getMove();
+     
      //  koniec kolejki, więc trzeba usunąć listenery myszy
-     gBoard.removeMouseListener(mouseHandler1);
-     gBoard.removeMouseMotionListener(mouseHandler2);
+     gBoard.removeMouseListener(moveHandler);
+     gBoard.removeMouseMotionListener(cursorHandler);
      // przywrócenie domyślnego kursora myszy
      gBoard.setDefaultMouseCursor();
      

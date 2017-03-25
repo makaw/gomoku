@@ -87,7 +87,7 @@ public class PlayerComputer extends Player  {
   	    	
   	      try {  	    	  
 			BoardField move = get();
-			lBoard.setLastField(move);
+			lastMove = move;
 			// rysowanie kamienia
 		    gBoard.setPiece(lBoard, move.getA(), move.getB(), getColor());
 		    gBoard.repaint();    

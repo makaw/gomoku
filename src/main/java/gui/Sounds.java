@@ -11,7 +11,7 @@ import gomoku.IConf;
 
 /**
  *
- * Szablon obiektu służącego do odtwarzania dźwięków
+ * Odtwarzanie dźwięków
  * 
  * @author Maciej Kawecki
  * 
@@ -20,33 +20,22 @@ public class Sounds {
     
 
    /** Stała używana do oznaczenia klipu dźwiękowego, odtwarzanego po wykonaniu ruchu */
-   public final static byte SND_MOVE = 1;
+   public final static byte SND_MOVE = 0;
    /** Stała używana do oznaczenia klipu dźwiękowego, odtwarzanego w razie wygranej lub remisu */
-   public final static byte SND_SUCCESS = 2;
+   public final static byte SND_SUCCESS = 1;
    /** Stała używana do oznaczenia klipu dźwiękowego, odtwarzanego po rozpoczęciu nowej gry */
-   public final static byte SND_INFO = 3;    
+   public final static byte SND_INFO = 2;    
     
-   /** Klip dźwiękowy odtwarzany po wykonaniu ruchu - postawieniu kamienia na planszy */
-   private final AudioClip sndMove;
-   /** Klip dźwiękowy odtwarzany po zakończeniu rozgrywki przez wygraną lub remis */
-   private final AudioClip sndSuccess;
-   /** Klip dźwiękowy odtwarzany po rozpoczęciu nowej gry */
-   private final AudioClip sndInfo;
-   /** Flaga zezwolenia na odtwarzanie dźwięków */
-   private boolean enabled;
+   /** Pliki dźwiękowe */
+   private final static AudioClip[] audioClips = new AudioClip[] {
+	   loadSoundFile("move.wav"), 
+	   loadSoundFile("info.wav"), 
+	   loadSoundFile("success.wav")
+   };
    
-   /**
-    * Konstruktor wczytujący pliki dźwiękowe i ustawiający flagę zezwolenia na odtwarzanie na wartość domyślną
-    * @see gomoku.IConf#DEFAULT_ENABLE_SOUND
-    */
-   public Sounds() {
-       
-     sndMove = loadSoundFile("move.wav");
-     sndInfo = loadSoundFile("info.wav");
-     sndSuccess = loadSoundFile("success.wav");
-     enabled = IConf.DEFAULT_ENABLE_SOUND;
-       
-   }
+   /** Flaga zezwolenia na odtwarzanie dźwięków */
+   private boolean enabled = IConf.DEFAULT_ENABLE_SOUND;
+   
    
    /**
     * Metoda przełączająca flagę zezwolenia na odtwarzanie dźwięków na wartość przeciwną
@@ -57,11 +46,8 @@ public class Sounds {
        
    }
    
-   /**
-    * Metoda zwracająca wartość flagi zezwolenia na odtwarzanie dźwięków
-    * @return true jeżeli odtwarzanie dźwięków jest włączone, false jeżeli nie
-    */
-   public boolean getEnabled() {
+
+   public boolean isEnabled() {
        
      return enabled;  
        
@@ -72,16 +58,16 @@ public class Sounds {
     * @param fileName Nazwa pliku z /resources/snd
     * @return Klip dźwiękowy ze wskazanego pliku
     */
-   private AudioClip loadSoundFile(String fileName) {
+   private static AudioClip loadSoundFile(String fileName) {
        
      AudioClip ac = null;
      
      try {    	
-       ac = Applet.newAudioClip(getClass().getResource("/snd/"+fileName));     
+       ac = Applet.newAudioClip(Sounds.class.getResource("/snd/"+fileName));     
      }
      catch (NullPointerException e) {
        try {
-         ac = Applet.newAudioClip(getClass().getResource("/resources/snd/"+fileName)); 
+         ac = Applet.newAudioClip(Sounds.class.getResource("/resources/snd/"+fileName)); 
        }
        catch (NullPointerException ex) {
          System.err.println("Brak pliku /resources/img/"+fileName);
@@ -99,32 +85,16 @@ public class Sounds {
     */
    public synchronized void play(final byte snd) { 
        
-      final AudioClip clip;
-      
       if (!enabled) return;
       
-      switch(snd) {
-          
-          default: return;
-          case SND_MOVE:
-            clip = sndMove;
-            break;
-          case SND_SUCCESS:
-            clip = sndSuccess;
-            break;
-          case SND_INFO:
-            clip = sndInfo;
-            break;              
-      }
-      
-      if (clip==null) return;
       
       // odtwarzanie wybranego dźwięku w nowym wątku
       new Thread(new Runnable() {  
+    	  
          @Override
          public void run() {
        
-            clip.play();
+            audioClips[snd].play();
           
          } 
       

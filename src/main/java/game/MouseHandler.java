@@ -25,6 +25,8 @@ public class MouseHandler extends MouseAdapter  {
     protected final BoardFieldState pColor;
     /** Flaga blokująca obsługę zdarzeń myszy */
     protected boolean lockedFlag;
+    /** Wykonany ruch */
+    private BoardField move;
     
     /**
      * Konstruktor 
@@ -57,6 +59,8 @@ public class MouseHandler extends MouseAdapter  {
        // w razie potrzeby tu wysłanie odpowiedniego komunikatu do serwera gry
        sendMoveToServer(a, b);          
        
+       move = new BoardField(a, b, pColor);
+       
        // rysowanie kamienia
        gBoard.setPiece(lBoard, a, b, pColor);
        gBoard.repaint();                  
@@ -76,6 +80,10 @@ public class MouseHandler extends MouseAdapter  {
      */
     protected void sendMoveToServer(int a, int b) {}
     
+    
+    public BoardField getMove() {
+      return move;	
+    }
 
     
     @Override

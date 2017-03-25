@@ -25,8 +25,6 @@ public class Board {
   private final Settings settings;
   /** Wewnętrzna tablica zawierająca stan pól planszy */
   private final BoardField[] fields;
-  /** Referencja do ostatnio zapełnionego pola planszy */
-  private BoardField lastField;  
   /** Lista pustych pól */
   private final List<BoardField> emptyFields;
   /** Aktualny stan planszy  */
@@ -109,12 +107,8 @@ public class Board {
     	emptyFields.add(fields[index]);
       }
       
-      fields[index].setState(state); 
-      
-      
-      changed = true;
-      lastField = fields[index];
-      
+      fields[index].setState(state);             
+      changed = true;      
       scoring.update(a, b, state);
       
     }
@@ -131,24 +125,24 @@ public class Board {
 
   /**
    * Metoda znajdująca "wygrywający" rząd zawierający wskazane pole.
-   * @param a Indeks a (kolumna) pola
-   * @param b Indeks b (wiersz) pola
-   * @param pColor Sprawdzany kolor
+   * @field Zawarte pole
    * @return null jeżeli nie ma wygranej, lub w razie wygranej lista par indeksów 
    * pól wchodzących w skład  wygrywającego rzędu, w celu oznaczenia ich na planszy.
    */
-  private List<BoardField> getWinningRow(int a, int b, BoardFieldState pColor) {
+  public List<BoardField> getWinningRow(BoardField field) {
       
 	 int piecesNum = settings.getPiecesInRow(); 
 	  
      if (settings.getFieldsAmount() - freeFieldsAmount < piecesNum)
        return null;
      
-     if (!scoring.hasWon(pColor)) return null;
+     if (!scoring.hasWon(field.getState())) return null;
      
      int i,j,dir;
      List<BoardField> winRow = new ArrayList<>();
      Integer cnt = 0;   
+     
+     int a = field.getA(), b = field.getB();
 
      // przeglądanie od góry w 4 kierunkach: 0-skos góra, 1-pion, 2-poziom, 3-skos dół
      for (dir=0; dir<=3; dir++) {
@@ -158,7 +152,7 @@ public class Board {
     	 // wsp. pola: jeżeli pion to a jest stałe, jezeli poziom to b jest stałe  
     	 int a2 = dir!=1?a+i:a;
     	 int b2 = dir!=2?(dir!=3?b+i:b-i):b;
-    	 boolean checked = pColor.equals(getFieldState(a2, b2));
+    	 boolean checked = field.getState().equals(getFieldState(a2, b2));
     	           
          if (checked && a2<settings.getColsAndRows() && b2<settings.getColsAndRows() && a2>=0 && b2>=0) {
            	 cnt++; 
@@ -198,23 +192,6 @@ public class Board {
   
   
   /**
-   * Metoda znajdująca "wygrywający" rząd zawierający pole z ostatniego ruchu. 
-   * @return null jeżeli nie ma wygranej, lub w razie wygranej lista par indeksów 
-   * pól wchodzących w skład  wygrywającego rzędu, w celu oznaczenia ich na planszy.
-   * @see Board#getWinningRow(int, int, BoardFieldState)
-   */
-  public List<BoardField> getWinningRow() {
-    
-	try {
-      return getWinningRow(lastField.getA(), lastField.getB(), lastField.getState());
-	}
-	catch (NullPointerException e) { return null; }
-      
-  }
-  
-  
-  
-  /**
    * Funkcja zwraca indeks w wewnętrznej tablicy pól na podstawie współrzędnych pola na planszy
    * @param a Indeks a (kolumna) pola
    * @param b Indeks b (wiersz) pola
@@ -240,18 +217,7 @@ public class Board {
     		 + Integer.toString(settings.getColsAndRows() - field.getB());
       
   }  
-  
-  
-  /**
-   * Metoda zwracająca nazwę (np.A1) pola planszy z ostatniego ruchu
-   * @return Nazwa (np.A1) pola
-   */
-  public String getLastFieldName() {
-      
-     return getFieldName(lastField);
-      
-  }    
-  
+
   
   //-----------------------------------------------------------------------------------
   // metody dodatkowe dla AI
@@ -278,10 +244,7 @@ public class Board {
   protected int getFieldsAmount() {
 	 return settings.getFieldsAmount();
   }
-  
-  protected void setLastField(BoardField lastField) {
-	 this.lastField = lastField;
-  }
+
   
   protected List<BoardField> getEmptyFields() {
 	 return new ArrayList<>(emptyFields);      

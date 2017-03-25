@@ -147,7 +147,7 @@ public class GUI extends JFrame implements IBaseGUI, Observer {
     sndButton.addActionListener(new ActionListener() {
        @Override
        public void actionPerformed(final ActionEvent e) {
-         sndButton.setIcon(sounds.getEnabled() ? ImageRes.getIcon("mute.png") : ImageRes.getIcon("sound.png"));
+         sndButton.setIcon(sounds.isEnabled() ? ImageRes.getIcon("mute.png") : ImageRes.getIcon("sound.png"));
          sounds.toggleSound();
        }
     });        

@@ -286,12 +286,12 @@ public class Game extends Thread implements Observer {
          if (gameState!=GameState.RUN) break;
          
          // dokończenie komunikatu na konsoli - wykonany ruch 
-         console.setMessageLn("  \u279C  " + lBoard.getLastFieldName(), Color.RED);
+         console.setMessageLn("  \u279C  " + lBoard.getFieldName(p.getLastMove()), Color.RED);
          // dźwięk położenia kamienia
          sounds.play(Sounds.SND_MOVE);
          
          // sprawdzenie warunków końca gry (wygrana lub remis)
-         winRow = lBoard.getWinningRow();
+         winRow = lBoard.getWinningRow(p.getLastMove());
          if ((winRow != null || lBoard.freeFieldsAmount==0)) {
              
            // komunikat o wygranej 
@@ -307,6 +307,8 @@ public class Game extends Thread implements Observer {
             		 || gameMode == GameMode.HOTSEAT_GAME 
             		 || (gameMode == GameMode.NETWORK_GAME && p instanceof PlayerLocal);
              
+             sounds.play(Sounds.SND_SUCCESS);
+             
              new InfoDialog(frame, "Koniec gry (ruch\u00f3w: " + String.valueOf(moveNo) + ").\n\n"
              		+ "Wygrywa " + p.getName() + ".", win ? DialogType.WIN : DialogType.LOOSE);
              
@@ -319,16 +321,14 @@ public class Game extends Thread implements Observer {
              console.setMessageLn("REMIS!", Color.RED);  
              console.newGameMsg();
              
+             sounds.play(Sounds.SND_SUCCESS);
+             
              new InfoDialog(frame, "Koniec gry (ruch\u00f3w: " + String.valueOf(moveNo) + ").\n\n"
              		+ "Gra zako\u0144czona remisem.", DialogType.DRAW);
              
            }
 
-           // na wypadek wymuszonego zakończenia ruchu - przywrócenie domyślnego kursora myszy
            gBoard.setDefaultMouseCursor();
-           // kończący dzwonek :-)
-           sounds.play(Sounds.SND_SUCCESS);
-           // zatrzymanie rozgrywki
            gameState=GameState.WAIT;                      
               
          }

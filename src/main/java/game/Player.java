@@ -28,6 +28,8 @@ public abstract class Player {
    protected final Board lBoard;
    /** Zmienna wymuszająca zakończenie ruchu w razie zakończenia gry */
    protected boolean gameRestarted;
+   /** Ostatni ruch gracza */
+   protected BoardField lastMove;
    
    
    /** 
@@ -83,6 +85,14 @@ public abstract class Player {
        
       return name + " (" + pieceColor.getName() + ")";
        
+   }
+   
+   
+   public BoardField getLastMove() {
+	   
+	   
+	  return lastMove; 
+	   
    }
       
     

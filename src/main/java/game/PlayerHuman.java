@@ -39,20 +39,22 @@ public class PlayerHuman extends Player {
    public void makeMove() {
     
      // ustawienie obsługi zdarzeń myszy
-     final MouseHandler mouseHandler1
+     final MouseHandler moveHandler
               = new MouseHandler(gBoard, lBoard, pieceColor);   
-     final MouseHandler mouseHandler2
+     final MouseHandler cursorHandler
               = new MouseHandler(gBoard, lBoard, pieceColor);      
-     gBoard.addMouseListener(mouseHandler1);
-     gBoard.addMouseMotionListener(mouseHandler2);
+     gBoard.addMouseListener(moveHandler);
+     gBoard.addMouseMotionListener(cursorHandler);
 
      // oczekiwanie na ustawienie kamienia lub wymuszenie zakończenia ruchu
      Integer tmp = lBoard.freeFieldsAmount;
      do {} while (!gameRestarted && tmp.equals(lBoard.freeFieldsAmount));
     
+     lastMove = moveHandler.getMove();
+     
      //  koniec kolejki, więc trzeba usunąć listenery myszy
-     gBoard.removeMouseListener(mouseHandler1);
-     gBoard.removeMouseMotionListener(mouseHandler2);
+     gBoard.removeMouseListener(moveHandler);
+     gBoard.removeMouseMotionListener(cursorHandler);
      
         
    }

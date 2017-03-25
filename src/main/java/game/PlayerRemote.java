@@ -96,6 +96,7 @@ public class PlayerRemote extends Player {
       
         // ruch, sprawdzony już po stronie klienta zdalnego
         BoardField field = (BoardField)(command.getCommandData());
+        lastMove = field;
         gBoard.setPiece(lBoard, field.getA(), field.getB(), field.getState());
         gBoard.repaint();    
         // zmiana wartosci pola (logicznego)
