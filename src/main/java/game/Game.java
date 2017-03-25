@@ -276,11 +276,11 @@ public class Game extends Thread implements Observer {
     	   
          // komunikat na konsoli
          console.setMessage("Ruch #" + Integer.toString(moveNo) + ": ", Color.BLUE);
-         console.setMessage(p.getName(), (p.getColor()==BoardFieldState.WHITE) ? Color.BLACK : Color.WHITE,
-                           (p.getColor()==BoardFieldState.WHITE) ? Color.WHITE : Color.BLACK);
+         console.setMessage(p.getName(), (p.getPieceColor()==BoardFieldState.WHITE) ? Color.BLACK : Color.WHITE,
+                           (p.getPieceColor()==BoardFieldState.WHITE) ? Color.WHITE : Color.BLACK);
          
          // wykonanie ruchu przez gracza
-         p.makeMove();   
+         p.makeMove();         
          
          // żeby uniknąć wypisywanie komunikatów jeżeli przerwano w trakcie ruchu
          if (gameState!=GameState.RUN) break;
@@ -301,7 +301,7 @@ public class Game extends Thread implements Observer {
              console.setMessageLn("WYGRYWA " + p.getName().toUpperCase() + " !!!", Color.RED);
              console.newGameMsg();
              
-             gBoard.setPiecesRow(winRow, p.getColor());
+             gBoard.setPiecesRow(winRow, p.getPieceColor());
              
              boolean win = (gameMode == GameMode.SINGLE_GAME && p instanceof PlayerHuman) 
             		 || gameMode == GameMode.HOTSEAT_GAME 

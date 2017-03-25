@@ -66,11 +66,8 @@ public abstract class Player {
    public abstract void makeMove();
 
    
-   /**
-    * Metoda pobierająca kolor kamieni gracza
-    * @return Kolor kamieni gracza
-    */
-   public BoardFieldState getColor() {  
+
+   public BoardFieldState getPieceColor() {  
        
      return pieceColor; 
    
@@ -88,8 +85,7 @@ public abstract class Player {
    }
    
    
-   public BoardField getLastMove() {
-	   
+   public BoardField getLastMove() {	   
 	   
 	  return lastMove; 
 	   

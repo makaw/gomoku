@@ -97,6 +97,8 @@ public class Board {
     try {
          
       int index = getIndex(a, b);  
+
+      fields[index].setState(state);     
       
       if (state != BoardFieldState.EMPTY) {
     	freeFieldsAmount--;
@@ -106,15 +108,14 @@ public class Board {
     	freeFieldsAmount++;
     	emptyFields.add(fields[index]);
       }
-      
-      fields[index].setState(state);             
+              
       changed = true;      
       scoring.update(a, b, state);
       
     }
     
     // wyjątek - a lub b poza zakresem
-    catch (Exception e) {   }
+    catch (Exception e) {  System.err.println(e); }
     
     return changed;
 

@@ -96,7 +96,9 @@ public class Sounds {
         	try { 
               audioClips[snd].play();
         	}
-        	catch (NullPointerException e) {}
+        	catch (Exception e) {
+        	  System.err.println(e);	
+        	}
               
          } 
       

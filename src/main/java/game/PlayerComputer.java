@@ -71,6 +71,8 @@ public class PlayerComputer extends Player  {
    @Override
    public void makeMove() {
           
+	 BoardField tmp = lastMove;  
+	   
      gBoard.setWaitMouseCursor();               
      statusBar.addPropertyChangeListener(change);
              
@@ -89,15 +91,15 @@ public class PlayerComputer extends Player  {
 			BoardField move = get();
 			lastMove = move;
 			// rysowanie kamienia
-		    gBoard.setPiece(lBoard, move.getA(), move.getB(), getColor());
-		    gBoard.repaint();    
+		    gBoard.setPiece(lBoard, move.getA(), move.getB(), pieceColor);
+		    gBoard.repaint();
 		    // zmiana wartosci pola (logicznego)
-		    lBoard.setFieldState(move.getA(), move.getB(), getColor());
+		    lBoard.setFieldState(move.getA(), move.getB(), pieceColor);
 		  } 
   	      catch (InterruptedException | ExecutionException | CancellationException e) {	}
   	      finally {			  
   	        statusBar.enableProgress(false);
-  	        statusBar.removePropertyChangeListener(change);  	        
+  	        statusBar.removePropertyChangeListener(change);  	
 		  }
   	      
   	    }
@@ -114,7 +116,7 @@ public class PlayerComputer extends Player  {
   	   } catch (InterruptedException e) {
 		 break;
   	   }	   		 
-  	 } while (!worker.isDone());
+  	 } while (!worker.isDone() || (tmp !=null && tmp.equals(lastMove)));
   	   	   	 
    }
    
