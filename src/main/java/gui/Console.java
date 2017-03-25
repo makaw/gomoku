@@ -7,7 +7,6 @@ package gui;
 import java.awt.Color;
 
 import javax.swing.JButton;
-import javax.swing.JMenuItem;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.StyledDocument;
 
@@ -25,22 +24,22 @@ public class Console extends BaseConsole {
    private final JButton msgButton;   
    /** Przycisk do rozłączenia z serwerem */
    private final JButton disconButton;
-   /** Opcja w menu - nowa gra */
-   private final JMenuItem newGameItem;
+   /** Menu gry */
+   private final MenuGame menuGame;
     
    /**
     * Konstruktor 
     * @param msgButton Przycisk do wysyłania wiadomości w grze sieciowej
     * @param disconButton Przycisk do rozłączenia z serwerem
-    * @param newGameItem Opcja w menu - nowa gra
+    * @param menuGame menu "Gra"
     */
-   protected Console(JButton msgButton, JButton disconButton, JMenuItem newGameItem) {
+   protected Console(JButton msgButton, JButton disconButton, MenuGame menuGame) {
        
       super();
       
       this.msgButton = msgButton;
       this.disconButton = disconButton;
-      this.newGameItem = newGameItem;
+      this.menuGame = menuGame;
       
    } 
    
@@ -87,7 +86,7 @@ public class Console extends BaseConsole {
       
     msgButton.setEnabled(enabled); 
     disconButton.setEnabled(enabled); 
-    newGameItem.setEnabled(!enabled);
+    menuGame.enableItems(!enabled);
       
   }
   

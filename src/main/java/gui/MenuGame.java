@@ -33,7 +33,8 @@ public class MenuGame extends JMenu {
     
    /** Menu: opcja nowej gry */ 
    private final JMenuItem newGameItem;
-    
+   /** Menu: opcja ustawienia */
+   private final JMenuItem settingsItem;
     
    /**
     * Konstruktor  
@@ -88,11 +89,11 @@ public class MenuGame extends JMenu {
      
      
     
-     menuItem = new JMenuItem("Ustawienia");
-     menuItem.setMnemonic(KeyEvent.VK_U);
-     menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_U, ActionEvent.CTRL_MASK));
-     add(menuItem);
-     menuItem.addActionListener(new ActionListener() {
+     settingsItem = new JMenuItem("Ustawienia");
+     settingsItem.setMnemonic(KeyEvent.VK_U);
+     settingsItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_U, ActionEvent.CTRL_MASK));
+     add(settingsItem);
+     settingsItem.addActionListener(new ActionListener() {
        @Override  
        public void actionPerformed(final ActionEvent e) {
            
@@ -119,10 +120,13 @@ public class MenuGame extends JMenu {
      });          
        
    }
-
    
-   public JMenuItem getNewGameItem() {
-       return newGameItem;
+   
+   public void enableItems(boolean enabled) {
+	   
+	 newGameItem.setEnabled(enabled);
+	 settingsItem.setEnabled(enabled);
+	   
    }
    
    

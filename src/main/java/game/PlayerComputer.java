@@ -73,6 +73,7 @@ public class PlayerComputer extends Player  {
           
 	 BoardField tmp = lastMove;  
 	   
+	 frame.getMenuGame().enableItems(false);
      gBoard.setWaitMouseCursor();               
      statusBar.addPropertyChangeListener(change);
              
@@ -118,6 +119,8 @@ public class PlayerComputer extends Player  {
   	   }	   		 
   	 } while (!worker.isDone() || (tmp !=null && tmp.equals(lastMove)));
   	   	   	 
+  	frame.getMenuGame().enableItems(true);  	 
+  	 
    }
    
    

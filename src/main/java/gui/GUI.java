@@ -169,7 +169,7 @@ public class GUI extends JFrame implements IBaseGUI, Observer {
          try {
            socket.close();
            dscButton.setEnabled(false);
-           menuGame.getNewGameItem().setEnabled(true);
+           menuGame.enableItems(true);
          } 
          catch (IOException ex) {
            System.err.println(ex);  
@@ -196,7 +196,7 @@ public class GUI extends JFrame implements IBaseGUI, Observer {
     gbc.gridheight = 1;
     
  
-    console = new Console(msgButton, dscButton, menuGame.getNewGameItem());
+    console = new Console(msgButton, dscButton, menuGame);
     console.setPreferredSize(new Dimension(F_WIDTH-70, 102));
     //console.setSize(new Dimension(F_WIDTH-70, 64));
   
@@ -403,6 +403,12 @@ public class GUI extends JFrame implements IBaseGUI, Observer {
       
   }
   
+  
+  public MenuGame getMenuGame() {
+	 return menuGame;
+  }
+  
+  
   /**
    * Metoda odpowiada: to nie serwer
    * @return false
@@ -450,7 +456,7 @@ public class GUI extends JFrame implements IBaseGUI, Observer {
              
            socket = (Socket)obs.getObject();
            dscButton.setEnabled(true);
-           menuGame.getNewGameItem().setEnabled(false);            
+           menuGame.enableItems(false);            
            break;
           
          case "socket-state":
