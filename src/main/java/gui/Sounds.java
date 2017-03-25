@@ -18,12 +18,11 @@ import gomoku.IConf;
  */
 public class Sounds {
     
-
-   /** Stała używana do oznaczenia klipu dźwiękowego, odtwarzanego po wykonaniu ruchu */
+   /** Wykonanie ruchu */
    public final static byte SND_MOVE = 0;
-   /** Stała używana do oznaczenia klipu dźwiękowego, odtwarzanego w razie wygranej lub remisu */
+   /** Wygrana lub remis */
    public final static byte SND_SUCCESS = 1;
-   /** Stała używana do oznaczenia klipu dźwiękowego, odtwarzanego po rozpoczęciu nowej gry */
+   /** Rozpoczęcie nowej gry */
    public final static byte SND_INFO = 2;    
     
    /** Pliki dźwiękowe */
@@ -33,12 +32,12 @@ public class Sounds {
 	   loadSoundFile("success.wav")
    };
    
-   /** Flaga zezwolenia na odtwarzanie dźwięków */
+   /** Zezwolenie na odtwarzanie dźwięków */
    private boolean enabled = IConf.DEFAULT_ENABLE_SOUND;
    
    
    /**
-    * Metoda przełączająca flagę zezwolenia na odtwarzanie dźwięków na wartość przeciwną
+    * Metoda przełączająca flagę zezwolenia  
     */
    public void toggleSound() {
        
@@ -54,9 +53,9 @@ public class Sounds {
    }
    
    /**
-    * Metoda pobierająca klip dźwiękowy ze wskazanego pliku z /resources/snd
+    * Metoda pobierająca klip dźwiękowy ze wskazanego pliku 
     * @param fileName Nazwa pliku z /resources/snd
-    * @return Klip dźwiękowy ze wskazanego pliku
+    * @return Klip dźwiękowy  
     */
    private static AudioClip loadSoundFile(String fileName) {
        
@@ -81,7 +80,7 @@ public class Sounds {
 
    /**
     * Metoda odtwarzająca (w nowym wątku) wskazany klip dźwiękowy
-    * @param snd Klip dźwiękowy, który ma być odtworzony (ruch, wygrana, informacja)
+    * @param snd Nr klipu
     */
    public synchronized void play(final byte snd) { 
        
@@ -94,8 +93,11 @@ public class Sounds {
          @Override
          public void run() {
        
-            audioClips[snd].play();
-          
+        	try { 
+              audioClips[snd].play();
+        	}
+        	catch (NullPointerException e) {}
+              
          } 
       
       }).start();
