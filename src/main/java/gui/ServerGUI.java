@@ -173,6 +173,10 @@ public class ServerGUI extends JFrame implements IBaseGUI {
      console.setMessageLn("Ustawienia zostały zmienione.", Color.BLUE);
      
   }
+    
+  
+  @Override
+  public void translate() {}
   
   
 }

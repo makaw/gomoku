@@ -4,6 +4,8 @@
  */
 package game;
 
+import gomoku.Lang;
+
 /**
  *
  * Szablon obiektu opisującego stan gry
@@ -44,9 +46,9 @@ public enum GameMode {
 	   
 	 switch (this) {
 	 	   
-	   case SINGLE_GAME: return "Rozpocznij gr\u0119 z komputerem";
-	   case HOTSEAT_GAME: return "Rozpocznij gr\u0119 2-osobow\u0105 (hot-seat)";
-	   case NETWORK_GAME: return "Do\u0142\u0105cz do gry sieciowej (jako klient)";
+	   case SINGLE_GAME: return Lang.get("StartSingleGame");
+	   case HOTSEAT_GAME: return Lang.get("StartHotSeatGame");
+	   case NETWORK_GAME: return Lang.get("StartNetworkGame");
 	 
 	 }
 	   

@@ -14,6 +14,7 @@ import java.util.Observer;
 import javax.swing.SwingUtilities;
 
 import gomoku.AppObserver;
+import gomoku.Lang;
 import gomoku.Settings;
 import gui.BoardGraphics;
 import gui.Console;
@@ -122,10 +123,10 @@ public class Game extends Thread implements Observer {
            
            try {
              
-             String txt = "[Gracz "+(client.getNumber()+1)+"]: " + msg;
+             String txt = "[" + Lang.get("Player") + " " +(client.getNumber()+1)+"]: " + msg;
              client.sendCommand(new Command(Command.CMD_MESSAGE, txt));
              console.newLine();
-             console.setMessageLn("Wys\u0142ano: "+msg, Color.GRAY);
+             console.setMessageLn(Lang.get("Sent") + ": " + msg, Color.GRAY);
             
            } catch (IOException | ClassNotFoundException e) {
               System.err.println(e);
@@ -173,12 +174,16 @@ public class Game extends Thread implements Observer {
         case SINGLE_GAME:
              
            if (settings.isComputerStarts()) {
-             player1 = new PlayerComputer(BoardFieldState.BLACK, gBoard, lBoard, "Komputer");
-             player2 = new PlayerHuman(BoardFieldState.WHITE, gBoard, lBoard, "Gracz [Ty]");
+             player1 = new PlayerComputer(BoardFieldState.BLACK, gBoard, lBoard,
+            		 Lang.get("Computer"));
+             player2 = new PlayerHuman(BoardFieldState.WHITE, gBoard, lBoard,
+            		 Lang.get("Player") + " [" + Lang.get("You") +"]");
            }
            else {        	  
-             player1 = new PlayerHuman(BoardFieldState.BLACK, gBoard, lBoard, "Gracz [Ty]");
-             player2 = new PlayerComputer(BoardFieldState.WHITE, gBoard, lBoard, "Komputer");
+             player1 = new PlayerHuman(BoardFieldState.BLACK, gBoard, lBoard,
+            		 Lang.get("Player") + " [" + Lang.get("You") +"]");
+             player2 = new PlayerComputer(BoardFieldState.WHITE, gBoard, lBoard,
+            		 Lang.get("Computer"));
            }
            
            frame.getStatusBar().setVisible(true);
@@ -188,8 +193,10 @@ public class Game extends Thread implements Observer {
         // gracz vs gracz
         case HOTSEAT_GAME:
              
-           player1 = new PlayerHuman(BoardFieldState.BLACK, gBoard, lBoard, "Gracz 1");
-           player2 = new PlayerHuman(BoardFieldState.WHITE, gBoard, lBoard, "Gracz 2");
+           player1 = new PlayerHuman(BoardFieldState.BLACK, gBoard, lBoard,
+        		   Lang.get("Player") + " 1");
+           player2 = new PlayerHuman(BoardFieldState.WHITE, gBoard, lBoard,
+        		   Lang.get("Player") + " 2");
            
            break;  
              
@@ -203,7 +210,7 @@ public class Game extends Thread implements Observer {
               // jeżeli się udało połączyć, to zmiana ustawień gry
               Settings clientSettings = client.getSettings();
               frame.restartClientGameSettings(clientSettings.getColsAndRows());
-              settings.setSettings(clientSettings.getColsAndRows(), clientSettings.getPiecesInRow());
+              settings.setGameSettings(clientSettings.getColsAndRows(), clientSettings.getPiecesInRow());
               gameSpy.sendObject("settings-main", clientSettings);
               
               // zmiana logiki planszy, bo zmiana ustawień
@@ -211,12 +218,16 @@ public class Game extends Thread implements Observer {
               
               // kto pierwszy ten zaczyna
               if (client.getNumber()==0) {
-                player1 = new PlayerLocal(client, BoardFieldState.BLACK, gBoard, lBoard, "Gracz 1 [Ty] ");
-                player2 = new PlayerRemote(client, BoardFieldState.WHITE, gBoard, lBoard, "Gracz 2");
+                player1 = new PlayerLocal(client, BoardFieldState.BLACK, gBoard, lBoard,
+                		Lang.get("Player") + " 1 [" + Lang.get("You") + "] ");
+                player2 = new PlayerRemote(client, BoardFieldState.WHITE, gBoard, lBoard,
+                		Lang.get("Player") + " 2");
               }
               else {
-                player1 = new PlayerRemote(client, BoardFieldState.BLACK, gBoard, lBoard, "Gracz 1");    
-                player2 = new PlayerLocal(client, BoardFieldState.WHITE, gBoard, lBoard, "Gracz2 [Ty]");   
+                player1 = new PlayerRemote(client, BoardFieldState.BLACK, gBoard, lBoard,
+                		Lang.get("Player") + " 1");    
+                player2 = new PlayerLocal(client, BoardFieldState.WHITE, gBoard, lBoard,
+                		Lang.get("Player") + " 2 [" + Lang.get("You") + "] ");   
               }
               
               
@@ -229,11 +240,11 @@ public class Game extends Thread implements Observer {
               } 
               catch (InterruptedException ex) {}
                
-              console.setMessage("Pr\u00f3ba po\u0142\u0105czenia nieudana.", Color.RED); 
+              console.setMessage(Lang.get("CantConnect"), Color.RED); 
               
               if (e instanceof ClassNotFoundException) System.err.println(e);
               if (!(e instanceof IOException))
-            	  console.setMessage(" Jest ju\u017c komplet klient\u00f3w.", Color.RED); 
+            	  console.setMessage(" " + Lang.get("CantConnectFull"), Color.RED); 
               
               console.newLine();
               
@@ -260,7 +271,7 @@ public class Game extends Thread implements Observer {
      }
      catch(InterruptedException e) {}
      
-     console.setMessageLn("START!", new Color(0x22, 0x8b, 0x22));  
+     console.setMessageLn(Lang.get("START"), new Color(0x22, 0x8b, 0x22));  
      console.newLine();      
 
      int moveNo = 1;            // nr ruchu
@@ -275,7 +286,7 @@ public class Game extends Thread implements Observer {
        for(Player p:players) if (gameState==GameState.RUN) {         
     	   
          // komunikat na konsoli
-         console.setMessage("Ruch #" + Integer.toString(moveNo) + ": ", Color.BLUE);
+         console.setMessage(Lang.get("Move") + " #" + Integer.toString(moveNo) + ": ", Color.BLUE);
          console.setMessage(p.getName(), (p.getPieceColor()==BoardFieldState.WHITE) ? Color.BLACK : Color.WHITE,
                            (p.getPieceColor()==BoardFieldState.WHITE) ? Color.WHITE : Color.BLACK);
          
@@ -298,7 +309,7 @@ public class Game extends Thread implements Observer {
            if (winRow != null) {
                
              console.newLine();  
-             console.setMessageLn("WYGRYWA " + p.getName().toUpperCase() + " !!!", Color.RED);
+             console.setMessageLn(Lang.get("WON", p.getName().toUpperCase()), Color.RED);
              console.newGameMsg();
              
              gBoard.setPiecesRow(winRow, p.getPieceColor());
@@ -309,8 +320,8 @@ public class Game extends Thread implements Observer {
              
              sounds.play(Sounds.SND_SUCCESS);
              
-             new InfoDialog(frame, "Koniec gry (ruch\u00f3w: " + String.valueOf(moveNo) + ").\n\n"
-             		+ "Wygrywa " + p.getName() + ".", win ? DialogType.WIN : DialogType.LOOSE);
+             new InfoDialog(frame, Lang.get("GameOver", moveNo) + "\n\n"
+             		+ Lang.get("Won", p.getName()), win ? DialogType.WIN : DialogType.LOOSE);
              
            }
            
@@ -318,13 +329,13 @@ public class Game extends Thread implements Observer {
            else {
                
              console.newLine();  
-             console.setMessageLn("REMIS!", Color.RED);  
+             console.setMessageLn(Lang.get("DRAW"), Color.RED);  
              console.newGameMsg();
              
              sounds.play(Sounds.SND_SUCCESS);
              
-             new InfoDialog(frame, "Koniec gry (ruch\u00f3w: " + String.valueOf(moveNo) + ").\n\n"
-             		+ "Gra zako\u0144czona remisem.", DialogType.DRAW);
+             new InfoDialog(frame, Lang.get("GameOver", moveNo) + "\n\n"
+             		+ Lang.get("Draw"), DialogType.DRAW);
              
            }
 

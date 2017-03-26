@@ -102,8 +102,8 @@ public final class Gomoku implements Observer {
         case "settings-main":
             
           Settings s = (Settings)obs.getObject();
-          settings.setSettings(s.getColsAndRows(), s.getPiecesInRow(), s.isComputerStarts());
-          gui.getSettings().setSettings(s.getColsAndRows(), s.getPiecesInRow(), s.isComputerStarts());                    
+          settings.setGameSettings(s.getColsAndRows(), s.getPiecesInRow(), s.isComputerStarts());
+          gui.getSettings().setGameSettings(s.getColsAndRows(), s.getPiecesInRow(), s.isComputerStarts());                    
           
           break;
      
@@ -122,17 +122,15 @@ public final class Gomoku implements Observer {
    * @see network.Server
    */
   public static void main(final String[] args) {
-    
+	  
      GUI.setLookAndFeel(); 
      try {
          
         if (args.length!=0 && args[0].startsWith("-s")) Server.main(args); 
         else new Gomoku();
         
-     } catch (InterruptedException e) {
-        System.err.println("Problem podczas wywo\u0142ania interfejsu graficznego: "+e);
-     } catch (InvocationTargetException e) {
-        System.err.println("Problem z wywo\u0142aniem interfejsu graficznego: "+e);        
+     } catch (InterruptedException | InvocationTargetException e) {
+        System.err.println(Lang.get("StartGraphicsProblem") + ": "+e);
      }
      
   }

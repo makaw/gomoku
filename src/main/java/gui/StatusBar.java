@@ -17,6 +17,8 @@ import javax.swing.JProgressBar;
 import javax.swing.JToolBar;
 import javax.swing.border.EmptyBorder;
 
+import gomoku.Lang;
+
 /**
 *
 * Dolny pasek stanu
@@ -30,7 +32,7 @@ public class StatusBar extends JToolBar {
   /** Wysokość paska stanu */
   private final static int BAR_HEIGHT = 25;
   /** Komunikat */  
-  private final static String PROGRESS_TEXT = "Proszę czekać ...  ";	
+  private final static String PROGRESS_TEXT = Lang.get("PleaseWait") + "  ";	
 	
   /** Referencja do GUI */
   private final GUI frame;	  

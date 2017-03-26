@@ -266,7 +266,7 @@ public class Server  implements Observer {
         case "settings":
             
            Settings s = (Settings)obs.getObject();
-           settings.setSettings(s.getColsAndRows(), s.getPiecesInRow());                       
+           settings.setGameSettings(s.getColsAndRows(), s.getPiecesInRow());                       
            serverRestart();
            
            break;

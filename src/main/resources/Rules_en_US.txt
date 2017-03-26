@@ -1,0 +1,3 @@
+Gomoku ("5 points" in Japanese), also known as "Five in a Row", is an abstract strategy board game.
+
+It is played with black and white stones on a board with 15x15 intersections. Players variably place their stones on a board. The goal is to get an unbroken row of five stones horizontally, vertically, or diagonally.

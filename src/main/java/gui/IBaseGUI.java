@@ -45,5 +45,11 @@ public interface IBaseGUI {
    * @return True jeżeli serwer, false jeżeli klient
    */
   boolean isServer();
+  
+  /**
+   * Metoda zmienia wszystkie etykiety w GUI po zmianie lokalizacji
+   */
+  void translate();
+  
    
 }

@@ -40,6 +40,7 @@ import edu.stanford.ejalbert.BrowserLauncher;
 import edu.stanford.ejalbert.exception.BrowserLaunchingInitializingException;
 import edu.stanford.ejalbert.exception.UnsupportedOperatingSystemException;
 import gomoku.IConf;
+import gomoku.Lang;
 import gui.IBaseGUI;
 import gui.ImageRes;
 import gui.SimpleDialog;
@@ -71,7 +72,7 @@ public class RulesDialog extends SimpleDialog {
     @Override
     protected void getContent()  {
         
-       setTitle("Gomoku - o programie");	
+       setTitle(Lang.get("GomokuAbout"));	
     	
        setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
        JPanel p = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -80,7 +81,7 @@ public class RulesDialog extends SimpleDialog {
        p.add(ico);
        JPanel p0 = new JPanel(new GridLayout(3, 1, 0, 10));      
        p0.add(new JLabel("Gomoku v." + IConf.VERSION));
-       JLabel lab = new JLabel("Autor: M. Kawecki " + IConf.YEARS);
+       JLabel lab = new JLabel(Lang.get("Author", "M. Kawecki", IConf.YEARS));
        lab.setFont(formsFont);
        p0.add(lab);
        
@@ -152,7 +153,7 @@ public class RulesDialog extends SimpleDialog {
        getContentPane().add(sc);
       
        
-       JButton b = new JButton(" OK ");
+       JButton b = new JButton(" " + Lang.get("OK") + " ");
        b.setFocusPainted(false);
        b.addActionListener(new ActionListener() {
           @Override
@@ -178,15 +179,16 @@ public class RulesDialog extends SimpleDialog {
      */
     private String loadRules() throws IOException {
         
-       InputStream input =  getClass().getResourceAsStream("/rules.txt");
-       if (input == null) input =  getClass().getResourceAsStream("/resources/rules.txt");
+       String fName = "/Rules_" + Lang.getLocaleSymbol() + ".txt";
+       InputStream input =  getClass().getResourceAsStream(fName);
+       if (input == null) input =  getClass().getResourceAsStream("/resources" + fName);
        BufferedReader reader;
        
        try {
          reader = new BufferedReader(new InputStreamReader(input, "UTF-8"));
        }
        catch (NullPointerException e) {
-         System.err.println("Brak pliku /resources/rules.txt");
+         System.err.println(Lang.get("FileNotFound", "/resources" + fName));
          return null;
        }
        

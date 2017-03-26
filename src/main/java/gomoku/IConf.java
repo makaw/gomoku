@@ -4,6 +4,8 @@
  */
 package gomoku;
 
+import java.util.Locale;
+
 /**
  *
  * Interfejs konfiguracyjny
@@ -38,6 +40,10 @@ public interface IConf {
    /** Używany port serwera */  
    int SERVER_PORT = 4444;  
    
+   /** Dostępne lokalizacje */
+   Locale[] LOCALES = { new Locale("en", "US"), new Locale("pl", "PL")};
+   /** Domyślna lokalizacja (indeks) */
+   int DEFAULT_LOCALE_INDEX = 0;
     
    /** Nr wersji aplikacji */
    String VERSION = "0.6"; 

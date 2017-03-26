@@ -4,6 +4,8 @@
  */
 package game;
 
+import gomoku.Lang;
+
 /**
  *
  * Stan pola planszy
@@ -63,8 +65,8 @@ public enum BoardFieldState {
 	   
 	   switch (this) {
 	     default: return "-";
-	     case WHITE: return "bia\u0142e";
-	     case BLACK: return "czarne";	  
+	     case WHITE: return Lang.get("White");
+	     case BLACK: return Lang.get("Black");
 	   }
 	   
    }

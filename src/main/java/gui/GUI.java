@@ -34,6 +34,7 @@ import game.GameMode;
 import game.GameState;
 import gomoku.AppObserver;
 import gomoku.IConf;
+import gomoku.Lang;
 import gomoku.Settings;
 import gui.dialogs.ConfirmDialog;
 import gui.dialogs.PromptDialog;
@@ -233,7 +234,7 @@ public class GUI extends JFrame implements IBaseGUI, Observer {
     setVisible(true);
 
     // witamy sie :-)
-    console.setMessageLn("Dzie\u0144 dobry :-)", Color.BLACK); 
+    console.setMessageLn(Lang.get("Hello"), Color.BLACK); 
     
     gameSpy.addObserver(this);    
 
@@ -274,10 +275,10 @@ public class GUI extends JFrame implements IBaseGUI, Observer {
     console.clear();   
     
     if (gameMode == GameMode.NETWORK_GAME) 
-      console.setMessageLn("Wybrano tryb sieciowy.", Color.DARK_GRAY);
+      console.setMessageLn(Lang.get("NetworkModeChosen"), Color.DARK_GRAY);
               
     else {
-      console.setMessageLn("Wybrano tryb gry.", Color.GRAY);    
+      console.setMessageLn(Lang.get("ModeChosen"), Color.GRAY);    
     }
     
     
@@ -438,6 +439,11 @@ public class GUI extends JFrame implements IBaseGUI, Observer {
       
   }  
 
+  
+  @Override
+  public void translate() {}
+  
+  
   
    /**
    * Metoda ustawia referencje przekazane przez obserwatora

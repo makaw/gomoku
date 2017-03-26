@@ -10,6 +10,8 @@ import javax.swing.JButton;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.StyledDocument;
 
+import gomoku.Lang;
+
 /**
  *
  * Konsola do wyświetlania komunikatów w oknie gry 
@@ -73,7 +75,7 @@ public class Console extends BaseConsole {
     */
    public void newGameMsg() {
 	   
-	  setMessageLn("Wybierz \"Gra\"  \u279C \"Nowa gra\" aby rozpocz\u0105\u0107.", Color.GRAY); 
+	  setMessageLn(Lang.get("UseGameMenuToStart"), Color.GRAY); 
 	   
    }   
    

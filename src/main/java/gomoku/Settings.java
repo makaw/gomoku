@@ -4,7 +4,6 @@
  */
 package gomoku;
 
-
 /**
  *
  * Szablon obiektu przechowywującego ustawienia gry.
@@ -14,10 +13,11 @@ package gomoku;
  */
 public class Settings extends SettingsVar {
    
-  private static final long serialVersionUID = 1L;  
-  
+  /** Czy komputer zaczyna grę */
   private boolean computerStarts = IConf.DEFAULT_COMPUTER_STARTS;
-    
+
+
+  private static final long serialVersionUID = 1L;  
     
   /**
    * Konstruktor, ustawiający domyślne wartości
@@ -61,7 +61,7 @@ public class Settings extends SettingsVar {
    * @param computerStarts Czy komputer rozpoczyna
    * @return true jeżeli coś zmieniono, false jeżeli nic się nie zmieniło
    */
-  public boolean setSettings(int colsAndRows, int piecesInRow, boolean computerStarts) {
+  public boolean setGameSettings(int colsAndRows, int piecesInRow, boolean computerStarts) {
       
      // sprawdzenie czy cos zmieniono 
      if (colsAndRows == this.colsAndRows && piecesInRow == this.piecesInRow
@@ -75,8 +75,8 @@ public class Settings extends SettingsVar {
      
   }
   
-  public boolean setSettings(int colsAndRows, int piecesInRow) {
-	  return setSettings(colsAndRows, piecesInRow, IConf.DEFAULT_COMPUTER_STARTS);
+  public boolean setGameSettings(int colsAndRows, int piecesInRow) {
+	  return setGameSettings(colsAndRows, piecesInRow, IConf.DEFAULT_COMPUTER_STARTS);
   }
   
 
@@ -109,8 +109,6 @@ public class Settings extends SettingsVar {
   public void setComputerStarts(boolean computerStarts) {
 	this.computerStarts = computerStarts;
   }
-  
-  
   
   
     

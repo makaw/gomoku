@@ -10,6 +10,7 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
+import java.util.Locale;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -26,6 +27,7 @@ import javax.swing.text.StyleContext;
 import javax.swing.text.StyledDocument;
 
 import gomoku.IConf;
+import gomoku.Lang;
 import gomoku.Settings;
 import gui.IBaseGUI;
 import gui.SimpleDialog;
@@ -55,7 +57,7 @@ public class SettingsDialog extends SimpleDialog {
       super(frame);
       settings = frame.getSettings();
       server = frame.isServer();
-      super.showDialog(320, server ? 260 : 290);
+      super.showDialog(320, server ? 280 : 320);
       
     }        
    
@@ -166,22 +168,41 @@ public class SettingsDialog extends SimpleDialog {
        tx.setBorder(new EmptyBorder(20, 12, 15, 12)); 
        add(tx);       
        
+       p = new JPanel(new GridLayout(1, 2));
+       label = new JLabel(Lang.get("Language") + ":");
+       label.setFont(formsFont);
+       p.add(label);
+       
+       options = new String[IConf.LOCALES.length];
+       int i = 0;
+       for (Locale l: IConf.LOCALES) options[i++] = l.getDisplayLanguage();
+       
+       final JComboBox<String> language = new JComboBox<>(options);
+       language.setSelectedIndex(Lang.getLocaleIndex());
+       language.setFont(formsFont);
+       language.setBorder(new EmptyBorder(5, 0, 5, 0)); 
+       p.add(language);       
+       p.setBorder(new EmptyBorder(5, 15, 5, 15)); 
+       add(p);
+       
        
        JButton buttonChange = new JButton("Zastosuj");
        buttonChange.addActionListener(new ActionListener() {
           @Override
           public void actionPerformed(final ActionEvent e) { 
               
+        	 if (Lang.setLocale(language.getSelectedIndex())) frame.translate(); 
+        	  
              // jezeli cos sie zmienilo, zakonczenie rozgrywki i wprowadzenie zmian 
-             if (settings.setSettings(boardOptionIndex[boardSize.getSelectedIndex()], 
+             if (settings.setGameSettings(boardOptionIndex[boardSize.getSelectedIndex()], 
                                   piecesOptionIndex[piecesInLine.getSelectedIndex()], 
                                   compStartsField.isSelected())) {
-               dispose();
+               
                frame.restartGameSettings();
                
              }
              
-             else dispose();
+             dispose();
              
           }
        });
