@@ -4,6 +4,11 @@
  */
 package gui;
 
+import java.awt.Component;
+import java.awt.Container;
+import java.util.ArrayList;
+import java.util.List;
+
 import game.GameMode;
 import gomoku.Settings;
 
@@ -15,7 +20,7 @@ import gomoku.Settings;
  * @author Maciej Kawecki
  * 
  */
-public interface IBaseGUI {
+public interface IBaseGUI extends ILocalizable {
    
 
   /**
@@ -46,10 +51,25 @@ public interface IBaseGUI {
    */
   boolean isServer();
   
-  /**
-   * Metoda zmienia wszystkie etykiety w GUI po zmianie lokalizacji
+  
+  
+  
+  /** 
+   * Wszystkie zawarte komponenty wymagające tłumaczenia
+   * @param c Kontener
+   * @return Lista komponentów
    */
-  void translate();
+  static List<Component> getAllLocalised(final Container container) {
+	 
+	Component[] components = container.getComponents();
+	List<Component> compList = new ArrayList<>();
+	for (Component c : components) {
+	  if (c instanceof ILocalizable) compList.add(c);
+	  if (c instanceof Container) compList.addAll(getAllLocalised((Container) c));
+	}
+	return compList;
+	
+  }
   
    
 }

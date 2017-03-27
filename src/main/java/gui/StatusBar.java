@@ -27,12 +27,10 @@ import gomoku.Lang;
 * 
 */
 @SuppressWarnings("serial")
-public class StatusBar extends JToolBar {
+public class StatusBar extends JToolBar implements ILocalizable {
 
   /** Wysokość paska stanu */
-  private final static int BAR_HEIGHT = 25;
-  /** Komunikat */  
-  private final static String PROGRESS_TEXT = Lang.get("PleaseWait") + "  ";	
+  protected final static int BAR_HEIGHT = 25;
 	
   /** Referencja do GUI */
   private final GUI frame;	  
@@ -58,6 +56,7 @@ public class StatusBar extends JToolBar {
 	  
 	this.frame = frame;
 	
+	
 	setBorder(new EmptyBorder(5, 2, 5, 2));
 	setFloatable(false);
     setPreferredSize(new Dimension(GUI.F_WIDTH-4, BAR_HEIGHT));
@@ -68,7 +67,7 @@ public class StatusBar extends JToolBar {
     progressBar.setStringPainted(false);
     progressBar.setValue(0);
     
-    progressLabel = new JLabel(PROGRESS_TEXT);
+    progressLabel = new JLabel(Lang.get("PleaseWait") + "  ");
     progressLabel.setForeground(getBackground());
     
     add(progressLabel);
@@ -97,12 +96,20 @@ public class StatusBar extends JToolBar {
   @Override
   public void setVisible(boolean visible) {	  
 
-	if (isVisible() == visible) return;  
-	    
+	if (visible == isVisible()) return;  
+	  
 	frame.setSize(GUI.F_WIDTH, GUI.F_HEIGHT + (visible ? BAR_HEIGHT : 0));  	
 	super.setVisible(visible);	   
 	frame.repaint();
+
+  }
+  
+  
+  @Override
+  public void translate() {
 	  
+	progressLabel.setText(Lang.get("PleaseWait") + "  "); 		   
+		   
   }
   
 	

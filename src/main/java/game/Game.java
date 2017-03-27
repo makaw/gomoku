@@ -20,8 +20,9 @@ import gui.BoardGraphics;
 import gui.Console;
 import gui.GUI;
 import gui.Sounds;
+import gui.dialogs.ConfirmDialog;
 import gui.dialogs.DialogType;
-import gui.dialogs.InfoDialog;
+import gui.dialogs.NewGameDialog;
 import network.Client;
 import network.Command;
 
@@ -114,7 +115,7 @@ public class Game extends Thread implements Observer {
            setBoard((BoardGraphics)obs.getObject());
            
            break;
-                      
+           
            
         // przesłanie wiadomości
         case "message":
@@ -174,16 +175,12 @@ public class Game extends Thread implements Observer {
         case SINGLE_GAME:
              
            if (settings.isComputerStarts()) {
-             player1 = new PlayerComputer(BoardFieldState.BLACK, gBoard, lBoard,
-            		 Lang.get("Computer"));
-             player2 = new PlayerHuman(BoardFieldState.WHITE, gBoard, lBoard,
-            		 Lang.get("Player") + " [" + Lang.get("You") +"]");
+             player1 = new PlayerComputer(BoardFieldState.BLACK, gBoard, lBoard, "Computer");
+             player2 = new PlayerHuman(BoardFieldState.WHITE, gBoard, lBoard, "PlayerYou", "");
            }
            else {        	  
-             player1 = new PlayerHuman(BoardFieldState.BLACK, gBoard, lBoard,
-            		 Lang.get("Player") + " [" + Lang.get("You") +"]");
-             player2 = new PlayerComputer(BoardFieldState.WHITE, gBoard, lBoard,
-            		 Lang.get("Computer"));
+             player1 = new PlayerHuman(BoardFieldState.BLACK, gBoard, lBoard, "PlayerYou", "");
+             player2 = new PlayerComputer(BoardFieldState.WHITE, gBoard, lBoard, "Computer");
            }
            
            frame.getStatusBar().setVisible(true);
@@ -193,10 +190,8 @@ public class Game extends Thread implements Observer {
         // gracz vs gracz
         case HOTSEAT_GAME:
              
-           player1 = new PlayerHuman(BoardFieldState.BLACK, gBoard, lBoard,
-        		   Lang.get("Player") + " 1");
-           player2 = new PlayerHuman(BoardFieldState.WHITE, gBoard, lBoard,
-        		   Lang.get("Player") + " 2");
+           player1 = new PlayerHuman(BoardFieldState.BLACK, gBoard, lBoard, "Player", 1);
+           player2 = new PlayerHuman(BoardFieldState.WHITE, gBoard, lBoard, "Player", 2);
            
            break;  
              
@@ -219,15 +214,15 @@ public class Game extends Thread implements Observer {
               // kto pierwszy ten zaczyna
               if (client.getNumber()==0) {
                 player1 = new PlayerLocal(client, BoardFieldState.BLACK, gBoard, lBoard,
-                		Lang.get("Player") + " 1 [" + Lang.get("You") + "] ");
+                		"PlayerYou",  1);
                 player2 = new PlayerRemote(client, BoardFieldState.WHITE, gBoard, lBoard,
-                		Lang.get("Player") + " 2");
+                		"Player", 2);
               }
               else {
                 player1 = new PlayerRemote(client, BoardFieldState.BLACK, gBoard, lBoard,
-                		Lang.get("Player") + " 1");    
+                		"Player", 1);    
                 player2 = new PlayerLocal(client, BoardFieldState.WHITE, gBoard, lBoard,
-                		Lang.get("Player") + " 2 [" + Lang.get("You") + "] ");   
+                		"PlayerYou", 2);   
               }
               
               
@@ -274,6 +269,7 @@ public class Game extends Thread implements Observer {
      console.setMessageLn(Lang.get("START"), new Color(0x22, 0x8b, 0x22));  
      console.newLine();      
 
+     boolean playAgain = false;
      int moveNo = 1;            // nr ruchu
      List<BoardField> winRow;   // lista kamieni w ewentualnym wygrywającym rzędzie
      
@@ -320,8 +316,9 @@ public class Game extends Thread implements Observer {
              
              sounds.play(Sounds.SND_SUCCESS);
              
-             new InfoDialog(frame, Lang.get("GameOver", moveNo) + "\n\n"
-             		+ Lang.get("Won", p.getName()), win ? DialogType.WIN : DialogType.LOOSE);
+             playAgain = new ConfirmDialog(frame, Lang.get("GameOver", moveNo) + "\n\n"
+             		+ Lang.get("Won", p.getName()),
+             		win ? DialogType.WIN : DialogType.LOOSE).isConfirmed();
              
            }
            
@@ -334,8 +331,9 @@ public class Game extends Thread implements Observer {
              
              sounds.play(Sounds.SND_SUCCESS);
              
-             new InfoDialog(frame, Lang.get("GameOver", moveNo) + "\n\n"
-             		+ Lang.get("Draw"), DialogType.DRAW);
+             playAgain = new ConfirmDialog(frame, Lang.get("GameOver", moveNo) + "\n\n"
+             		+ Lang.get("Draw"), DialogType.DRAW).isConfirmed();
+                          
              
            }
 
@@ -361,12 +359,14 @@ public class Game extends Thread implements Observer {
                 
      } 
      
-     // przywrócenie domyślnego kursora w razie przerwania gry sieciowej
+     // przywrócenie ustawień i domyślnego kursora w razie przerwania gry sieciowej
      if (gameMode == GameMode.NETWORK_GAME && client != null)  {
 
-       gBoard.setDefaultMouseCursor();
-         
+       gBoard.setDefaultMouseCursor();      
+       
      }
+     
+     if (playAgain) new NewGameDialog(frame);
   
    }
    

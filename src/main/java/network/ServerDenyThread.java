@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
+import gomoku.Lang;
 import gui.BaseConsole;
 
 
@@ -56,7 +57,8 @@ public class ServerDenyThread extends Thread {
 	       out.flush();
 	     } catch (IOException ex) {}
 	              
-	     console.setMessageLn("Odrzucono po\u0142\u0105czenie z " + socket.getInetAddress(), Color.RED);
+	     console.setMessageLn(Lang.get("ConnectionWithXRejected", socket.getInetAddress()),
+	    		 Color.RED);
 	     
 	   }        
 	        

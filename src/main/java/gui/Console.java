@@ -7,8 +7,6 @@ package gui;
 import java.awt.Color;
 
 import javax.swing.JButton;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.StyledDocument;
 
 import gomoku.Lang;
 
@@ -20,12 +18,14 @@ import gomoku.Lang;
  * 
  */
 @SuppressWarnings("serial")
-public class Console extends BaseConsole {
+public class Console extends BaseConsole implements ILocalizable {
       
+   /** Przycisk Wł / wył gry */
+   private final JButton sndButton;
    /** Przycisk do wysyłania wiadomości w grze sieciowej */
    private final JButton msgButton;   
    /** Przycisk do rozłączenia z serwerem */
-   private final JButton disconButton;
+   private final JButton dscButton;
    /** Menu gry */
    private final MenuGame menuGame;
     
@@ -35,39 +35,17 @@ public class Console extends BaseConsole {
     * @param disconButton Przycisk do rozłączenia z serwerem
     * @param menuGame menu "Gra"
     */
-   protected Console(JButton msgButton, JButton disconButton, MenuGame menuGame) {
+   protected Console(JButton sndButton, JButton msgButton, JButton dscButton, MenuGame menuGame) {
        
       super();
       
+      this.sndButton = sndButton;
       this.msgButton = msgButton;
-      this.disconButton = disconButton;
+      this.dscButton = dscButton;
       this.menuGame = menuGame;
       
    } 
    
-   
-   /**
-    * Metoda usuwająca całą zawartość konsoli
-    */
-   public synchronized void clear() {
-    
-     // krótka przerwa na ewentualne dokończenie innych operacji na konsoli  
-     try {
-      Thread.sleep(10);  
-     }
-     catch(InterruptedException e) {
-       System.err.println(e);
-     }       
-     
-     StyledDocument doc =  getStyledDocument();  
-     try {       
-         doc.remove(0, doc.getLength());
-     } catch (BadLocationException e) {
-         System.err.println(e.getMessage());
-     }
-     
-     
-   }
    
       
    /**
@@ -87,9 +65,19 @@ public class Console extends BaseConsole {
   public void networkButtonsEnable(boolean enabled) {
       
     msgButton.setEnabled(enabled); 
-    disconButton.setEnabled(enabled); 
+    dscButton.setEnabled(enabled); 
     menuGame.enableItems(!enabled);
       
+  }
+  
+  
+  @Override
+  public void translate() {
+	  
+	sndButton.setToolTipText(Lang.get("SoundOnOff"));
+    msgButton.setToolTipText(Lang.get("SendMessage"));
+	dscButton.setToolTipText(Lang.get("DisconnectServer"));
+	
   }
   
   

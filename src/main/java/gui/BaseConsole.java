@@ -7,6 +7,7 @@ package gui;
 import java.awt.Color;
 
 import javax.swing.JTextPane;
+import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultCaret;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
@@ -27,6 +28,7 @@ public class BaseConsole extends JTextPane  {
    protected final StyledDocument doc;	
    /** Styl tekstu */
    protected final Style style;
+   
    
    protected BaseConsole() {
        
@@ -110,6 +112,27 @@ public class BaseConsole extends JTextPane  {
        
    }
    
+   
+   /**
+    * Metoda usuwająca całą zawartość konsoli
+    */
+   public synchronized void clear() {
+        
+     try {
+      Thread.sleep(10);  
+     }
+     catch(InterruptedException e) {
+       System.err.println(e);
+     }       
+     
+     try {       
+         doc.remove(0, doc.getLength());
+     } catch (BadLocationException e) {
+         System.err.println(e.getMessage());
+     }
+     
+     
+   }   
    
     
 }

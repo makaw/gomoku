@@ -8,7 +8,10 @@ import java.awt.Font;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.WindowConstants;
+import javax.swing.border.EmptyBorder;
 
 /**
  *
@@ -66,5 +69,31 @@ public abstract class SimpleDialog extends JDialog {
    }      
    
    
+   
+   /**
+    * Przewijane pole tekstowe
+    *
+    */
+   protected class TextField extends JScrollPane {
+	   
+	 public TextField(String text) {
+		 
+	   super();
+	   
+	   JTextArea textArea = new JTextArea(text);
+	   textArea.setLineWrap(true);
+	   textArea.setWrapStyleWord(true);
+	   textArea.setFont(formsFontB);
+	   textArea.setOpaque(false); 
+	   textArea.setEditable(false);
+	   
+	   setViewportView(textArea);
+	   setBorder(new EmptyBorder(10, 10, 5, 5));
+	   setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);   
+		 
+	 }
+	 
+   }
+	   
 
 }

@@ -21,10 +21,11 @@ import javax.swing.SwingUtilities;
 
 import gomoku.AppObserver;
 import gomoku.IConf;
+import gomoku.Lang;
 import gomoku.Settings;
+import gui.BaseConsole;
 import gui.GUI;
 import gui.ServerGUI;
-import gui.BaseConsole;
 import gui.dialogs.DialogType;
 import gui.dialogs.InfoDialog;
 
@@ -79,6 +80,7 @@ public class Server  implements Observer {
     
     // ustawia wartości domyślne
     settings = new Settings();
+    settings.load(true);
     
     GUI.setLookAndFeel();
     
@@ -204,13 +206,13 @@ public class Server  implements Observer {
       for (Socket s: serverSocketList) {
         
         // przesłanie powitania do klienta, żeby sprawdzić czy się czasem nie rozłączył  
-        gui.getConsole().setMessageLn("Komunikat powitania do klienta "+(n+1)+"....", new Color(0xa5, 0x2a, 0x2a));
+        gui.getConsole().setMessageLn(Lang.get("WelcomeMessageToClient", n+1), new Color(0xa5, 0x2a, 0x2a));
         ObjectOutputStream out = getOutputStream(n); 
         try {
            out.writeObject(new Command(Command.CMD_START));
            out.flush();
         } catch (IOException ex) {
-           gui.getConsole().setMessageLn("Klient "+(n+1)+" roz\u0142\u0105czy\u0142 si\u0119.", Color.RED);
+           gui.getConsole().setMessageLn(Lang.get("ClientXHasDisconnected", n+1), Color.RED);
            serverRestart();
         }
       
@@ -281,7 +283,7 @@ public class Server  implements Observer {
    */  
   protected void serverRestart() {
       
-     gui.getConsole().setMessageLn("Serwer zrestartowany, zerwane połączenia.", Color.RED);
+     gui.getConsole().setMessageLn(Lang.get("ServerRestarted"), Color.RED);
      gui.getConsole().newLine(); 
 
      restart = true;
@@ -305,7 +307,10 @@ public class Server  implements Observer {
                  
      } catch (NullPointerException e) {  }
 
-     if (denyThread.isAlive()) denyThread.interrupt();
+     try {
+       if (denyThread.isAlive()) denyThread.interrupt();
+     }
+     catch (NullPointerException e) {}
      
      for (ServerThread t: serverThreadList) t.interrupt();
      for (Socket s: serverSocketList) 
@@ -377,7 +382,8 @@ public class Server  implements Observer {
       } catch (Exception e) {}
       
 
-      console.setMessageLn("Oczekiwanie na po\u0142\u0105czenia na porcie " + IConf.SERVER_PORT + " ...", Color.DARK_GRAY); 
+      console.setMessageLn(Lang.get("WaitForConnectionsOnPort",
+    		  String.valueOf(IConf.SERVER_PORT)), Color.DARK_GRAY); 
       
       int clients = 0;
       Socket socketOld = null;
@@ -395,14 +401,15 @@ public class Server  implements Observer {
               out.writeObject(new Command(Command.CMD_PING));
               out.flush();
             } catch (IOException ex) {
-              console.setMessageLn("Utracone wcze\u015bniejsze po\u0142\u0105czenie z "
-                      + socketOld.getInetAddress(), Color.RED);
+              console.setMessageLn(Lang.get("LastConnectionWithXLost", 
+            		  socketOld.getInetAddress()), Color.RED);
               server.removeSocket(socketOld);
               clients--;
             }  
           }
           
-          console.setMessageLn("Zaakceptowano po\u0142\u0105czenie z " + socket.getInetAddress(), Color.BLUE);
+          console.setMessageLn(Lang.get("ConnectionWithXAccepted", socket.getInetAddress()),
+        		  Color.BLUE);
      
           ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
           server.setInputStream(clients, new ObjectInputStream(socket.getInputStream()));
@@ -418,8 +425,7 @@ public class Server  implements Observer {
               
               server.startServerThreads();
                     
-              console.setMessageLn("Jest ju\u017c dw\u00f3ch graczy, rozpocz\u0119cie gry,"
-              		+ " odrzucanie kolejnych klient\u00f3w", Color.BLACK);
+              console.setMessageLn(Lang.get("TwoClientsAlready"), Color.BLACK);
               console.newLine();
               
               // odrzucanie kolejnych klientów 

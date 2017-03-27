@@ -97,6 +97,17 @@ public class Lang {
 	 return instance.locale.getLanguage() + "_" + instance.locale.getCountry();
 	   
    }
+   
+   
+   /**
+    * Zwraca nazwę języka
+    * @return Nazwa języka
+    */
+   public static String getName() {
+	   
+	 return instance.locale.getDisplayLanguage();  
+	   
+   }
 	
 	
 }

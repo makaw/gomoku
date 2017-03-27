@@ -17,6 +17,7 @@ import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 
 import gomoku.Gomoku;
+import gomoku.Lang;
 import gui.dialogs.ConfirmDialog;
 import gui.dialogs.NewGameDialog;
 import gui.dialogs.SettingsDialog;
@@ -29,25 +30,29 @@ import gui.dialogs.SettingsDialog;
  * 
  */
 @SuppressWarnings("serial")
-public class MenuGame extends JMenu {
+public class MenuGame extends JMenu implements ILocalizable {
     
    /** Menu: opcja nowej gry */ 
    private final JMenuItem newGameItem;
+   /** Menu: opcja serwer */
+   private final JMenuItem serverItem;
    /** Menu: opcja ustawienia */
    private final JMenuItem settingsItem;
+   /** Menu: opcja koniec */
+   private final JMenuItem quitItem;
     
    /**
     * Konstruktor  
     * @param frame Interfejs GUI
     */
-   protected MenuGame(final IBaseGUI frame) {
+   public MenuGame(final IBaseGUI frame) {
        
-     super("Gra");
-     setMnemonic(KeyEvent.VK_G);
+     super(Lang.get("MenuGame"));
+     setMnemonic(GUI.getKeyCode(this));
     
-     newGameItem = new JMenuItem("Nowa gra");     
+     newGameItem = new JMenuItem(Lang.get("MenuNewGame"));     
      newGameItem.setPreferredSize(new Dimension(160, 20));
-     newGameItem.setMnemonic(KeyEvent.VK_N);
+     newGameItem.setMnemonic(GUI.getKeyCode(newGameItem));
      newGameItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.CTRL_MASK));
      add(newGameItem);
      newGameItem.addActionListener(new ActionListener() {
@@ -60,12 +65,11 @@ public class MenuGame extends JMenu {
      });   
      
      
-    JMenuItem menuItem = new JMenuItem("Serwer");
-    menuItem.setPreferredSize(new Dimension(160, 20));
-    menuItem.setMnemonic(KeyEvent.VK_S);
-    menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
-    add(menuItem);
-    menuItem.addActionListener(new ActionListener() {
+    serverItem = new JMenuItem(Lang.get("MenuRunServer"));
+    serverItem.setPreferredSize(new Dimension(160, 20));
+    serverItem.setMnemonic(GUI.getKeyCode(serverItem));
+    add(serverItem);
+    serverItem.addActionListener(new ActionListener() {
        @Override  
        public void actionPerformed(final ActionEvent e) {
            
@@ -89,9 +93,8 @@ public class MenuGame extends JMenu {
      
      
     
-     settingsItem = new JMenuItem("Ustawienia");
-     settingsItem.setMnemonic(KeyEvent.VK_U);
-     settingsItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_U, ActionEvent.CTRL_MASK));
+     settingsItem = new JMenuItem(Lang.get("MenuSettings"));
+     settingsItem.setMnemonic(GUI.getKeyCode(settingsItem));
      add(settingsItem);
      settingsItem.addActionListener(new ActionListener() {
        @Override  
@@ -105,15 +108,15 @@ public class MenuGame extends JMenu {
 
      addSeparator(); 
 
-     menuItem = new JMenuItem("Koniec");
-     menuItem.setMnemonic(KeyEvent.VK_K);
-     menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_K, ActionEvent.CTRL_MASK));
-     add(menuItem);       
-     menuItem.addActionListener(new ActionListener() {
+     quitItem = new JMenuItem(Lang.get("MenuQuit"));
+     quitItem.setMnemonic(GUI.getKeyCode(quitItem));
+     quitItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, ActionEvent.CTRL_MASK));
+     add(quitItem);       
+     quitItem.addActionListener(new ActionListener() {
      @Override
      public void actionPerformed(final ActionEvent e) {
            
-        boolean res = new ConfirmDialog(frame, "Czy na pewno zako\u0144czy\u0107 ?").isConfirmed();        
+        boolean res = new ConfirmDialog(frame, Lang.get("ExitConfirm")).isConfirmed();
         if (res) System.exit(0);
           
        }
@@ -122,6 +125,10 @@ public class MenuGame extends JMenu {
    }
    
    
+   /**
+    * Wł / wył opcji nowej gry i ustawień
+    * @param enabled Czy włączone
+    */
    public void enableItems(boolean enabled) {
 	   
 	 newGameItem.setEnabled(enabled);
@@ -129,6 +136,24 @@ public class MenuGame extends JMenu {
 	   
    }
    
+   
+
+   @Override
+   public void translate() {
+	   
+	  setText(Lang.get("MenuGame"));
+	  setMnemonic(GUI.getKeyCode(this)); 
+	   
+	  newGameItem.setText(Lang.get("MenuNewGame"));     
+	  newGameItem.setMnemonic(GUI.getKeyCode(newGameItem));
+	  serverItem.setText(Lang.get("MenuRunServer"));     
+	  serverItem.setMnemonic(GUI.getKeyCode(serverItem));
+	  settingsItem.setText(Lang.get("MenuSettings"));     
+	  settingsItem.setMnemonic(GUI.getKeyCode(settingsItem));
+	  quitItem.setText(Lang.get("MenuQuit"));     
+	  quitItem.setMnemonic(GUI.getKeyCode(quitItem));
+	   
+   }
    
     
 }

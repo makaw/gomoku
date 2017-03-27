@@ -135,8 +135,8 @@ public class Board {
 	 int piecesNum = settings.getPiecesInRow(); 
 	  
      if (settings.getFieldsAmount() - freeFieldsAmount < piecesNum)
-       return null;
-     
+         return null;
+       
      if (!scoring.hasWon(field.getState())) return null;
      
      int i,j,dir;

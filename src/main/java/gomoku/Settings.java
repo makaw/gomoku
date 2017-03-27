@@ -4,6 +4,12 @@
  */
 package gomoku;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.util.Properties;
+
 /**
  *
  * Szablon obiektu przechowywującego ustawienia gry.
@@ -15,12 +21,11 @@ public class Settings extends SettingsVar {
    
   /** Czy komputer zaczyna grę */
   private boolean computerStarts = IConf.DEFAULT_COMPUTER_STARTS;
-
-
+  
   private static final long serialVersionUID = 1L;  
     
   /**
-   * Konstruktor, ustawiający domyślne wartości
+   * Konstruktor (domyślne wartości)
    */
   public Settings() {
       
@@ -47,9 +52,7 @@ public class Settings extends SettingsVar {
    */
   public Settings(SettingsVar settings) {
       
-     this.colsAndRows = settings.colsAndRows;
-     this.piecesInRow = settings.piecesInRow;
-     this.computerStarts = IConf.DEFAULT_COMPUTER_STARTS;
+     this(settings.colsAndRows, settings.piecesInRow, IConf.DEFAULT_COMPUTER_STARTS);
      
   }        
     
@@ -69,7 +72,7 @@ public class Settings extends SettingsVar {
       
      this.colsAndRows = colsAndRows;
      this.piecesInRow = piecesInRow;
-     this.computerStarts = computerStarts;
+     this.computerStarts = computerStarts;     
       
      return true;
      
@@ -111,5 +114,69 @@ public class Settings extends SettingsVar {
   }
   
   
-    
+  /**
+   * Zapis ustawień do pliku
+   * @param server True jeżeli ustawienia serwera
+   */  
+  public void save(boolean server) {
+	 
+	try {
+	  Properties props = new Properties();
+	  props.setProperty("colsAndRows", String.valueOf(colsAndRows));
+	  props.setProperty("piecesInRow", String.valueOf(piecesInRow));
+	  props.setProperty("computerStarts", String.valueOf(computerStarts));
+	  props.setProperty("localeIndex", String.valueOf(Lang.getLocaleIndex()));
+	  File f = new File("gomoku" + (server ? "-server" : "") + "-settings.properties");
+	  OutputStream out = new FileOutputStream(f);
+	  props.store(out, "Gomoku " + (server ? "server " : "") + "settings");
+	}
+	catch (Exception e ) {
+	  System.err.println(e);
+	}
+  
+  }
+  
+  
+  /**
+   * Załadowanie ustawień z pliku
+   * @param server True jeżeli ustawienia serwera
+   */
+  public void load(boolean server) {
+	  
+	 Properties props = new Properties();
+	 
+	 try {
+		File f = new File("gomoku" + (server ? "-server" : "") + "-settings.properties");
+	    props.load(new FileInputStream(f));
+	 }
+	 catch (Exception e) { }
+	  
+	 try {
+		int val = Integer.parseInt(props.getProperty("colsAndRows"));
+		if (val < IConf.MIN_COLS_AND_ROWS || val > IConf.MAX_COLS_AND_ROWS) throw new Exception();
+		if (val%2 == 0) throw new Exception();
+		colsAndRows = val;
+	 }
+	 catch (Exception e) { }
+	 
+	 try {
+		int val = Integer.parseInt(props.getProperty("piecesInRow"));
+		if (val < IConf.MIN_PIECES_IN_ROW || val > IConf.MAX_PIECES_IN_ROW) throw new Exception();
+		piecesInRow = val;
+	 }
+	 catch (Exception e) { }	 
+	 
+	 if (props.containsKey("computerStarts"))
+		 computerStarts = Boolean.valueOf(props.getProperty("computerStarts"));
+	 
+	 try {
+		int val = Integer.parseInt(props.getProperty("localeIndex"));
+		Lang.setLocale(val);
+	 }
+	 catch (Exception e) { }	
+	 
+  }
+  
+  
+	
 }

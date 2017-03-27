@@ -4,6 +4,7 @@
  */
 package game;
 
+import gomoku.Lang;
 import gui.BoardGraphics;
 
 
@@ -20,7 +21,7 @@ public abstract class Player {
     
    /** Kolor kamieni gracza - biały lub czarny */
    protected final BoardFieldState pieceColor;  
-   /** Nazwa gracza */
+   /** Nazwa gracza (klucz) */
    protected final String name;
    /** Referencja do obiektu będącego graficzną reprezentacją planszy */
    protected final BoardGraphics gBoard;
@@ -30,6 +31,8 @@ public abstract class Player {
    protected boolean gameRestarted;
    /** Ostatni ruch gracza */
    protected BoardField lastMove;
+   /** Parametry (nazwa) */
+   private final Object[] nameParams;
    
    
    /** 
@@ -39,14 +42,17 @@ public abstract class Player {
     * @param gBoard Referencja do obiektu będącego graficzną reprezentacją planszy
     * @param lBoard Referencja do obiektu logicznej warstwy planszy
     * @param name Nazwa gracza
+    * @param params Parametry (nazwa)
     */
-   public Player(BoardFieldState pieceColor, BoardGraphics gBoard, Board lBoard, String name) {
+   public Player(BoardFieldState pieceColor, BoardGraphics gBoard, Board lBoard,
+		   String name, Object... nameParams) {
        
      this.pieceColor = pieceColor;
      this.gBoard = gBoard;
      this.lBoard = lBoard;
      this.name = name;
      gameRestarted = false;
+     this.nameParams = nameParams;
        
    }  
    
@@ -80,9 +86,11 @@ public abstract class Player {
     */
    public String getName() {
        
-      return name + " (" + pieceColor.getName() + ")";
+      return Lang.get(name, nameParams) + " (" + pieceColor.getName() + ")";
        
    }
+   
+   
    
    
    public BoardField getLastMove() {	   

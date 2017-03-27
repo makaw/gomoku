@@ -12,10 +12,9 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
 
+import gomoku.Lang;
 import gui.IBaseGUI;
 import gui.SimpleDialog;
 
@@ -30,9 +29,9 @@ import gui.SimpleDialog;
 public class InfoDialog extends SimpleDialog {
    
    /** Typ okna */	
-   private final DialogType type;	
+   protected final DialogType type;	
    /** Treść wiadomości */
-   private final String text;
+   protected final String text;
 	
  
    /**
@@ -68,33 +67,36 @@ public class InfoDialog extends SimpleDialog {
             
       p.setBorder(new EmptyBorder(5, 5, 0, 5)); 
       add(p);
-      
-      JTextArea textArea = new JTextArea(text);
-      textArea.setLineWrap(true);
-      textArea.setWrapStyleWord(true);
-      textArea.setFont(formsFontB);
-      textArea.setOpaque(false); 
-      textArea.setEditable(false);
-      JScrollPane sc = new JScrollPane(textArea);
-      sc.setBorder(new EmptyBorder(10, 10, 5, 5));
-      sc.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-      p.add(sc);
-     
-      JButton button = new JButton(" OK ");
-      button.setFocusPainted(false);
-      button.addActionListener(new ActionListener() {
-         @Override
-         public void actionPerformed(final ActionEvent e) {   
-            dispose();
-         }
-      });
-      
-      p = new JPanel(new FlowLayout());
-      p.setBorder(new EmptyBorder(0, 30, 5, 0)); 
-      p.add(button);
-      add(p);
+
+      p.add(new TextField(text));
+           
+      add(getButtonsPanel());
       
       
+   }
+   
+   
+   /**
+    * Przygotowanie przycisków 
+    * @return Panel z przyciskami
+    */
+   protected JPanel getButtonsPanel() {
+	   
+	  JButton button = new JButton(" " + Lang.get("OK") + " ");
+	  button.setFocusPainted(false);
+	  button.addActionListener(new ActionListener() {
+	       @Override
+	       public void actionPerformed(final ActionEvent e) {   
+	          dispose();
+	       }
+	    });
+	      
+	  JPanel p = new JPanel(new FlowLayout());
+	  p.setBorder(new EmptyBorder(0, 30, 5, 0)); 
+	  p.add(button);
+	  
+	  return p;
+	  
    }
     
 

@@ -46,12 +46,13 @@ public final class Gomoku implements Observer {
 
     gameSpy = new AppObserver();
     settings = new Settings();
+    settings.load(false);
       
     // bezpieczne wywołanie interfejsu graficznego  
     SwingUtilities.invokeAndWait(new Runnable() {
       @Override
       public void run() {
-        gui = new GUI(gameSpy); 
+        gui = new GUI(gameSpy,settings); 
       }
     });
     
@@ -61,8 +62,8 @@ public final class Gomoku implements Observer {
 
     gameSpy.addObserver(this);	
   
-    do {    	
-    	
+    do {    	    	
+
        game = new Game(gui.getBoard(), gui.getConsole(), gui.getSounds(), gameSpy);
         
        // ustawienie obserwatorów - dot. zmiany stanu gry oraz ustawień
@@ -102,8 +103,8 @@ public final class Gomoku implements Observer {
         case "settings-main":
             
           Settings s = (Settings)obs.getObject();
-          settings.setGameSettings(s.getColsAndRows(), s.getPiecesInRow(), s.isComputerStarts());
-          gui.getSettings().setGameSettings(s.getColsAndRows(), s.getPiecesInRow(), s.isComputerStarts());                    
+          settings.setGameSettings(s.getColsAndRows(), s.getPiecesInRow(), s.isComputerStarts());          
+          gui.getSettings().setGameSettings(s.getColsAndRows(), s.getPiecesInRow(), s.isComputerStarts());  
           
           break;
      
@@ -130,7 +131,7 @@ public final class Gomoku implements Observer {
         else new Gomoku();
         
      } catch (InterruptedException | InvocationTargetException e) {
-        System.err.println(Lang.get("StartGraphicsProblem") + ": "+e);
+        System.err.println(Lang.get("StartGraphicsProblem", e));
      }
      
   }

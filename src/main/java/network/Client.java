@@ -13,6 +13,7 @@ import java.net.Socket;
 import game.GameState;
 import gomoku.AppObserver;
 import gomoku.IConf;
+import gomoku.Lang;
 import gomoku.Settings;
 import gomoku.SettingsVar;
 import gui.Console;
@@ -207,7 +208,7 @@ public final class Client {
     gameSpy.sendObject("state", GameState.WAIT);
     
     console.newLine();
-    console.setMessageLn("Zerwanie po\u0142\u0105czenia przez serwer.", Color.RED);
+    console.setMessageLn(Lang.get("ConnectionLost"), Color.RED);
     console.newGameMsg();    
              
     ping.stopPinging();

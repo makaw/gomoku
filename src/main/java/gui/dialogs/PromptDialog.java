@@ -16,6 +16,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
+import gomoku.Lang;
 import gui.IBaseGUI;
 import gui.SimpleDialog;
 
@@ -84,7 +85,6 @@ public class PromptDialog extends SimpleDialog {
       p2.setLayout(new FlowLayout(FlowLayout.LEFT));
       p2.add(new JLabel(question));
       
-      // przygotowanie pola tekstowego do wprowadzenia wiadomości
       final JTextField msg = new JTextField(defaultAnswer);
       msg.setPreferredSize(new Dimension(200, 26));
       p2.setBorder(new EmptyBorder(5, 5, 0, 10)); 
@@ -94,10 +94,9 @@ public class PromptDialog extends SimpleDialog {
       p.setBorder(new EmptyBorder(5, 5, 0, 5)); 
       add(p);
      
-      // przygotowanie przycisków OK i Anuluj
-      JButton buttonSend = new JButton(" OK ");
-      buttonSend.setFocusPainted(false);
-      buttonSend.addActionListener(new ActionListener() {
+      JButton buttonOk = new JButton(" " + Lang.get("OK") + " ");
+      buttonOk.setFocusPainted(false);
+      buttonOk.addActionListener(new ActionListener() {
          @Override
          public void actionPerformed(final ActionEvent e) { 
             answer = msg.getText();
@@ -105,7 +104,7 @@ public class PromptDialog extends SimpleDialog {
          }
       });
 
-      JButton buttonCancel = new JButton("Anuluj");
+      JButton buttonCancel = new JButton(Lang.get("Cancel"));
       buttonCancel.setFocusPainted(false);
       buttonCancel.addActionListener(new ActionListener() {
          @Override
@@ -116,7 +115,8 @@ public class PromptDialog extends SimpleDialog {
       
       p = new JPanel(new FlowLayout());
       p.setBorder(new EmptyBorder(0, 30, 5, 0)); 
-      p.add(buttonSend);
+      p.add(buttonOk);
+      p.add(new JLabel(" "));
       p.add(buttonCancel);
       add(p);
       

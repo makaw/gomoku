@@ -7,11 +7,11 @@ package gui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
+import gomoku.Lang;
 import gui.dialogs.RulesDialog;
 
 
@@ -23,22 +23,26 @@ import gui.dialogs.RulesDialog;
  * 
  */
 @SuppressWarnings("serial")
-public class MenuHelp extends JMenu {
+public class MenuHelp extends JMenu implements ILocalizable {
     
+   /** Menu: opcja about */
+   private final JMenuItem aboutItem;	
+	
+   
    /**
     * Konstruktor 
     * @param frame Interfejs GUI
     */    
-   protected MenuHelp(final IBaseGUI frame) {
+   public MenuHelp(final IBaseGUI frame) {
        
-    super("Pomoc");
-    setMnemonic(KeyEvent.VK_P);
+    super(Lang.get("MenuHelp"));
+    setMnemonic(GUI.getKeyCode(this));
     
     
-    JMenuItem menuItem = new JMenuItem("O programie");
-    menuItem.setMnemonic(KeyEvent.VK_O);
-    add(menuItem);
-    menuItem.addActionListener(new ActionListener() {
+    aboutItem = new JMenuItem(Lang.get("MenuAbout"));
+    aboutItem.setMnemonic(GUI.getKeyCode(aboutItem));
+    add(aboutItem);
+    aboutItem.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(final ActionEvent e) {        
         new RulesDialog(frame);
@@ -46,6 +50,18 @@ public class MenuHelp extends JMenu {
     });    
     
    } 
+   
+   
+   @Override
+   public void translate() {
+	   
+	  setText(Lang.get("MenuHelp"));
+	  setMnemonic(GUI.getKeyCode(this)); 
+		   
+	  aboutItem.setText(Lang.get("MenuAbout"));     
+	  aboutItem.setMnemonic(GUI.getKeyCode(aboutItem));	   
+	   
+   }
     
     
 }

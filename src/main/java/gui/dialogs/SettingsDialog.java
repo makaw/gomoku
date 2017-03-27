@@ -69,11 +69,12 @@ public class SettingsDialog extends SimpleDialog {
     protected void getContent()  {
         
        setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
-       setTitle("Gomoku: ustawienia" + (frame.isServer() ? " (serwer)" : ""));
+       setTitle(Lang.get("GomokuSettings") 
+    		   + (frame.isServer() ? " (" + Lang.get("Server") + ")" : ""));
        
        JPanel p = new JPanel(new GridLayout(2,2));
        
-       JLabel label = new JLabel("Wielko\u015b\u0107 planszy:");
+       JLabel label = new JLabel(Lang.get("BoardSize") + ":");
        label.setFont(formsFont);
        p.add(label);
        
@@ -92,7 +93,7 @@ public class SettingsDialog extends SimpleDialog {
        boardSize.setBorder(new EmptyBorder(5, 0, 5, 0)); 
        p.add(boardSize);
 
-       label = new JLabel("Warunek wygranej:");
+       label = new JLabel(Lang.get("WinCondition") + ":");
        label.setFont(formsFont);
        p.add(label);
        
@@ -102,7 +103,7 @@ public class SettingsDialog extends SimpleDialog {
        Integer[] piecesOptionIndex = new Integer[k];
        for (int i = 0; i < k; i++) {
     	 j = i + IConf.MIN_PIECES_IN_ROW;  
-    	 options[i] = "rz\u0105d " + String.valueOf(j) + " kamieni";
+    	 options[i] = Lang.get("RowOfStones", j);
     	 piecesOptionIndex[i] = j;
        }
        
@@ -114,7 +115,8 @@ public class SettingsDialog extends SimpleDialog {
        p.setBorder(new EmptyBorder(5, 15, 5, 15)); 
        add(p);
        
-       final JCheckBox compStartsField = new JCheckBox(" Komputer rozpoczyna gr\u0119", settings.isComputerStarts());
+       final JCheckBox compStartsField = new JCheckBox(" " + Lang.get("ComputerStarts"),
+    		   settings.isComputerStarts());
               
        if (!server) {
     	   
@@ -149,16 +151,13 @@ public class SettingsDialog extends SimpleDialog {
        StyleConstants.setForeground(style2, Color.RED);
       
        // inny tekst dla serwera i dla klienta
-       final String info = (frame.isServer())  ?  " zmiana ustawie\u0144 wymaga zako\u0144czenia" 
-                             + " bie\u017c\u0105cej gry. Serwer zostanie zrestartowany."
-                             : " zmiana ustawie\u0144 wymaga zako\u0144czenia bie\u017c\u0105cej gry. " 
-                             + "W przypadku do\u0142\u0105czenia do gry sieciowej, " 
-                             + "obowi\u0105zuj\u0105 ustawienia po stronie serwera gry.";   
+       final String info = frame.isServer() ? Lang.get("ChangeSettingsWarningServer") 
+    		   				: Lang.get("ChangeSettingsWarningClient");  
 
        
        // umieszczenie tekstu
        try {
-         doc.insertString(doc.getLength(), "Uwaga: ", style2);
+         doc.insertString(doc.getLength(), Lang.get("Warning") + ": ", style2);
          doc.insertString(doc.getLength(), info, style);
        }
        catch(BadLocationException e) {
@@ -186,12 +185,12 @@ public class SettingsDialog extends SimpleDialog {
        add(p);
        
        
-       JButton buttonChange = new JButton("Zastosuj");
+       JButton buttonChange = new JButton(Lang.get("Apply"));
        buttonChange.addActionListener(new ActionListener() {
           @Override
           public void actionPerformed(final ActionEvent e) { 
               
-        	 if (Lang.setLocale(language.getSelectedIndex())) frame.translate(); 
+        	 if (Lang.setLocale(language.getSelectedIndex())) frame.translate();
         	  
              // jezeli cos sie zmienilo, zakonczenie rozgrywki i wprowadzenie zmian 
              if (settings.setGameSettings(boardOptionIndex[boardSize.getSelectedIndex()], 
@@ -202,12 +201,14 @@ public class SettingsDialog extends SimpleDialog {
                
              }
              
+             settings.save(server);
+             
              dispose();
              
           }
        });
        
-       JButton buttonCancel = new JButton("Anuluj");
+       JButton buttonCancel = new JButton(Lang.get("Cancel"));
        buttonCancel.addActionListener(new ActionListener() {
           @Override
           public void actionPerformed(final ActionEvent e) {   
@@ -223,7 +224,7 @@ public class SettingsDialog extends SimpleDialog {
        add(p);
 
     }
-
+    
     
     
 }

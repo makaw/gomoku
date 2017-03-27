@@ -8,6 +8,7 @@ import java.applet.Applet;
 import java.applet.AudioClip;
 
 import gomoku.IConf;
+import gomoku.Lang;
 
 /**
  *
@@ -69,7 +70,7 @@ public class Sounds {
          ac = Applet.newAudioClip(Sounds.class.getResource("/resources/snd/"+fileName)); 
        }
        catch (NullPointerException ex) {
-         System.err.println("Brak pliku /resources/img/"+fileName);
+         System.err.println(Lang.get("FileNotFound", "/resources/img/"+fileName));
        }
      }          
      

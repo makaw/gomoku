@@ -5,13 +5,15 @@
 package network;
 
 
-import gomoku.Settings;
-import gomoku.SettingsVar;
-import gui.BaseConsole;
 import java.awt.Color;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+
+import gomoku.Lang;
+import gomoku.Settings;
+import gomoku.SettingsVar;
+import gui.BaseConsole;
 
 /**
  *
@@ -108,7 +110,7 @@ public class ServerThread extends Thread {
 
       } catch (IOException e) {
           
-         console.setMessageLn("Utracono po\u0142\u0105czenie z klientem "+(clientNumber+1)+" ("+e+")", Color.RED);
+         console.setMessageLn(Lang.get("ConnectionWithXLost", clientNumber+1) + " ("+e+")", Color.RED);
          
          server.getServerSpy().sendObject("state", "restart");
           

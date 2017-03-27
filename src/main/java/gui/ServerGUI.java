@@ -20,6 +20,7 @@ import javax.swing.JScrollPane;
 
 import game.GameMode;
 import gomoku.AppObserver;
+import gomoku.Lang;
 import gomoku.Settings;
 import gui.dialogs.ConfirmDialog;
 import gui.dialogs.SettingsDialog;
@@ -45,7 +46,8 @@ public class ServerGUI extends JFrame implements IBaseGUI {
   private final Settings serverSettings;
   /** Obserwator - komunikacja z wątkami serwera */
   private final AppObserver serverSpy;
-  
+  /** przyciski */
+  private final JButton settingsButton, restartButton, exitButton;
   
   /**
    * Konstruktor
@@ -80,40 +82,40 @@ public class ServerGUI extends JFrame implements IBaseGUI {
  
     
     // obsługa przycisku Ustawienia
-    JButton settingsButton = new JButton(" Ustawienia ");
+    settingsButton = new JButton(" " + Lang.get("Settings") + " ");
     settingsButton.setFocusPainted(false);
     
-    final IBaseGUI frame = this;
-
     settingsButton.addActionListener(new ActionListener() {
        @Override
        public void actionPerformed(final ActionEvent e) {   
           
          // wywołanie okna z wyborem ustawień 
-          new SettingsDialog(frame);  
+          new SettingsDialog(ServerGUI.this);  
             
        }
     });    
 
     // obsługa przycisku Restart
-    JButton restartButton = new JButton(" Restart ");
+    restartButton = new JButton(" " + Lang.get("Restart") + " ");
     restartButton.setFocusPainted(false);
     restartButton.addActionListener(new ActionListener() {
        @Override
        public void actionPerformed(final ActionEvent e) {   
           // potwierdzenie przez użytkownika 
-          boolean res = new ConfirmDialog(frame, "Zrestartowa\u0107 serwer ?").isConfirmed();  
+          boolean res = new ConfirmDialog(ServerGUI.this,
+        		  Lang.get("ServerRestartConfirm")).isConfirmed();  
           if (res) serverSpy.sendObject("state", "restart");
        }
     });
     
     // obsługa przycisku Koniec
-    JButton exitButton = new JButton(" Koniec ");
+    exitButton = new JButton(" " + Lang.get("Quit") + " ");
     exitButton.setFocusPainted(false);
     exitButton.addActionListener(new ActionListener() {
        @Override
        public void actionPerformed(final ActionEvent e) {   
-         boolean res = new ConfirmDialog(frame, "Czy na pewno zako\u0144czy\u0107 ?").isConfirmed();           
+         boolean res = new ConfirmDialog(ServerGUI.this,
+        		 Lang.get("ExitConfirm")).isConfirmed();           
          if (res) System.exit(0);
        }
     });    
@@ -170,14 +172,21 @@ public class ServerGUI extends JFrame implements IBaseGUI {
   public void restartGameSettings() {
   
      serverSpy.sendObject("settings", serverSettings);
-     console.setMessageLn("Ustawienia zostały zmienione.", Color.BLUE);
+     console.setMessageLn(Lang.get("SettingsChanged"), Color.BLUE);
      
   }
     
   
   @Override
-  public void translate() {}
-  
+  public void translate() {
+	  
+	settingsButton.setText(" " + Lang.get("Settings") + " ");  
+	restartButton.setText(" " + Lang.get("Restart") + " ");
+	exitButton.setText(" " + Lang.get("Quit") + " ");
+	
+	console.setMessageLn("[" + Lang.get("Language") + ": " + Lang.getName() + "]", Color.GRAY);
+	 
+  }
   
 }
 

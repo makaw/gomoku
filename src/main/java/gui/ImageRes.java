@@ -9,6 +9,7 @@ import java.awt.Image;
 import javax.swing.ImageIcon;
 
 import game.BoardFieldState;
+import gomoku.Lang;
 
 /**
  *
@@ -86,7 +87,7 @@ public class ImageRes {
     	 icon = (new ImageIcon(ImageRes.class.getResource("/resources/img/"+fileName))); 
        }
        catch (NullPointerException ex) {
-         System.err.println("Brak pliku /resources/img/"+fileName);
+         System.err.println(Lang.get("FileNotFound", "/resources/img/"+fileName));
        }
     }
         

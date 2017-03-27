@@ -7,6 +7,7 @@ package gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -24,8 +25,10 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 import javax.swing.plaf.metal.OceanTheme;
@@ -77,22 +80,23 @@ public class GUI extends JFrame implements IBaseGUI, Observer {
   private final StatusBar statusBar;
   /** Menu gra */
   private final MenuGame menuGame;
+  /** Menu pomoc */
+  private final MenuHelp menuHelp;
   /** Gniazdko dla klienta */
   private Socket socket;  
    
-   
+   private final JPanel csPanel;
   
   /**
    * Konstruktor
    * @param gameSpy Obserwator - komunikacja z wątkiem kontrolującym przebieg gry
    */  
-  public GUI(final AppObserver gameSpy) {
+  public GUI(final AppObserver gameSpy, Settings settings) {
       
     super("Gomoku");  
     
-    this.gameSpy = gameSpy;
-    
-    settings = new Settings();
+    this.gameSpy = gameSpy;    
+    this.settings = settings;
     
     setIconImage(ImageRes.getImage("icon_small.png"));  
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -104,7 +108,7 @@ public class GUI extends JFrame implements IBaseGUI, Observer {
       
     getContentPane().setLayout(new BorderLayout());
 
-    board = new BoardGraphics();
+    board = new BoardGraphics(settings.getColsAndRows());
     sounds = new Sounds();
 
     // przygotowanie dolnej części ekranu - konsola i przyciski
@@ -127,11 +131,11 @@ public class GUI extends JFrame implements IBaseGUI, Observer {
     // przycisk do wysyłania wiadomości
     msgButton = new JButton("", ImageRes.getIcon("message.png"));
     msgButton.setFocusPainted(false);
-    msgButton.setToolTipText("Wy\u015blij wiadomo\u015b\u0107");
+    msgButton.setToolTipText(Lang.get("SendMessage"));
     msgButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(final ActionEvent e) {
-        String msg = new PromptDialog(GUI.this, "Tre\u015b\u0107 wiadomo\u015bci:").getAnswer();
+        String msg = new PromptDialog(GUI.this, Lang.get("MessageContent") + ":").getAnswer();
         if (msg!=null && !msg.isEmpty()) {
           gameSpy.sendObject("message", msg);
         } 
@@ -144,7 +148,7 @@ public class GUI extends JFrame implements IBaseGUI, Observer {
     // przycisk do włączania/wyłączania dźwięku
     final JButton sndButton = new JButton("", ImageRes.getIcon(IConf.DEFAULT_ENABLE_SOUND ? "sound.png" : "mute.png"));
     sndButton.setFocusPainted(false);
-    sndButton.setToolTipText("D\u017awi\u0119k w\u0142./wy\u0142.");
+    sndButton.setToolTipText(Lang.get("SoundOnOff"));
     sndButton.addActionListener(new ActionListener() {
        @Override
        public void actionPerformed(final ActionEvent e) {
@@ -155,16 +159,17 @@ public class GUI extends JFrame implements IBaseGUI, Observer {
     
     
     menuGame = new MenuGame(this);
+    menuHelp = new MenuHelp(this);
     
     // przycisk rozłączenia z serwerem
     dscButton = new JButton("", ImageRes.getIcon("disconnect.png"));
     dscButton.setFocusPainted(false);
-    dscButton.setToolTipText("Roz\u0142\u0105cz z serwerem");
+    dscButton.setToolTipText(Lang.get("DisconnectServer"));
     dscButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(final ActionEvent e) {
             
-         boolean res = new ConfirmDialog(GUI.this, "Czy na pewno roz\u0142\u0105czy\u0107 ?").isConfirmed(); 
+         boolean res = new ConfirmDialog(GUI.this, Lang.get("DisconnectConfirm")).isConfirmed(); 
           
          if (res) 
          try {
@@ -197,10 +202,11 @@ public class GUI extends JFrame implements IBaseGUI, Observer {
     gbc.gridheight = 1;
     
  
-    console = new Console(msgButton, dscButton, menuGame);
+    console = new Console(sndButton, msgButton, dscButton, menuGame);
     console.setPreferredSize(new Dimension(F_WIDTH-70, 102));
-    //console.setSize(new Dimension(F_WIDTH-70, 64));
-  
+    console.setMaximumSize(new Dimension(F_WIDTH-70, 102));
+    console.setSize(new Dimension(F_WIDTH-70, 102));
+    
     gb.setConstraints(console, gbc);
     panelConsole.add(console);
      
@@ -212,7 +218,7 @@ public class GUI extends JFrame implements IBaseGUI, Observer {
     panelBoard = new JPanel(new GridLayout(1,1));
     panelBoard.add(board);
 
-    JPanel csPanel = new JPanel();
+    csPanel = new JPanel();
     csPanel.setLayout(new BoxLayout(csPanel, BoxLayout.Y_AXIS));
     
     statusBar = new StatusBar(this); 
@@ -225,7 +231,7 @@ public class GUI extends JFrame implements IBaseGUI, Observer {
     // stworzenie glownego menu aplikacji
     JMenuBar menu = new JMenuBar();
     menu.add(menuGame);
-    menu.add(new MenuHelp(this));
+    menu.add(menuHelp);
     setJMenuBar(menu);    
     
     pack();
@@ -291,7 +297,7 @@ public class GUI extends JFrame implements IBaseGUI, Observer {
   public void cancelGame() {
 	  
 	  gameSpy.sendObject("state", GameState.WAIT);
-	  console.setMessageLn("\nPrzerwano gr\u0119.", Color.RED);
+	  console.setMessageLn("\n" + Lang.get("GameCancelled"), Color.RED);
 	  console.newGameMsg();
 	  board.setCursor(null);
 	  
@@ -312,7 +318,7 @@ public class GUI extends JFrame implements IBaseGUI, Observer {
     gameSpy.sendObject("state", GameState.WAIT);
     
     console.clear();
-    console.setMessageLn("Przerwano gr\u0119 (zmiana ustawie\u0144).", Color.RED);
+    console.setMessageLn(Lang.get("GameCancelledSettings"), Color.RED);
     
     board = new BoardGraphics(settings.getColsAndRows());
     panelBoard.removeAll();
@@ -344,8 +350,7 @@ public class GUI extends JFrame implements IBaseGUI, Observer {
   public void restartClientGameSettings(int colsAndRows) {
     
     console.clear();
-    console.setMessageLn("Po\u0142\u0105czono z 2. klientem. Ustawienia gry dla trybu klienta "
-                        +"zosta\u0142y pobrane z serwera.", new Color(0xa5, 0x2a, 0x2a));
+    console.setMessageLn(Lang.get("ConnectedWithSecondPlayer"), new Color(0xa5, 0x2a, 0x2a));
     
     board = new BoardGraphics(colsAndRows);
     panelBoard.removeAll();
@@ -441,7 +446,30 @@ public class GUI extends JFrame implements IBaseGUI, Observer {
 
   
   @Override
-  public void translate() {}
+  public void translate() {
+	  	 
+	console.clear();
+	
+	for (Component c: IBaseGUI.getAllLocalised(this)) ((ILocalizable)c).translate();
+	
+	console.setMessageLn("[" + Lang.get("Language") + ": " + Lang.getName() + "]", Color.GRAY);
+	console.setMessageLn(Lang.get("Hello"), Color.BLACK);
+	console.newLine();
+	
+  }
+  
+  
+  /**
+   * Kod pierwszego znaku elementu menu
+   * @param item Element menu
+   * @return Kod znaku
+   */
+  protected static int getKeyCode(JMenuItem item) {
+	  
+	return KeyStroke.getKeyStroke(item.getText().charAt(0), 0).getKeyCode();  
+	  
+	  
+  }
   
   
   
@@ -469,7 +497,7 @@ public class GUI extends JFrame implements IBaseGUI, Observer {
         	 
            String state = obs.getObject().toString();
            if (state.equals("wait"))
-             console.setMessageLn("OK, oczekiwanie na do\u0142\u0105czenie 2. gracza ....", Color.DARK_GRAY);
+             console.setMessageLn(Lang.get("OKWaitingForSecondPlayer"), Color.DARK_GRAY);
            break;
            
      }

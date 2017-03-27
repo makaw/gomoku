@@ -22,6 +22,7 @@ import javax.swing.border.EmptyBorder;
 
 import game.GameMode;
 import gomoku.IConf;
+import gomoku.Lang;
 import gui.IBaseGUI;
 import gui.SimpleDialog;
 
@@ -59,9 +60,9 @@ public class NewGameDialog extends SimpleDialog {
   protected final void getContent() {
 
      setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
-     setTitle("Gomoku - nowa gra");
+     setTitle(Lang.get("GomokuNewGame"));
      
-     JLabel title = new JLabel("Wybierz tryb nowej rozgrywki:");
+     JLabel title = new JLabel(Lang.get("ChooseNewGameMode") + ":");
      title.setBorder(new EmptyBorder(20, 0, 20, 0));
      title.setAlignmentX(Component.CENTER_ALIGNMENT);
      add(title);
@@ -88,8 +89,8 @@ public class NewGameDialog extends SimpleDialog {
      p = new JPanel(new FlowLayout());
          
      // przygotowanie przycisków OK i Anuluj
-     JButton b1 = new JButton(" OK ");
-     JButton b2 = new JButton("Anuluj");
+     JButton b1 = new JButton(" " + Lang.get("OK") + " ");
+     JButton b2 = new JButton(Lang.get("Cancel"));
      
      b1.addActionListener(new ActionListener() {
        @Override
@@ -108,7 +109,7 @@ public class NewGameDialog extends SimpleDialog {
              removeAll();
              setBackground(new Color(0, 0, 0, 0));
              
-             serverIP = new PromptDialog(frame, "Adres IP / host serwera gry:",
+             serverIP = new PromptDialog(frame, Lang.get("ServerHost") + ":",
             		 IConf.DEFAULT_HOST).getAnswer();
           }
           

@@ -4,19 +4,17 @@
  */
 package gui.dialogs;
 
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import gomoku.Lang;
 import gui.IBaseGUI;
-import gui.SimpleDialog;
 
 
 /**
@@ -27,50 +25,45 @@ import gui.SimpleDialog;
  * 
  */
 @SuppressWarnings("serial")
-public class ConfirmDialog extends SimpleDialog {
+public class ConfirmDialog extends InfoDialog {
     
-   /** Odpowiedź użytkownika: true jeżeli potwierdził */ 
-   private boolean confirmed;
-   /** Pytanie do wyświetlenia w okienku */
-   private final String question;
-    
+  /** Odpowiedź użytkownika: true jeżeli potwierdził */ 
+  private boolean confirmed;
+  
+	
   /**
-    * Konstruktor 
+    * Konstruktor (okno po zakończeniu gry)
     * @param frame Interfejs GUI
     * @param question Pytanie do wyświetlenia w okienku
-    */    
+    * @type Typ okienka
+    */
+   public ConfirmDialog(IBaseGUI frame, String question, DialogType type) {
+      
+	 super(frame, question, type);	     
+	            
+   } 
+   
+   
+   /**
+    * Konstruktor (okno potwierdzenia)
+    * @param frame Interfejs GUI
+    * @param question Pytanie
+    */
    public ConfirmDialog(IBaseGUI frame, String question) {
        
-     super(frame);
-     confirmed = false;
-     this.question = question;
-     super.showDialog(300, 150); 
+     this(frame, question, DialogType.CONFIRM);
             
    } 
    
+   
 
-    
-   /**
-    * Metoda wyświetlająca zawartość okienka
-    */
    @Override
-   protected void getContent()  {   
-    
-      setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS)); 
-      
-      JPanel p = new JPanel();
-      p.setLayout(new BoxLayout(p, BoxLayout.X_AXIS));
-      p.setPreferredSize(new Dimension(130, 70));
-      
-      JLabel ico = new JLabel(DialogType.CONFIRM.getIcon());
-      ico.setBorder(new EmptyBorder(25, 0, 0, 20));
-      p.add(ico);
-      
-      p.add(new JLabel(question, JLabel.CENTER));
-      
-      add(p); 
-       
-      JButton buttonYes = new JButton("Tak");
+   protected JPanel getButtonsPanel()  {   
+           
+	  confirmed = false; 
+	   
+      JButton buttonYes = new JButton(type == DialogType.CONFIRM
+    		  ? Lang.get("Yes") : Lang.get("PlayAgain"));
       buttonYes.setFocusPainted(false);
       buttonYes.addActionListener(new ActionListener() {
          @Override
@@ -80,7 +73,8 @@ public class ConfirmDialog extends SimpleDialog {
          }
       });
        
-      JButton buttonNo = new JButton("Nie");
+      JButton buttonNo = new JButton(type == DialogType.CONFIRM
+    		  ? Lang.get("No") : Lang.get("OK"));
       buttonNo.setFocusPainted(false);
       buttonNo.addActionListener(new ActionListener() {
          @Override
@@ -89,11 +83,16 @@ public class ConfirmDialog extends SimpleDialog {
          }
       });
       
-      p = new JPanel(new FlowLayout());
-      p.setBorder(new EmptyBorder(0, 40, 0, 0)); 
-      p.add(buttonYes);
+      JPanel p = new JPanel(new FlowLayout());
+      p.setBorder(new EmptyBorder(0, 30, 5, 0)); 
+      
+      if (type == DialogType.CONFIRM) p.add(buttonYes);
+      p.add(new JLabel(" "));
       p.add(buttonNo);
-      add(p);
+      p.add(new JLabel(" "));
+      if (type != DialogType.CONFIRM) p.add(buttonYes);
+      
+      return p;
             
    }
     
