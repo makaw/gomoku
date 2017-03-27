@@ -13,9 +13,9 @@ The NEGASCOUT algorithm - [avianey/minimax4j](https://github.com/avianey/minimax
 
 ----------
 
-![Okno klienta](http://kaw.net.pl/gomoku_img/klient.jpg)
+![Okno klienta](http://kaw.net.pl/gomoku_img/klient1.jpg)
 
-![Okno serwera](http://kaw.net.pl/gomoku_img/serwer.jpg)
+![Okno serwera](http://kaw.net.pl/gomoku_img/serwer1.jpg)
 
 ----------
 
