@@ -20,7 +20,7 @@ import java.util.ResourceBundle;
 public class Lang {
 
    /** Instancja klasy */
-   private static Lang instance = new Lang();
+   private final static Lang INSTANCE = new Lang();
    
    /** Lokalizacja - indeks */
    private int localeIndex = IConf.DEFAULT_LOCALE_INDEX;
@@ -33,7 +33,12 @@ public class Lang {
    private Lang() {
 	   
 	 Locale.setDefault(locale);
-	 bundle = ResourceBundle.getBundle("ApplicationMessages");  
+	 try {
+	   bundle = ResourceBundle.getBundle("ApplicationMessages");
+	 }
+	 catch (MissingResourceException e) {
+	   bundle = ResourceBundle.getBundle("resources/ApplicationMessages");
+	 }
 	   
    }
    
@@ -46,12 +51,17 @@ public class Lang {
     */
    public static boolean setLocale(int index) {
  	  
- 	 if (index != instance.localeIndex)  
+ 	 if (index != INSTANCE.localeIndex)  
  	 try { 
- 	   instance.localeIndex = index;
- 	   instance.locale = IConf.LOCALES[index];
- 	   Locale.setDefault(instance.locale);
- 	   instance.bundle = ResourceBundle.getBundle("ApplicationMessages");
+ 	   INSTANCE.localeIndex = index;
+ 	   INSTANCE.locale = IConf.LOCALES[index];
+ 	   Locale.setDefault(INSTANCE.locale);
+ 	   try {
+ 	     INSTANCE.bundle = ResourceBundle.getBundle("ApplicationMessages");
+ 	   }
+ 	   catch (MissingResourceException e) {
+ 		 INSTANCE.bundle = ResourceBundle.getBundle("resources/ApplicationMessages");
+ 	   }
  	   return true;
  	 }
  	 catch (IndexOutOfBoundsException e) {
@@ -64,7 +74,7 @@ public class Lang {
    
    
    public static int getLocaleIndex() {
- 	 return instance.localeIndex;
+ 	 return INSTANCE.localeIndex;
    }
    
 
@@ -78,7 +88,7 @@ public class Lang {
    public static String get(String key, Object... params) {
  	  
 	 try {    
- 	   return MessageFormat.format(instance.bundle.getString(key), params);
+ 	   return MessageFormat.format(INSTANCE.bundle.getString(key), params);
 	 }
 	 catch (MissingResourceException e) {
 	   System.err.println(e);
@@ -94,7 +104,7 @@ public class Lang {
     */
    public static String getLocaleSymbol() {
 	 
-	 return instance.locale.getLanguage() + "_" + instance.locale.getCountry();
+	 return INSTANCE.locale.getLanguage() + "_" + INSTANCE.locale.getCountry();
 	   
    }
    
@@ -105,7 +115,7 @@ public class Lang {
     */
    public static String getName() {
 	   
-	 return instance.locale.getDisplayLanguage();  
+	 return INSTANCE.locale.getDisplayLanguage();  
 	   
    }
 	
