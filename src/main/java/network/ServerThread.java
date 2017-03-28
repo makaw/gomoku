@@ -41,8 +41,6 @@ public class ServerThread extends Thread {
     this.server = server;
     this.socket = socket;
     this.clientNumber = clientNumber;
-
-    setDaemon(true);
     
   }  
   

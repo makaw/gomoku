@@ -33,7 +33,8 @@ public class Command implements Serializable {
    public final static byte CMD_SETTINGS = 21;
    /** Komenda: DAJ NUMER */
    public final static byte CMD_NUMBER = 22;     
-        
+   /** Komenda: KOMPLET GRACZY */
+   public final static byte CMD_FULL = 23;
     
    /** Komenda */ 
    private final byte command;

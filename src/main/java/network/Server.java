@@ -61,8 +61,6 @@ public class Server  implements Observer {
   private ServerGUI gui;
   /** Ustawienia gry po stronie serwera */
   private final Settings settings;
-  /** Wątek odrzucający połączenia nadmiarowych klientów */
-  private ServerDenyThread denyThread;
   
   
   /**
@@ -305,12 +303,7 @@ public class Server  implements Observer {
   /** 
    * Operacje przy restarcie/zamknięciu
    */
-  private void free() {
-	  
-	try {
-	  if (denyThread.isAlive()) denyThread.interrupt();
-	}
-	catch (NullPointerException e) {}
+  private void free() {	  
 		       
 	for (Ping p: serverPingList) p.stopPinging();
 	serverPingList.clear();	
@@ -338,29 +331,22 @@ public class Server  implements Observer {
      gui.getConsole().setMessageLn(Lang.get("ServerRestarted"), Color.RED);
      gui.getConsole().newLine(); 
 
+     free();	   
+     
      restart = true;
      
      try {
-         
-       try {
-          serverSocket.close();
-       } catch (Exception e) {
-          
-       }
+       serverSocket.close();
+     } catch (Exception e) {}
        
-       do {          
-           try {
-             Thread.sleep(50);
-           } catch (InterruptedException e) {}           
-       } while (!serverSocket.isClosed());
-         
-         
-       setServerSocket();
-
-       free();	 
-    	 
-                 
-     } catch (NullPointerException e) {  }
+     do {          
+       try {
+         Thread.sleep(50);
+       } catch (InterruptedException e) { break;}           
+     } while (!serverSocket.isClosed());
+                
+     setServerSocket();
+  	 
 
   }
   
@@ -384,22 +370,6 @@ public class Server  implements Observer {
       
   }
   
-  
-  /**
-   * Uruchomienie wątku odrzucającego klientów > 2
-   */
-  public void startDenyThread() {
-	  
-	try {
-	  if (denyThread.isAlive()) denyThread.interrupt();
-	}
-	catch (NullPointerException e) {}  
-	  
-	denyThread = new ServerDenyThread(this, gui.getConsole());
-    denyThread.start(); 
-	  
-  }
- 
   
       
  /** 
@@ -427,9 +397,7 @@ public class Server  implements Observer {
     console.setMessageLn("Gomoku Server v."+IConf.VERSION_SERVER, Color.GRAY);
     console.setMessageLn("--------------------------------", Color.GRAY);  
    
-    server.setServerSocket();    
-    
-    server.restart = false; 
+    server.setServerSocket();         
     
     do {
       
@@ -441,53 +409,55 @@ public class Server  implements Observer {
     		  String.valueOf(IConf.SERVER_PORT)), Color.DARK_GRAY);
       
       int clients = 0;
-                
-      while (clients < 2)  {
+      server.restart = false;
+             
+      while (!server.restart)  {
           
         try {  
                  
           Socket socket = server.getServerSocket().accept();
           
-          console.setMessageLn(Lang.get("ConnectionWithXAccepted", socket.getInetAddress()),
-        		  Color.BLUE);
+          if (clients < 2) {
+            console.setMessageLn(Lang.get("ConnectionWithXAccepted", socket.getInetAddress()),
+        	  	    Color.BLUE);
      
-          server.setInputStream(clients, new ObjectInputStream(socket.getInputStream()));
-          server.setOutputStream(clients, new ObjectOutputStream(socket.getOutputStream()));          
+            server.setInputStream(clients, new ObjectInputStream(socket.getInputStream()));
+            server.setOutputStream(clients, new ObjectOutputStream(socket.getOutputStream()));          
           
-          Ping ping = new Ping(server, clients);
-          server.serverPingList.add(ping);
-          ping.startPinging();
+            Ping ping = new Ping(server, clients);
+            server.serverPingList.add(ping);
+            ping.startPinging();
           
-          server.addNewSocket(socket);
-          clients++;
+            server.addNewSocket(socket);
+            clients++;
           
-          if (clients == 2) {
+          
+            if (clients == 2) {
               
-              server.startServerThreads();
+               server.startServerThreads();
                     
-              console.setMessageLn(Lang.get("TwoClientsAlready"), Color.BLACK);
-              console.newLine();
+               console.setMessageLn(Lang.get("TwoClientsAlready"), Color.BLACK);
+               console.newLine();              
               
-              server.startDenyThread();
-              
-           }
+             }
           
-           server.restart = false;
-          
-        }        
-        
-        catch (IOException e) {
-        
-           server.restart = true;        	
-           break;
-            
+          }        
+       
+          // > 2 klientów
+          else {
+        	
+            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+     	    out.writeObject(new Command(Command.CMD_FULL));
+     	    out.flush();     	           
+        	
+          }
         }
-     
-      } 
-      
-      
-      while (!server.restart) {
-    
+        
+        catch (IOException e) {        
+      	  server.restart = true; 
+      	  clients = 0;
+        }
+
         try {
           Thread.sleep(50);
         }

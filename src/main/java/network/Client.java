@@ -74,8 +74,9 @@ public final class Client {
 
      // oczekiwanie na powitanie z serwera
      Command cmd = getResponse();
-     if (cmd.getCommand() == Command.CMD_EXIT) throw new Exception();
-     
+     //  jest już komplet
+     if (cmd.getCommand() == Command.CMD_FULL) throw new Exception();
+     // oczekiwanie na 2. gracza
      gameSpy.sendObject("socket-state", "wait");     
      while (cmd.getCommand() != Command.CMD_START) {         
        cmd = getResponse();       
