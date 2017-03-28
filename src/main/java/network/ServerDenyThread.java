@@ -5,7 +5,6 @@
 package network;
 
 import java.awt.Color;
-import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
@@ -52,25 +51,21 @@ public class ServerDenyThread extends Thread {
 		       
 	     Socket socket = server.getServerSocket().accept();			          
 	     ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-	     try {
-	       out.writeObject(new Command(Command.CMD_EXIT));
-	       out.flush();
-	     } catch (IOException ex) {}
+	     out.writeObject(new Command(Command.CMD_EXIT));
+	     out.flush();
 	              
 	     console.setMessageLn(Lang.get("ConnectionWithXRejected", socket.getInetAddress()),
 	    		 Color.RED);
 	     
 	   }        
 	        
-	   catch (IOException | NullPointerException e) {
-	        
-	     return;
-	            
+	   catch (Exception e) {	        
+	     return;	            
 	   }
 	   
 	   
 	   try {
-		 Thread.sleep(10);
+		 Thread.sleep(50);
 	   }
 	   catch (InterruptedException e) {
 		 return;

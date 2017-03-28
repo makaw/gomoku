@@ -83,7 +83,7 @@ public class Server  implements Observer {
     
     // ustawia wartości domyślne
     settings = new Settings();
-    settings.load(true);
+    settings.load();
   	
     // operacje przy zakończeniu
   	Runtime.getRuntime().addShutdownHook(new Thread() {  	
@@ -207,18 +207,18 @@ public class Server  implements Observer {
         
       for (Socket s: serverSocketList) {
         
-        // przesłanie powitania do klienta, żeby sprawdzić czy się czasem nie rozłączył  
+        // przesłanie powitania do klienta 
         gui.getConsole().setMessageLn(Lang.get("WelcomeMessageToClient", n+1), new Color(0xa5, 0x2a, 0x2a));
         ObjectOutputStream out = getOutputStream(n); 
         try {
            out.writeObject(new Command(Command.CMD_START));
            out.flush();
         } catch (IOException ex) {
-           gui.getConsole().setMessageLn(Lang.get("ClientXHasDisconnected", n+1), Color.RED);
-           serverRestart();
+           // tylko wyjście, restart będzie obsłużony przez Ping
+           return;
         }
       
-        ServerThread sThread = new ServerThread(gui.getConsole(), s, this, n);
+        ServerThread sThread = new ServerThread(s, this, n);
         serverThreadList.add(sThread);
         sThread.start();
         n++;
@@ -248,44 +248,56 @@ public class Server  implements Observer {
   }
   
   
-   /**
+  /**
    * Metoda ustawia referencje przekazane przez obserwatora
    * @param o Obserwowany obiekt 
    * @param object Przekazany obiekt
    */
-   @Override
-   public void update(Observable o, Object object) {
+  @Override
+  public void update(Observable o, Object object) {
        
-     AppObserver obs = (AppObserver)object;
+    AppObserver obs = (AppObserver)object;
+    
+    SwingUtilities.invokeLater(new Runnable() { 
+      @Override
+      public void run() {
+    	  
+    	 switch (obs.getKey()) {           
      
-     switch (obs.getKey()) {
-
-        case "state":
+           case "state":
             
-           String val = (String)obs.getObject();
-           if (val.equals("restart")) serverRestart();
+             String val = (String)obs.getObject();
+             if (val.equals("restart")) serverRestart();
+            
+             break;
            
-           break;
            
-        case "ping-out":
+           case "ping-out":
         	
-           int c = (int)obs.getObject();
-           gui.getConsole().setMessageLn(Lang.get("ConnectionWithXLost", 
+             try {	
+               int c = (int)obs.getObject();
+               gui.getConsole().setMessageLn(Lang.get("ConnectionWithXLost", 
          		  serverSocketList.get(c).getInetAddress()), Color.RED);
-           serverRestart();
+               serverRestart();
+             }
+             // już zrestartowane
+             catch (IndexOutOfBoundsException e) {  }
            
-           break;
+             break;
            
            
-        case "settings":
+           case "settings":
             
-           Settings s = (Settings)obs.getObject();
-           settings.setGameSettings(s.getColsAndRows(), s.getPiecesInRow());                       
-           serverRestart();
+             Settings s = (Settings)obs.getObject();
+             settings.setGameSettings(s.getColsAndRows(), s.getPiecesInRow());                       
+             serverRestart();
            
-           break;
+             break;
+             
+    	 }
            
-    }           
+       };
+    });           
      
   }    
   
@@ -300,20 +312,22 @@ public class Server  implements Observer {
 	}
 	catch (NullPointerException e) {}
 		       
+	for (Ping p: serverPingList) p.stopPinging();
+	serverPingList.clear();	
+	
 	for (ServerThread t: serverThreadList) t.interrupt();
-	for (Socket s: serverSocketList) 
+	for (Socket s: serverSocketList) {
 	   try {
 	     s.close();
 	   } catch (Exception ex) {}
-		       
-	for (Ping p: serverPingList) p.stopPinging();
+	}		       
 	    
 	serverThreadList.clear();
 	serverSocketList.clear();
-	serverPingList.clear();
 	  	  
   }
-   
+  
+  
   
   
   /**
@@ -331,7 +345,7 @@ public class Server  implements Observer {
        try {
           serverSocket.close();
        } catch (Exception e) {
-          System.err.println("IOExc restart: "+e);
+          
        }
        
        do {          
@@ -342,11 +356,12 @@ public class Server  implements Observer {
          
          
        setServerSocket();
+
+       free();	 
+    	 
                  
      } catch (NullPointerException e) {  }
 
-     free();
-     
   }
   
   
@@ -367,6 +382,22 @@ public class Server  implements Observer {
           
       }
       
+  }
+  
+  
+  /**
+   * Uruchomienie wątku odrzucającego klientów > 2
+   */
+  public void startDenyThread() {
+	  
+	try {
+	  if (denyThread.isAlive()) denyThread.interrupt();
+	}
+	catch (NullPointerException e) {}  
+	  
+	denyThread = new ServerDenyThread(this, gui.getConsole());
+    denyThread.start(); 
+	  
   }
  
   
@@ -398,34 +429,30 @@ public class Server  implements Observer {
    
     server.setServerSocket();    
     
-    server.restart = false;
+    server.restart = false; 
     
     do {
       
       try {
-        Thread.sleep(150);
+        Thread.sleep(50);
       } catch (Exception e) {}
       
-
       console.setMessageLn(Lang.get("WaitForConnectionsOnPort",
-    		  String.valueOf(IConf.SERVER_PORT)), Color.DARK_GRAY); 
+    		  String.valueOf(IConf.SERVER_PORT)), Color.DARK_GRAY);
       
       int clients = 0;
                 
       while (clients < 2)  {
           
         try {  
-       
+                 
           Socket socket = server.getServerSocket().accept();
           
           console.setMessageLn(Lang.get("ConnectionWithXAccepted", socket.getInetAddress()),
         		  Color.BLUE);
      
-          ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
           server.setInputStream(clients, new ObjectInputStream(socket.getInputStream()));
-          server.setOutputStream(clients, out);          
-          out.writeObject(new Command(Command.CMD_PING));
-          out.flush();
+          server.setOutputStream(clients, new ObjectOutputStream(socket.getOutputStream()));          
           
           Ping ping = new Ping(server, clients);
           server.serverPingList.add(ping);
@@ -441,9 +468,7 @@ public class Server  implements Observer {
               console.setMessageLn(Lang.get("TwoClientsAlready"), Color.BLACK);
               console.newLine();
               
-              // odrzucanie kolejnych klientów 
-              server.denyThread = new ServerDenyThread(server, console);
-              server.denyThread.start();
+              server.startDenyThread();
               
            }
           
@@ -453,8 +478,7 @@ public class Server  implements Observer {
         
         catch (IOException e) {
         
-           server.restart = true;
-        	
+           server.restart = true;        	
            break;
             
         }
@@ -465,11 +489,11 @@ public class Server  implements Observer {
       while (!server.restart) {
     
         try {
-          Thread.sleep(10);
+          Thread.sleep(50);
         }
         catch (Exception e) {}    
 
-      }
+      }      
       
       
     }  while(true);

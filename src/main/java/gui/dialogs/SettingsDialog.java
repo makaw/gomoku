@@ -201,7 +201,7 @@ public class SettingsDialog extends SimpleDialog {
                
              }
              
-             settings.save(server);
+             settings.save();
              
              dispose();
              

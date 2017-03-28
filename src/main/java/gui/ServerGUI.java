@@ -171,8 +171,8 @@ public class ServerGUI extends JFrame implements IBaseGUI {
   @Override
   public void restartGameSettings() {
   
+	 console.setMessageLn(Lang.get("SettingsChanged"), Color.BLUE); 
      serverSpy.sendObject("settings", serverSettings);
-     console.setMessageLn(Lang.get("SettingsChanged"), Color.BLUE);
      
   }
     

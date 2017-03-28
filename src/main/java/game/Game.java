@@ -254,7 +254,7 @@ public class Game extends Thread implements Observer {
      }
      
      
-     // zatrzymanie, jeżeli brakuje graczy lub nie ma połąćzenia przy grze sieciowej
+     // zatrzymanie, jeżeli brakuje graczy lub nie ma połączenia przy grze sieciowej
      if (player1==null || player2==null)  throw new Exception();
  
 
@@ -355,15 +355,16 @@ public class Game extends Thread implements Observer {
          moveNo++;         
          
        }
+       
+       
+       try {
+    	 Thread.sleep(50);
+       }
+       catch (InterruptedException e) { gameState=GameState.RESTART; }
                 
      } 
      
-     // przywrócenie ustawień i domyślnego kursora w razie przerwania gry sieciowej
-     if (gameMode == GameMode.NETWORK_GAME && client != null)  {
-
-       gBoard.setDefaultMouseCursor();      
-       
-     }
+     if (gameMode == GameMode.NETWORK_GAME && client != null) gBoard.setDefaultMouseCursor();             
      
      if (playAgain) new NewGameDialog(frame);
   

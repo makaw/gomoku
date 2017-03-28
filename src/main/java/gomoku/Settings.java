@@ -22,6 +22,9 @@ public class Settings extends SettingsVar {
   /** Czy komputer zaczyna grę */
   private boolean computerStarts = IConf.DEFAULT_COMPUTER_STARTS;
   
+  /** Nazwa pliku ustawień */
+  private final static String FILE_NAME = "gomoku-settings.properties";
+  
   private static final long serialVersionUID = 1L;  
     
   /**
@@ -116,9 +119,8 @@ public class Settings extends SettingsVar {
   
   /**
    * Zapis ustawień do pliku
-   * @param server True jeżeli ustawienia serwera
    */  
-  public void save(boolean server) {
+  public void save() {
 	 
 	try {
 	  Properties props = new Properties();
@@ -126,9 +128,9 @@ public class Settings extends SettingsVar {
 	  props.setProperty("piecesInRow", String.valueOf(piecesInRow));
 	  props.setProperty("computerStarts", String.valueOf(computerStarts));
 	  props.setProperty("localeIndex", String.valueOf(Lang.getLocaleIndex()));
-	  File f = new File("gomoku" + (server ? "-server" : "") + "-settings.properties");
+	  File f = new File(FILE_NAME);
 	  OutputStream out = new FileOutputStream(f);
-	  props.store(out, "Gomoku " + (server ? "server " : "") + "settings");
+	  props.store(out, "Gomoku settings");
 	}
 	catch (Exception e ) {
 	  System.err.println(e);
@@ -139,14 +141,13 @@ public class Settings extends SettingsVar {
   
   /**
    * Załadowanie ustawień z pliku
-   * @param server True jeżeli ustawienia serwera
    */
-  public void load(boolean server) {
+  public void load() {
 	  
 	 Properties props = new Properties();
 	 
 	 try {
-		File f = new File("gomoku" + (server ? "-server" : "") + "-settings.properties");
+		File f = new File(FILE_NAME);
 	    props.load(new FileInputStream(f));
 	 }
 	 catch (Exception e) { }

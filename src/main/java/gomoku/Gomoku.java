@@ -46,7 +46,7 @@ public final class Gomoku implements Observer {
 
     gameSpy = new AppObserver();
     settings = new Settings();
-    settings.load(false);
+    settings.load();
       
     // bezpieczne wywołanie interfejsu graficznego  
     SwingUtilities.invokeAndWait(new Runnable() {

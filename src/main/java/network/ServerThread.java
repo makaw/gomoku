@@ -5,15 +5,12 @@
 package network;
 
 
-import java.awt.Color;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
-import gomoku.Lang;
 import gomoku.Settings;
 import gomoku.SettingsVar;
-import gui.BaseConsole;
 
 /**
  *
@@ -26,8 +23,6 @@ public class ServerThread extends Thread {
   
   /** Numer obsługiwanego klienta (0-1) */
   private final int clientNumber;  
-  /** Referencja do konsoli GUI */
-  private final BaseConsole console;
   /** Referencja do obiektu głównego serwera */
   private final Server server;
   /** Referencja do gniazdka klienckiego */
@@ -41,12 +36,11 @@ public class ServerThread extends Thread {
    * @param server Referencja do obiektu głównego serwera
    * @param clientNumber Numer obsługiwanego klienta
    */
-  public ServerThread(BaseConsole console, Socket socket, Server server, int clientNumber)  {
+  public ServerThread(Socket socket, Server server, int clientNumber)  {
       
     this.server = server;
     this.socket = socket;
     this.clientNumber = clientNumber;
-    this.console = console;
 
     setDaemon(true);
     
@@ -105,30 +99,36 @@ public class ServerThread extends Thread {
                output = server.getOutputStream(clientNumber^1);
                output.writeObject(command);
                output.flush();
+               
+               break;
            
          }
 
       } catch (IOException e) {
-          
-         console.setMessageLn(Lang.get("ConnectionWithXLost", clientNumber+1) + " ("+e+")", Color.RED);
-         
-         server.getServerSpy().sendObject("state", "restart");
+        
+         server.getServerSpy().sendObject("ping-out", clientNumber);
           
          stopThread = true;
          
-          try {
+         try {
               
-             socket.close();
+           socket.close();
              
-          } catch (IOException ex) {}
+         } catch (IOException ex) {}
          
              
       } 
       
-      catch (ClassNotFoundException | NullPointerException ex) {}
+      catch (ClassNotFoundException | ClassCastException | NullPointerException ex) {}
+      
+      
+      try {
+          Thread.sleep(50);
+      }
+      catch (InterruptedException e) {  return; }
       
          
-     }   while (!stopThread);
+    } while (!stopThread);
       
       
   }
