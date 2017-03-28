@@ -36,17 +36,17 @@ import network.Command;
  */
 public class Game extends Thread implements Observer {
 
-   /** Referencja do obiektu reprezentującego pierwszego z graczy */
+   /** Pierwszy gracz */
    private Player player1;
-   /** Referencja do obiektu reprezentującego drugiego z graczy */
+   /** Drugi gracz */
    private Player player2;
-   /** Logicznej warstwa planszy */
+   /** Logiczna warstwa planszy */
    private Board lBoard;
    /** Graficzna reprezentacja planszy */
    private BoardGraphics gBoard;
    /** Konsola do wyświetlania komunikatów */
    private final Console console;
-   /** Referencja do obiektu służącego do odtwarzania dźwięków */
+   /** Ref. do obiektu służącego do odtwarzania dźwięków */
    private final Sounds sounds;
    /** Aktualny stan gry (trwa, oczekiwanie, restart) */
    private GameState gameState;   
@@ -124,10 +124,9 @@ public class Game extends Thread implements Observer {
            
            try {
              
-             String txt = "[" + Lang.get("Player") + " " +(client.getNumber()+1)+"]: " + msg;
-             client.sendCommand(new Command(Command.CMD_MESSAGE, txt));
+             client.sendCommand(new Command(Command.CMD_MESSAGE, msg));
              console.newLine();
-             console.setMessageLn(Lang.get("Sent") + ": " + msg, Color.GRAY);
+             console.setMessageLn("[" + Lang.get("SentMsg", msg) + "]", Color.GRAY);
             
            } catch (IOException | ClassNotFoundException e) {
               System.err.println(e);

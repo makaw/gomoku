@@ -161,18 +161,13 @@ public class GUI extends JFrame implements IBaseGUI, Observer {
     menuGame = new MenuGame(this);
     menuHelp = new MenuHelp(this);
     
-    // przycisk rozłączenia z serwerem
-    dscButton = new JButton("", ImageRes.getIcon("disconnect.png"));
-    dscButton.setFocusPainted(false);
-    dscButton.setToolTipText(Lang.get("DisconnectServer"));
-    dscButton.addActionListener(new ActionListener() {
+    ActionListener dscList = new ActionListener() {
       @Override
       public void actionPerformed(final ActionEvent e) {
-            
+              
          boolean res = new ConfirmDialog(GUI.this, Lang.get("DisconnectConfirm")).isConfirmed(); 
-          
-         if (res) 
-         try {
+            
+         if (res)  try {
            socket.close();
            dscButton.setEnabled(false);
            menuGame.enableItems(true);
@@ -180,13 +175,20 @@ public class GUI extends JFrame implements IBaseGUI, Observer {
          catch (IOException ex) {
            System.err.println(ex);  
          }          
-          
-      }
-       
-    });
             
-    dscButton.setEnabled(false);
+      }
+         
+    };
+    
 
+    menuGame.getDscItem().addActionListener(dscList);            
+    
+    // przycisk rozłączenia z serwerem
+    dscButton = new JButton("", ImageRes.getIcon("disconnect.png"));
+    dscButton.setFocusPainted(false);
+    dscButton.setToolTipText(Lang.get("DisconnectServer"));
+    dscButton.addActionListener(dscList);
+    dscButton.setEnabled(false);
     
     panelButtons.add(sndButton);
     panelButtons.add(msgButton);
@@ -490,7 +492,10 @@ public class GUI extends JFrame implements IBaseGUI, Observer {
              
            socket = (Socket)obs.getObject();
            dscButton.setEnabled(true);
-           menuGame.enableItems(false);            
+           menuGame.enableItems(false);
+           menuGame.getDscItem().setEnabled(true);
+           menuGame.getDscItem().setVisible(true);
+           
            break;
           
          case "socket-state":

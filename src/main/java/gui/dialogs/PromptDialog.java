@@ -96,13 +96,6 @@ public class PromptDialog extends SimpleDialog {
      
       JButton buttonOk = new JButton(" " + Lang.get("OK") + " ");
       buttonOk.setFocusPainted(false);
-      buttonOk.addActionListener(new ActionListener() {
-         @Override
-         public void actionPerformed(final ActionEvent e) { 
-            answer = msg.getText();
-            dispose();
-         }
-      });
 
       JButton buttonCancel = new JButton(Lang.get("Cancel"));
       buttonCancel.setFocusPainted(false);
@@ -112,6 +105,18 @@ public class PromptDialog extends SimpleDialog {
             dispose();
          }
       });
+      
+      ActionListener listener = new ActionListener() {
+          @Override
+          public void actionPerformed(final ActionEvent e) { 
+             answer = msg.getText();
+             dispose();
+          }
+      };
+
+      
+      msg.addActionListener(listener);
+      buttonOk.addActionListener(listener);      
       
       p = new JPanel(new FlowLayout());
       p.setBorder(new EmptyBorder(0, 30, 5, 0)); 

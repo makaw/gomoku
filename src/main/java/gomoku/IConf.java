@@ -46,9 +46,9 @@ public interface IConf {
    int DEFAULT_LOCALE_INDEX = 0;
     
    /** Nr wersji aplikacji */
-   String VERSION = "0.7"; 
+   String VERSION = "0.7.1"; 
    /** Nr wersji serwera aplikacji */
-   String VERSION_SERVER = "0.6";
+   String VERSION_SERVER = "0.7";
    /** Rok(lata) stworzenia aplikacji */
    String YEARS = "2015-17";
       

@@ -1,5 +1,5 @@
 # Gomoku
-Gomoku (alias "Five in a Row") is an abstract strategy board game. You can play with the computer, in the network mode (this project contains a server) or in the hot-seat mode. 
+Gomoku (alias "Five in a Row") is an abstract strategy board game. You can play against the computer or with a friend (in the network mode – this project contains a server –  or in the hot-seat mode). 
 
 [Wikipedia: Gomoku](https://en.wikipedia.org/wiki/Gomoku)
 
@@ -13,9 +13,9 @@ The NEGASCOUT algorithm - [avianey/minimax4j](https://github.com/avianey/minimax
 
 ----------
 
-![Okno klienta](http://kaw.net.pl/gomoku_img/klient1.jpg)
+![Client window](http://kaw.net.pl/gomoku_img/klient1.jpg)
 
-![Okno serwera](http://kaw.net.pl/gomoku_img/serwer1.jpg)
+![Server console](http://kaw.net.pl/gomoku_img/serwer1.jpg)
 
 ----------
 
@@ -25,9 +25,7 @@ Gomoku (alias "Five in a Row") to gra logiczno-strategiczna. Gra z komputerem, w
 [Wikipedia: Gomoku](https://pl.wikipedia.org/wiki/Gomoku)
 
 ### Zasady gry
-W wersji standardowej, gra toczy się na planszy 15x15 pól, gracze na przemian układają na wolnych polach kamienie (czarne i białe).
+W wersji standardowej, gra toczy się na planszy 15x15 pól, gracze na przemian układają na wolnych polach czarne i białe kamienie.
 Celem jest ułożenie pięciu kamieni w ciągłej linii (pionowo, poziomo lub ukośnie).
 
-### AI
-Algorytm NEGASCOUT - [avianey/minimax4j](https://github.com/avianey/minimax4j) 
 

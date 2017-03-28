@@ -7,6 +7,8 @@ package game;
 import gui.BoardGraphics;
 import java.awt.Color;
 import java.io.IOException;
+
+import gomoku.Lang;
 import network.Client;
 import network.Command;
 
@@ -88,8 +90,11 @@ public class PlayerRemote extends Player {
            // odebranie wiadomości
            else if (command.getCommand() == Command.CMD_MESSAGE) {
                
+             String msg = "[" + Lang.get("MsgFromPlayer", client.getNumber() == 1 ? 1 : 2, 
+            		 (String)(command.getCommandData())) + "]";             
+
              client.getConsole().newLine();
-             client.getConsole().setMessageLn((String)(command.getCommandData()), new Color(0x22, 0x8b, 0x22));               
+             client.getConsole().setMessageLn(msg, new Color(0x22, 0x8b, 0x22));               
                
            }
 

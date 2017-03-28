@@ -67,6 +67,9 @@ public class Console extends BaseConsole implements ILocalizable {
     msgButton.setEnabled(enabled); 
     dscButton.setEnabled(enabled); 
     menuGame.enableItems(!enabled);
+
+    menuGame.getDscItem().setVisible(enabled);
+    menuGame.getDscItem().setEnabled(enabled);
       
   }
   

@@ -36,6 +36,8 @@ public class MenuGame extends JMenu implements ILocalizable {
    private final JMenuItem newGameItem;
    /** Menu: opcja serwer */
    private final JMenuItem serverItem;
+   /** Menu: opcja rozłącz */
+   private final JMenuItem dscItem;
    /** Menu: opcja ustawienia */
    private final JMenuItem settingsItem;
    /** Menu: opcja koniec */
@@ -91,6 +93,12 @@ public class MenuGame extends JMenu implements ILocalizable {
        }
      });   
      
+    
+     dscItem = new JMenuItem(Lang.get("MenuDisconnect"));
+     dscItem.setMnemonic(GUI.getKeyCode(dscItem));
+     dscItem.setEnabled(false);
+     dscItem.setVisible(false);
+     add(dscItem);
      
     
      settingsItem = new JMenuItem(Lang.get("MenuSettings"));
@@ -137,6 +145,11 @@ public class MenuGame extends JMenu implements ILocalizable {
    }
    
    
+   public JMenuItem getDscItem() {
+	 return dscItem;
+   }
+   
+   
 
    @Override
    public void translate() {
@@ -148,6 +161,8 @@ public class MenuGame extends JMenu implements ILocalizable {
 	  newGameItem.setMnemonic(GUI.getKeyCode(newGameItem));
 	  serverItem.setText(Lang.get("MenuRunServer"));     
 	  serverItem.setMnemonic(GUI.getKeyCode(serverItem));
+	  dscItem.setText(Lang.get("MenuDisconnect"));
+	  dscItem.setMnemonic(GUI.getKeyCode(dscItem));
 	  settingsItem.setText(Lang.get("MenuSettings"));     
 	  settingsItem.setMnemonic(GUI.getKeyCode(settingsItem));
 	  quitItem.setText(Lang.get("MenuQuit"));     
