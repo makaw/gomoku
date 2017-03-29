@@ -48,11 +48,11 @@ public class Server  implements Observer {
   /** Tablica strumieni wejściowych */
   private final ObjectInputStream[] input;
   /** Lista wątków klientów */
-  List<ServerThread> serverThreadList;
+  private final List<ServerThread> serverThreadList;
   /** Lista gniazdek klienckich */
-  List<Socket> serverSocketList;
+  private final List<Socket> serverSocketList;
   /** Lista timerów */
-  List<Ping> serverPingList;
+  private final List<Ping> serverPingList;
   /** True jeżeli konieczny jest restart, false jeżeli nie */
   private boolean restart;
   /** Obserwator do komunikacji z innymi wątkami */
@@ -87,7 +87,10 @@ public class Server  implements Observer {
   	Runtime.getRuntime().addShutdownHook(new Thread() {  	
   	  @Override
       public void run() {
-  		Server.this.free();    
+  	    try {  	       
+  	      Server.this.free();  
+  	    }
+  	    catch (Exception e) {}		  
   	  }  		
   	});  	
     
@@ -278,9 +281,14 @@ public class Server  implements Observer {
          		  serverSocketList.get(c).getInetAddress()), Color.RED);
                serverRestart();
              }
-             // już zrestartowane
-             catch (IndexOutOfBoundsException e) {  }
-           
+             // już zrestartowane - FIX (2 klientów, kolejna gra)
+             catch (IndexOutOfBoundsException e) {
+               try {
+                 free();
+               } catch (Exception ex) {}
+               restart = true;
+             }
+
              break;
            
            
@@ -313,6 +321,11 @@ public class Server  implements Observer {
 	   try {
 	     s.close();
 	   } catch (Exception ex) {}
+	   do {          
+	     try {
+	       Thread.sleep(50);
+	     } catch (InterruptedException e) { }           
+	   } while (!s.isClosed());
 	}		       
 	    
 	serverThreadList.clear();
@@ -321,6 +334,13 @@ public class Server  implements Observer {
   }
   
   
+  /**
+   * Liczba podłączonych klientów   
+   * @return Liczba klientów
+   */
+  public int clientsNum() {
+	 return serverSocketList.size();
+  }
   
   
   /**
@@ -328,12 +348,17 @@ public class Server  implements Observer {
    */  
   protected void serverRestart() {
       
-     gui.getConsole().setMessageLn(Lang.get("ServerRestarted"), Color.RED);
-     gui.getConsole().newLine(); 
-
-     free();	   
-     
-     restart = true;
+	 gui.getConsole().setMessageLn(Lang.get("ServerRestarted"), Color.RED);
+     gui.getConsole().newLine();
+	      
+     try {
+       Thread.sleep(100);	 
+       free();
+     }
+     // właśnie zwalnianie w innym wątku
+     catch (ConcurrentModificationException e) {}
+     catch (InterruptedException e) {}
+     catch (NullPointerException e) {}
      
      try {
        serverSocket.close();
@@ -342,13 +367,15 @@ public class Server  implements Observer {
      do {          
        try {
          Thread.sleep(50);
-       } catch (InterruptedException e) { break;}           
+       } catch (InterruptedException e) { }           
      } while (!serverSocket.isClosed());
                 
-     setServerSocket();
-  	 
+     setServerSocket();     
+
+     restart = true;     
 
   }
+  
   
   
   /**
@@ -356,17 +383,17 @@ public class Server  implements Observer {
    */
   public void setServerSocket() {
       
-      try { 
+    try { 
     	  
-        serverSocket = new ServerSocket(IConf.SERVER_PORT);
+      serverSocket = new ServerSocket(IConf.SERVER_PORT);
         
-      } catch (IOException e) {
+    } catch (IOException e) {
     	  
-        gui.getConsole().setMessageLn(e.getMessage(), Color.RED);
-        new InfoDialog(gui, e.getMessage(), DialogType.WARNING);
-        System.exit(0);
+      gui.getConsole().setMessageLn(e.getMessage(), Color.RED);
+      new InfoDialog(gui, e.getMessage(), DialogType.WARNING);
+      System.exit(0);
           
-      }
+    }
       
   }
   
@@ -386,11 +413,9 @@ public class Server  implements Observer {
       
     try {  
       server = new Server();    
-    }
-
-    catch (Exception e) {  
-      System.err.println(e);
-      System.exit(0);  
+    } catch (InterruptedException | InvocationTargetException e) {
+      System.err.println(Lang.get("StartGraphicsProblem", e));
+      System.exit(0);
     }
     
     BaseConsole console = server.gui.getConsole();
@@ -408,60 +433,61 @@ public class Server  implements Observer {
       console.setMessageLn(Lang.get("WaitForConnectionsOnPort",
     		  String.valueOf(IConf.SERVER_PORT)), Color.DARK_GRAY);
       
-      int clients = 0;
       server.restart = false;
              
-      while (!server.restart)  {
+      while (!server.restart)  {    	  
           
         try {  
                  
-          Socket socket = server.getServerSocket().accept();
+           Socket socket = server.getServerSocket().accept();
+           
+           try {
           
-          if (clients < 2) {
+            server.setInputStream(server.clientsNum(), new ObjectInputStream(socket.getInputStream()));
+            server.setOutputStream(server.clientsNum(), new ObjectOutputStream(socket.getOutputStream()));                    
+
             console.setMessageLn(Lang.get("ConnectionWithXAccepted", socket.getInetAddress()),
-        	  	    Color.BLUE);
-     
-            server.setInputStream(clients, new ObjectInputStream(socket.getInputStream()));
-            server.setOutputStream(clients, new ObjectOutputStream(socket.getOutputStream()));          
-          
-            Ping ping = new Ping(server, clients);
+        	  	    Color.BLUE);     
+            
+            Ping ping = new Ping(server, server.clientsNum());
             server.serverPingList.add(ping);
             ping.startPinging();
           
             server.addNewSocket(socket);
-            clients++;
           
           
-            if (clients == 2) {
+            if (server.clientsNum() == 2) {
               
                server.startServerThreads();
                     
                console.setMessageLn(Lang.get("TwoClientsAlready"), Color.BLACK);
                console.newLine();              
               
-             }
+            }
           
-          }        
+          }      
+           
+           // jest już 2 klientów
+           catch (ArrayIndexOutOfBoundsException e) {
+           	          
+             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+          	 out.writeObject(new Command(Command.CMD_FULL));
+          	 out.flush();     	    
+           	
+           }
        
-          // > 2 klientów
-          else {
-        	
-            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-     	    out.writeObject(new Command(Command.CMD_FULL));
-     	    out.flush();     	           
-        	
-          }
         }
+      
         
-        catch (IOException e) {        
-      	  server.restart = true; 
-      	  clients = 0;
+        catch (IOException e) {       
+          server.restart = true;
+      	  break;      	  
         }
 
         try {
           Thread.sleep(50);
         }
-        catch (Exception e) {}    
+        catch (InterruptedException e) { return; }    
 
       }      
       

@@ -81,7 +81,8 @@ public class ServerThread extends Thread {
              // rozłączenie klienta    
              case Command.CMD_EXIT: throw new IOException();                  
              
-             // ping - nic nie robi
+             // full, ping - nic nie robi
+             case Command.CMD_FULL: 
              case Command.CMD_PING: break;
              
              // koniec odbioru wiadomości - odeślij żeby odblokować wątek
