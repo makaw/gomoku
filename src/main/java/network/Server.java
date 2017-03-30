@@ -103,11 +103,9 @@ public class Server  implements Observer {
         gui = new ServerGUI(serverSpy, settings); 
       }
     });        
-  
-      
+        
   }
-  
-  
+    
   
   /**
    * Metoda ustawia referencję do strumienia wyjściowego dla danego klienta
@@ -268,7 +266,10 @@ public class Server  implements Observer {
            case "state":
             
              String val = (String)obs.getObject();
-             if (val.equals("restart")) serverRestart();
+             if (val.equals("restart")) {
+               gui.trayMessage(Lang.get("ServerRestarted")); 
+               serverRestart();
+             }
             
              break;
            
@@ -276,9 +277,10 @@ public class Server  implements Observer {
            case "ping-out":
         	
              try {	
-               int c = (int)obs.getObject();
-               gui.getConsole().setMessageLn(Lang.get("ConnectionWithXLost", 
-         		  serverSocketList.get(c).getInetAddress()), Color.RED);
+               String msg = Lang.get("ConnectionWithXLost", 
+              		  serverSocketList.get((int)obs.getObject()).getInetAddress());
+               gui.getConsole().setMessageLn(msg, Color.RED);
+               gui.trayMessage(msg + ". " + Lang.get("ServerRestarted"));
                serverRestart();
              }
              // już zrestartowane - FIX (2 klientów, kolejna gra)
@@ -418,11 +420,19 @@ public class Server  implements Observer {
       System.exit(0);
     }
     
-    BaseConsole console = server.gui.getConsole();
+    ServerGUI frame = server.gui;
+    BaseConsole console = frame.getConsole();
     console.setMessageLn("Gomoku Server v."+IConf.VERSION_SERVER, Color.GRAY);
     console.setMessageLn("--------------------------------", Color.GRAY);  
    
-    server.setServerSocket();         
+    server.setServerSocket();        
+    
+    SwingUtilities.invokeLater(new Runnable() {		
+	  @Override
+	  public void run() {
+		frame.setSystemTray();
+	  }
+	});
     
     do {
       
@@ -446,8 +456,9 @@ public class Server  implements Observer {
             server.setInputStream(server.clientsNum(), new ObjectInputStream(socket.getInputStream()));
             server.setOutputStream(server.clientsNum(), new ObjectOutputStream(socket.getOutputStream()));                    
 
-            console.setMessageLn(Lang.get("ConnectionWithXAccepted", socket.getInetAddress()),
-        	  	    Color.BLUE);     
+            String msg = Lang.get("ConnectionWithXAccepted", socket.getInetAddress());
+            console.setMessageLn(msg, Color.BLUE);     
+            frame.trayMessage(msg);
             
             Ping ping = new Ping(server, server.clientsNum());
             server.serverPingList.add(ping);
@@ -462,6 +473,7 @@ public class Server  implements Observer {
                     
                console.setMessageLn(Lang.get("TwoClientsAlready"), Color.BLACK);
                console.newLine();              
+               server.gui.trayMessage(Lang.get("TwoClientsAlready"));
               
             }
           

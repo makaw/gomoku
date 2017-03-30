@@ -36,11 +36,11 @@ public class MenuHelp extends JMenu implements ILocalizable {
    public MenuHelp(final IBaseGUI frame) {
        
     super(Lang.get("MenuHelp"));
-    setMnemonic(GUI.getKeyCode(this));
+    setMnemonic(IBaseGUI.getKeyCode(this));
     
     
     aboutItem = new JMenuItem(Lang.get("MenuAbout"));
-    aboutItem.setMnemonic(GUI.getKeyCode(aboutItem));
+    aboutItem.setMnemonic(IBaseGUI.getKeyCode(aboutItem));
     add(aboutItem);
     aboutItem.addActionListener(new ActionListener() {
       @Override
@@ -56,10 +56,10 @@ public class MenuHelp extends JMenu implements ILocalizable {
    public void translate() {
 	   
 	  setText(Lang.get("MenuHelp"));
-	  setMnemonic(GUI.getKeyCode(this)); 
+	  setMnemonic(IBaseGUI.getKeyCode(this)); 
 		   
 	  aboutItem.setText(Lang.get("MenuAbout"));     
-	  aboutItem.setMnemonic(GUI.getKeyCode(aboutItem));	   
+	  aboutItem.setMnemonic(IBaseGUI.getKeyCode(aboutItem));	   
 	   
    }
     

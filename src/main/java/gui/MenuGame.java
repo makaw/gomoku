@@ -50,11 +50,11 @@ public class MenuGame extends JMenu implements ILocalizable {
    public MenuGame(final IBaseGUI frame) {
        
      super(Lang.get("MenuGame"));
-     setMnemonic(GUI.getKeyCode(this));
+     setMnemonic(IBaseGUI.getKeyCode(this));
     
      newGameItem = new JMenuItem(Lang.get("MenuNewGame"));     
      newGameItem.setPreferredSize(new Dimension(160, 20));
-     newGameItem.setMnemonic(GUI.getKeyCode(newGameItem));
+     newGameItem.setMnemonic(IBaseGUI.getKeyCode(newGameItem));
      newGameItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.CTRL_MASK));
      add(newGameItem);
      newGameItem.addActionListener(new ActionListener() {
@@ -69,7 +69,7 @@ public class MenuGame extends JMenu implements ILocalizable {
      
     serverItem = new JMenuItem(Lang.get("MenuRunServer"));
     serverItem.setPreferredSize(new Dimension(160, 20));
-    serverItem.setMnemonic(GUI.getKeyCode(serverItem));
+    serverItem.setMnemonic(IBaseGUI.getKeyCode(serverItem));
     add(serverItem);
     serverItem.addActionListener(new ActionListener() {
        @Override  
@@ -95,14 +95,14 @@ public class MenuGame extends JMenu implements ILocalizable {
      
     
      dscItem = new JMenuItem(Lang.get("MenuDisconnect"));
-     dscItem.setMnemonic(GUI.getKeyCode(dscItem));
+     dscItem.setMnemonic(IBaseGUI.getKeyCode(dscItem));
      dscItem.setEnabled(false);
      dscItem.setVisible(false);
      add(dscItem);
      
     
      settingsItem = new JMenuItem(Lang.get("MenuSettings"));
-     settingsItem.setMnemonic(GUI.getKeyCode(settingsItem));
+     settingsItem.setMnemonic(IBaseGUI.getKeyCode(settingsItem));
      add(settingsItem);
      settingsItem.addActionListener(new ActionListener() {
        @Override  
@@ -117,7 +117,7 @@ public class MenuGame extends JMenu implements ILocalizable {
      addSeparator(); 
 
      quitItem = new JMenuItem(Lang.get("MenuQuit"));
-     quitItem.setMnemonic(GUI.getKeyCode(quitItem));
+     quitItem.setMnemonic(IBaseGUI.getKeyCode(quitItem));
      quitItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, ActionEvent.CTRL_MASK));
      add(quitItem);       
      quitItem.addActionListener(new ActionListener() {
@@ -155,18 +155,18 @@ public class MenuGame extends JMenu implements ILocalizable {
    public void translate() {
 	   
 	  setText(Lang.get("MenuGame"));
-	  setMnemonic(GUI.getKeyCode(this)); 
+	  setMnemonic(IBaseGUI.getKeyCode(this)); 
 	   
 	  newGameItem.setText(Lang.get("MenuNewGame"));     
-	  newGameItem.setMnemonic(GUI.getKeyCode(newGameItem));
+	  newGameItem.setMnemonic(IBaseGUI.getKeyCode(newGameItem));
 	  serverItem.setText(Lang.get("MenuRunServer"));     
-	  serverItem.setMnemonic(GUI.getKeyCode(serverItem));
+	  serverItem.setMnemonic(IBaseGUI.getKeyCode(serverItem));
 	  dscItem.setText(Lang.get("MenuDisconnect"));
-	  dscItem.setMnemonic(GUI.getKeyCode(dscItem));
+	  dscItem.setMnemonic(IBaseGUI.getKeyCode(dscItem));
 	  settingsItem.setText(Lang.get("MenuSettings"));     
-	  settingsItem.setMnemonic(GUI.getKeyCode(settingsItem));
+	  settingsItem.setMnemonic(IBaseGUI.getKeyCode(settingsItem));
 	  quitItem.setText(Lang.get("MenuQuit"));     
-	  quitItem.setMnemonic(GUI.getKeyCode(quitItem));
+	  quitItem.setMnemonic(IBaseGUI.getKeyCode(quitItem));
 	   
    }
    

@@ -37,7 +37,7 @@ import gui.dialogs.SettingsDialog;
 public class ServerGUI extends JFrame implements IBaseGUI {
     
   /** Szerokość okna aplikacji w pikselach */
-  private static final int F_WIDTH = 395;
+  private static final int F_WIDTH = 465;
   /** Wysokość okna aplikacji w pikselach */
   private static final int F_HEIGHT = 320;   
   /** Referencja do obiektu konsoli w GUI serwera */
@@ -47,7 +47,10 @@ public class ServerGUI extends JFrame implements IBaseGUI {
   /** Obserwator - komunikacja z wątkami serwera */
   private final AppObserver serverSpy;
   /** przyciski */
-  private final JButton settingsButton, restartButton, exitButton;
+  private final JButton settingsButton, restartButton, exitButton, hideButton;
+  /** system tray */
+  private ServerTrayIcon systemTray;
+  
   
   /**
    * Konstruktor
@@ -81,7 +84,6 @@ public class ServerGUI extends JFrame implements IBaseGUI {
                                      JScrollPane.HORIZONTAL_SCROLLBAR_NEVER));
  
     
-    // obsługa przycisku Ustawienia
     settingsButton = new JButton(" " + Lang.get("Settings") + " ");
     settingsButton.setFocusPainted(false);
     
@@ -89,60 +91,97 @@ public class ServerGUI extends JFrame implements IBaseGUI {
        @Override
        public void actionPerformed(final ActionEvent e) {   
           
-         // wywołanie okna z wyborem ustawień 
           new SettingsDialog(ServerGUI.this);  
-            
+
        }
     });    
 
-    // obsługa przycisku Restart
     restartButton = new JButton(" " + Lang.get("Restart") + " ");
     restartButton.setFocusPainted(false);
     restartButton.addActionListener(new ActionListener() {
        @Override
        public void actionPerformed(final ActionEvent e) {   
-          // potwierdzenie przez użytkownika 
+
           boolean res = new ConfirmDialog(ServerGUI.this,
         		  Lang.get("ServerRestartConfirm")).isConfirmed();  
           if (res) serverSpy.sendObject("state", "restart");
        }
     });
     
-    // obsługa przycisku Koniec
     exitButton = new JButton(" " + Lang.get("Quit") + " ");
     exitButton.setFocusPainted(false);
     exitButton.addActionListener(new ActionListener() {
        @Override
        public void actionPerformed(final ActionEvent e) {   
          boolean res = new ConfirmDialog(ServerGUI.this,
-        		 Lang.get("ExitConfirm")).isConfirmed();           
+        		 Lang.get("ServerExitConfirm")).isConfirmed();           
          if (res) System.exit(0);
+       }
+    });    
+    
+    hideButton = new JButton(Lang.get("Hide"));
+    hideButton.setFocusPainted(false);
+    hideButton.addActionListener(new ActionListener() {
+       @Override
+       public void actionPerformed(final ActionEvent e) {   
+         ServerGUI.this.setVisible(false);
        }
     });    
         
       
-    JPanel p = new JPanel(new GridLayout(1,3));
+    JPanel p = new JPanel(new GridLayout(1,4));
     
     p.add(settingsButton);
     p.add(restartButton);
     p.add(exitButton);
+    p.add(hideButton);
     
     getContentPane().add(p);
     
     pack();
     setSize(F_WIDTH, F_HEIGHT);
     setResizable(false);
-    setVisible(true);    
-
-  }
+    setVisible(true);  
     
+  }
+  
+  
+  /**
+   * Dodaje menu do zasobnika systemowego (system tray)
+   */
+  public void setSystemTray() {
+
+ 	 systemTray = new ServerTrayIcon(this);
+ 
+	 try {
+	   systemTray.add();
+	 }
+	 catch (Exception e) {
+	   System.err.println(Lang.get("UnableToLoadSystemTray", e.getMessage()));
+	 } 
+	 
+  }
+  
+  
+  /**
+   * Powiadomienie w system tray
+   * @param msg Treść
+   */
+  public void trayMessage(String msg) {
+	  
+	systemTray.displayMessage(msg);  
+	  
+  }
+
+
 
   public BaseConsole getConsole() {
         
     return console;  
         
   }
-
+  
+  
   
   @Override
   public Settings getSettings() {
@@ -164,6 +203,12 @@ public class ServerGUI extends JFrame implements IBaseGUI {
   }  
   
   
+  
+  public AppObserver getServerSpy() {
+	return serverSpy;
+  }
+
+
   @Override
   public void restartGame(GameMode gameMode, String serverIP) {}
   
@@ -184,8 +229,25 @@ public class ServerGUI extends JFrame implements IBaseGUI {
 	restartButton.setText(" " + Lang.get("Restart") + " ");
 	exitButton.setText(" " + Lang.get("Quit") + " ");
 	
+	try {
+	  systemTray.translate();
+	}
+	catch (NullPointerException e) { }
+	
 	console.setMessageLn("[" + Lang.get("Language") + ": " + Lang.getName() + "]", Color.GRAY);
 	 
+  }
+  
+  
+  @Override
+  public void setVisible(boolean visible) {
+	  
+	 super.setVisible(visible);
+	 try {
+	    systemTray.enableShowItem(!visible); 
+	 }
+	 catch (NullPointerException e) {}
+
   }
   
 }

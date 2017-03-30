@@ -25,10 +25,8 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 import javax.swing.plaf.metal.OceanTheme;
@@ -459,20 +457,6 @@ public class GUI extends JFrame implements IBaseGUI, Observer {
 	console.newLine();
 	
   }
-  
-  
-  /**
-   * Kod pierwszego znaku elementu menu
-   * @param item Element menu
-   * @return Kod znaku
-   */
-  protected static int getKeyCode(JMenuItem item) {
-	  
-	return KeyStroke.getKeyStroke(item.getText().charAt(0), 0).getKeyCode();  
-	  
-	  
-  }
-  
   
   
    /**

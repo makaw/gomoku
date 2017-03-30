@@ -9,6 +9,9 @@ import java.awt.Container;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JMenuItem;
+import javax.swing.KeyStroke;
+
 import game.GameMode;
 import gomoku.Settings;
 
@@ -70,6 +73,19 @@ public interface IBaseGUI extends ILocalizable {
 	return compList;
 	
   }
+  
+  
+  
+  /**
+   * Kod pierwszego znaku elementu menu
+   * @param item Element menu
+   * @return Kod znaku
+   */
+  static int getKeyCode(JMenuItem item) {
+	
+	return KeyStroke.getKeyStroke(((JMenuItem)item).getText().charAt(0), 0).getKeyCode();
+	
+  }  
   
    
 }
