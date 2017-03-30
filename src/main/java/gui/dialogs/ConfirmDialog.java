@@ -35,7 +35,7 @@ public class ConfirmDialog extends InfoDialog {
     * Konstruktor (okno po zakończeniu gry)
     * @param frame Interfejs GUI
     * @param question Pytanie do wyświetlenia w okienku
-    * @type Typ okienka
+    * @param type Typ okienka
     */
    public ConfirmDialog(IBaseGUI frame, String question, DialogType type) {
       

@@ -31,8 +31,9 @@ public class Console extends BaseConsole implements ILocalizable {
     
    /**
     * Konstruktor 
+    * @param sndButton Przycisk do wł/wył dźwięku
     * @param msgButton Przycisk do wysyłania wiadomości w grze sieciowej
-    * @param disconButton Przycisk do rozłączenia z serwerem
+    * @param dscButton Przycisk do rozłączenia z serwerem
     * @param menuGame menu "Gra"
     */
    protected Console(JButton sndButton, JButton msgButton, JButton dscButton, MenuGame menuGame) {

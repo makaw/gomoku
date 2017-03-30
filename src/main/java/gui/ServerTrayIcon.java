@@ -214,7 +214,10 @@ public class ServerTrayIcon extends TrayIcon implements ILocalizable {
 		
   }
   
-  
+  /**
+   * Wyświetla powiadomienie
+   * @param message Treść
+   */
   public void displayMessage(String message) {
 	  
 	 if (!supported || !trayShowItem.isEnabled() || !SHOW_MSG) return;
@@ -236,6 +239,10 @@ public class ServerTrayIcon extends TrayIcon implements ILocalizable {
   }	
   
   
+  /**
+   * Włącza opcję "pokaż okno"
+   * @param enabled True jeżeli wł.
+   */
   public void enableShowItem(boolean enabled) {
 	  
 	if (!supported) return;  

@@ -42,7 +42,7 @@ public abstract class Player {
     * @param gBoard Referencja do obiektu będącego graficzną reprezentacją planszy
     * @param lBoard Referencja do obiektu logicznej warstwy planszy
     * @param name Nazwa gracza
-    * @param params Parametry (nazwa)
+    * @param nameParams Parametry (nazwa)
     */
    public Player(BoardFieldState pieceColor, BoardGraphics gBoard, Board lBoard,
 		   String name, Object... nameParams) {

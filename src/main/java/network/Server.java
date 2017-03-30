@@ -430,7 +430,7 @@ public class Server  implements Observer {
     SwingUtilities.invokeLater(new Runnable() {		
 	  @Override
 	  public void run() {
-		frame.setSystemTray();
+		frame.setTray();
 	  }
 	});
     

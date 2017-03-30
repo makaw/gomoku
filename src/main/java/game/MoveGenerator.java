@@ -41,7 +41,7 @@ public class MoveGenerator extends IA<BoardField> {
    /**
     * Konstruktor obiektu reprezentującego algorytm AI
     * @param board Referencja do logicznej warstwy planszy
-    * @param computerColor Kolor kamieni gracza-komputera
+    * @param currentPlayer Kolor kamieni gracza-komputera
     */
    private MoveGenerator(Board board, BoardFieldState currentPlayer) {
 	       

@@ -37,9 +37,9 @@ import gui.dialogs.SettingsDialog;
 public class ServerGUI extends JFrame implements IBaseGUI {
     
   /** Szerokość okna aplikacji w pikselach */
-  private static final int F_WIDTH = 465;
+  private static final int F_WIDTH = 450;
   /** Wysokość okna aplikacji w pikselach */
-  private static final int F_HEIGHT = 320;   
+  private static final int F_HEIGHT = 310;   
   /** Referencja do obiektu konsoli w GUI serwera */
   private final BaseConsole console;
   /** Ustawienia gry po stronie serwera */
@@ -49,7 +49,7 @@ public class ServerGUI extends JFrame implements IBaseGUI {
   /** przyciski */
   private final JButton settingsButton, restartButton, exitButton, hideButton;
   /** system tray */
-  private ServerTrayIcon systemTray;
+  private ServerTrayIcon tray;
   
   
   /**
@@ -84,7 +84,7 @@ public class ServerGUI extends JFrame implements IBaseGUI {
                                      JScrollPane.HORIZONTAL_SCROLLBAR_NEVER));
  
     
-    settingsButton = new JButton(" " + Lang.get("Settings") + " ");
+    settingsButton = new JButton(Lang.get("Settings"));
     settingsButton.setFocusPainted(false);
     
     settingsButton.addActionListener(new ActionListener() {
@@ -96,7 +96,7 @@ public class ServerGUI extends JFrame implements IBaseGUI {
        }
     });    
 
-    restartButton = new JButton(" " + Lang.get("Restart") + " ");
+    restartButton = new JButton(Lang.get("Restart"));
     restartButton.setFocusPainted(false);
     restartButton.addActionListener(new ActionListener() {
        @Override
@@ -108,7 +108,7 @@ public class ServerGUI extends JFrame implements IBaseGUI {
        }
     });
     
-    exitButton = new JButton(" " + Lang.get("Quit") + " ");
+    exitButton = new JButton(Lang.get("Quit"));
     exitButton.setFocusPainted(false);
     exitButton.addActionListener(new ActionListener() {
        @Override
@@ -149,12 +149,12 @@ public class ServerGUI extends JFrame implements IBaseGUI {
   /**
    * Dodaje menu do zasobnika systemowego (system tray)
    */
-  public void setSystemTray() {
+  public void setTray() {
 
- 	 systemTray = new ServerTrayIcon(this);
+ 	 tray = new ServerTrayIcon(this);
  
 	 try {
-	   systemTray.add();
+	   tray.add();
 	 }
 	 catch (Exception e) {
 	   System.err.println(Lang.get("UnableToLoadSystemTray", e.getMessage()));
@@ -169,7 +169,7 @@ public class ServerGUI extends JFrame implements IBaseGUI {
    */
   public void trayMessage(String msg) {
 	  
-	systemTray.displayMessage(msg);  
+	tray.displayMessage(msg);  
 	  
   }
 
@@ -191,10 +191,6 @@ public class ServerGUI extends JFrame implements IBaseGUI {
   }    
     
   
-  /**
-   * Metoda odpowiada: tak, to serwer
-   * @return true
-   */
   @Override
   public boolean isServer() {
       
@@ -225,12 +221,13 @@ public class ServerGUI extends JFrame implements IBaseGUI {
   @Override
   public void translate() {
 	  
-	settingsButton.setText(" " + Lang.get("Settings") + " ");  
-	restartButton.setText(" " + Lang.get("Restart") + " ");
-	exitButton.setText(" " + Lang.get("Quit") + " ");
+	settingsButton.setText(Lang.get("Settings"));  
+	restartButton.setText(Lang.get("Restart"));
+	exitButton.setText(Lang.get("Quit"));
+	hideButton.setText(Lang.get("Hide"));
 	
 	try {
-	  systemTray.translate();
+	  tray.translate();
 	}
 	catch (NullPointerException e) { }
 	
@@ -244,7 +241,7 @@ public class ServerGUI extends JFrame implements IBaseGUI {
 	  
 	 super.setVisible(visible);
 	 try {
-	    systemTray.enableShowItem(!visible); 
+	    tray.enableShowItem(!visible); 
 	 }
 	 catch (NullPointerException e) {}
 

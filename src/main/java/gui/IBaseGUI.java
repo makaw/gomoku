@@ -59,7 +59,7 @@ public interface IBaseGUI extends ILocalizable {
   
   /** 
    * Wszystkie zawarte komponenty wymagające tłumaczenia
-   * @param c Kontener
+   * @param container Kontener
    * @return Lista komponentów
    */
   static List<Component> getAllLocalised(final Container container) {

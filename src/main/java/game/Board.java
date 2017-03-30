@@ -126,7 +126,7 @@ public class Board {
 
   /**
    * Metoda znajdująca "wygrywający" rząd zawierający wskazane pole.
-   * @field Zawarte pole
+   * @param field Zawarte pole
    * @return null jeżeli nie ma wygranej, lub w razie wygranej lista par indeksów 
    * pól wchodzących w skład  wygrywającego rzędu, w celu oznaczenia ich na planszy.
    */

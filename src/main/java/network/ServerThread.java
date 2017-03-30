@@ -31,7 +31,6 @@ public class ServerThread extends Thread {
   
   /**
    * Konstruktor 
-   * @param console Referencja do konsoli GUI
    * @param socket Rereferencja do gniazdka klienckiego
    * @param server Referencja do obiektu głównego serwera
    * @param clientNumber Numer obsługiwanego klienta
