@@ -11,7 +11,9 @@ import java.io.ObjectOutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.ConcurrentModificationException;
 import java.util.List;
 import java.util.Observable;
@@ -23,7 +25,6 @@ import gomoku.AppObserver;
 import gomoku.IConf;
 import gomoku.Lang;
 import gomoku.Settings;
-import gui.BaseConsole;
 import gui.GUI;
 import gui.ServerGUI;
 import gui.dialogs.DialogType;
@@ -112,7 +113,7 @@ public class Server  implements Observer {
    * @param clientNumber Numer klienta
    * @param output Strumień wyjściowy
    */
-  public void setOutputStream(int clientNumber, ObjectOutputStream output) {
+  private void setOutputStream(int clientNumber, ObjectOutputStream output) {
       
     this.output[clientNumber] = output;
       
@@ -123,7 +124,7 @@ public class Server  implements Observer {
    * @param clientNumber Numer klienta
    * @param input Strumień wejściowy
    */
-  public void setInputStream(int clientNumber, ObjectInputStream input) {
+  private void setInputStream(int clientNumber, ObjectInputStream input) {
       
     this.input[clientNumber] = input;
       
@@ -134,7 +135,7 @@ public class Server  implements Observer {
    * @param clientNumber Numer klienta
    * @return Referencja do strumienia wyjściowego
    */
-  public ObjectOutputStream getOutputStream(int clientNumber) {
+  protected ObjectOutputStream getOutputStream(int clientNumber) {
       
     
     try {
@@ -144,7 +145,7 @@ public class Server  implements Observer {
     }
     catch (ArrayIndexOutOfBoundsException e) {
        
-       serverRestart();
+       restart();
        return null;
         
     }
@@ -157,7 +158,7 @@ public class Server  implements Observer {
    * @param clientNumber Numer klienta
    * @return Referencja do strumienia wejściowego
    */  
-  public ObjectInputStream getInputStream(int clientNumber) {
+  protected ObjectInputStream getInputStream(int clientNumber) {
     
     try {
         
@@ -167,7 +168,7 @@ public class Server  implements Observer {
       
     catch (ArrayIndexOutOfBoundsException e) {
        
-       serverRestart();
+       restart();
        return null;
         
     }
@@ -176,11 +177,6 @@ public class Server  implements Observer {
   
   
 
-  protected ServerSocket getServerSocket() {
-      
-    return serverSocket;  
-      
-  }
   
   
   /**
@@ -268,7 +264,7 @@ public class Server  implements Observer {
              String val = (String)obs.getObject();
              if (val.equals("restart")) {
                gui.trayMessage(Lang.get("ServerRestarted")); 
-               serverRestart();
+               restart();
              }
             
              break;
@@ -279,9 +275,9 @@ public class Server  implements Observer {
              try {	
                String msg = Lang.get("ConnectionWithXLost", 
               		  serverSocketList.get((int)obs.getObject()).getInetAddress());
-               gui.getConsole().setMessageLn(msg, Color.RED);
+               consoleMsg(msg, Color.RED);
                gui.trayMessage(msg + ". " + Lang.get("ServerRestarted"));
-               serverRestart();
+               restart();
              }
              // już zrestartowane - FIX (2 klientów, kolejna gra)
              catch (IndexOutOfBoundsException e) {
@@ -298,7 +294,7 @@ public class Server  implements Observer {
             
              Settings s = (Settings)obs.getObject();
              settings.setGameSettings(s.getColsAndRows(), s.getPiecesInRow());                       
-             serverRestart();
+             restart();
            
              break;
              
@@ -340,7 +336,7 @@ public class Server  implements Observer {
    * Liczba podłączonych klientów   
    * @return Liczba klientów
    */
-  public int clientsNum() {
+  private int clientsNum() {
 	 return serverSocketList.size();
   }
   
@@ -348,10 +344,9 @@ public class Server  implements Observer {
   /**
    * Restart serwera
    */  
-  protected void serverRestart() {
+  private void restart() {
       
-	 gui.getConsole().setMessageLn(Lang.get("ServerRestarted"), Color.RED);
-     gui.getConsole().newLine();
+	 consoleMsg(Lang.get("ServerRestarted") + "\n", Color.RED);
 	      
      try {
        Thread.sleep(100);	 
@@ -383,7 +378,7 @@ public class Server  implements Observer {
   /**
    * Ustawienie gniazda
    */
-  public void setServerSocket() {
+  private void setServerSocket() {
       
     try { 
     	  
@@ -391,12 +386,118 @@ public class Server  implements Observer {
         
     } catch (IOException e) {
     	  
-      gui.getConsole().setMessageLn(e.getMessage(), Color.RED);
+      consoleMsg(e.getMessage(), Color.RED);
       new InfoDialog(gui, e.getMessage(), DialogType.WARNING);
       System.exit(0);
           
     }
       
+  }
+  
+  
+  /**
+   * Wyświetlenie wiadomości na konsoli
+   * @param msg Treść
+   * @param color Kolor
+   */
+  private synchronized void consoleMsg(String msg, Color color) {
+	  
+	  String timeStamp
+	  	= new SimpleDateFormat("HH:mm:ss").format(Calendar.getInstance().getTime());  
+	  
+	  gui.getConsole().setMessage(timeStamp + ": ", Color.GRAY);
+	  gui.getConsole().setMessageLn(msg, color);  
+	  
+  }
+  
+  
+  
+  /**
+   * Uruchomienie serwera
+   */
+  public void start() {
+	  
+	gui.getConsole().setMessageLn("Gomoku Server v."+IConf.VERSION_SERVER, Color.BLACK);
+	gui.getConsole().setMessageLn("------------------------------------------------"
+			+ "-------------------------------------------------------", Color.BLACK);    
+	  
+    setServerSocket();	
+    
+    SwingUtilities.invokeLater(new Runnable() {		
+	  @Override
+	  public void run() {
+		gui.setTray();
+	  }
+	});
+	  
+	do {
+	      
+	  try {
+	    Thread.sleep(50);
+	  } catch (Exception e) {}
+	      
+	  consoleMsg(Lang.get("WaitForConnectionsOnPort",
+	    		  String.valueOf(IConf.SERVER_PORT)), Color.DARK_GRAY);
+	      
+	  restart = false;
+	             
+	  while (!restart)  {    	  
+	  
+        try {  
+          
+          Socket socket = serverSocket.accept();
+          
+          try {
+         
+            setInputStream(clientsNum(), new ObjectInputStream(socket.getInputStream()));
+            setOutputStream(clientsNum(), new ObjectOutputStream(socket.getOutputStream()));                    
+
+            String msg = Lang.get("ConnectionWithXAccepted", socket.getInetAddress());
+            consoleMsg(msg, Color.BLUE);     
+            gui.trayMessage(msg);
+           
+            Ping ping = new Ping(this, clientsNum());
+            serverPingList.add(ping);
+            ping.startPinging();
+         
+            addNewSocket(socket);         
+         
+            if (clientsNum() == 2) {             
+              startServerThreads();                   
+              consoleMsg(Lang.get("TwoClientsAlready") + "\n", Color.BLACK);
+              gui.trayMessage(Lang.get("TwoClientsAlready"));             
+            }
+         
+          }      
+          
+          // jest już 2 klientów
+          catch (ArrayIndexOutOfBoundsException e) {
+          	          
+            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+            out.writeObject(new Command(Command.CMD_FULL));
+            out.flush();     	    
+          	
+          }
+      
+        }
+     
+       
+        catch (IOException e) {       
+          restart = true;
+     	  break;      	  
+        }
+
+        try {
+          Thread.sleep(50);
+        }
+        catch (InterruptedException e) { return; }    
+
+      }
+	  
+	  
+	} while (true);      	  
+	  
+	  
   }
   
   
@@ -411,105 +512,14 @@ public class Server  implements Observer {
    */
   public static void main(final String[] args) {
      
-    Server server = null; 
-      
     try {  
-      server = new Server();    
+      new Server().start();    
     } catch (InterruptedException | InvocationTargetException e) {
       System.err.println(Lang.get("StartGraphicsProblem", e));
       System.exit(0);
-    }
+    } 
     
-    ServerGUI frame = server.gui;
-    BaseConsole console = frame.getConsole();
-    console.setMessageLn("Gomoku Server v."+IConf.VERSION_SERVER, Color.GRAY);
-    console.setMessageLn("--------------------------------", Color.GRAY);  
-   
-    server.setServerSocket();        
-    
-    SwingUtilities.invokeLater(new Runnable() {		
-	  @Override
-	  public void run() {
-		frame.setTray();
-	  }
-	});
-    
-    do {
-      
-      try {
-        Thread.sleep(50);
-      } catch (Exception e) {}
-      
-      console.setMessageLn(Lang.get("WaitForConnectionsOnPort",
-    		  String.valueOf(IConf.SERVER_PORT)), Color.DARK_GRAY);
-      
-      server.restart = false;
-             
-      while (!server.restart)  {    	  
-          
-        try {  
-                 
-           Socket socket = server.getServerSocket().accept();
-           
-           try {
-          
-            server.setInputStream(server.clientsNum(), new ObjectInputStream(socket.getInputStream()));
-            server.setOutputStream(server.clientsNum(), new ObjectOutputStream(socket.getOutputStream()));                    
-
-            String msg = Lang.get("ConnectionWithXAccepted", socket.getInetAddress());
-            console.setMessageLn(msg, Color.BLUE);     
-            frame.trayMessage(msg);
-            
-            Ping ping = new Ping(server, server.clientsNum());
-            server.serverPingList.add(ping);
-            ping.startPinging();
-          
-            server.addNewSocket(socket);
-          
-          
-            if (server.clientsNum() == 2) {
-              
-               server.startServerThreads();
-                    
-               console.setMessageLn(Lang.get("TwoClientsAlready"), Color.BLACK);
-               console.newLine();              
-               server.gui.trayMessage(Lang.get("TwoClientsAlready"));
-              
-            }
-          
-          }      
-           
-           // jest już 2 klientów
-           catch (ArrayIndexOutOfBoundsException e) {
-           	          
-             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-          	 out.writeObject(new Command(Command.CMD_FULL));
-          	 out.flush();     	    
-           	
-           }
-       
-        }
-      
-        
-        catch (IOException e) {       
-          server.restart = true;
-      	  break;      	  
-        }
-
-        try {
-          Thread.sleep(50);
-        }
-        catch (InterruptedException e) { return; }    
-
-      }      
-      
-      
-    }  while(true);
-    
-       
   }
-  
-  
   
  
 }
